@@ -75,6 +75,17 @@ video{display:block;width:100%;max-height:75vh;background:#000}
 .cin{display:flex;gap:6px;padding:10px;border-top:1px solid var(--ln)}.cin input{flex:1}
 .box p{color:var(--mu);font-size:14px}
 @media(min-width:900px){#watch{grid-template-columns:1fr 320px;grid-template-areas:"b b" "p c" "t c";grid-template-rows:auto auto 1fr}.chat{height:min(70vh,560px)}}
+.float{position:absolute;left:14px;bottom:64px;width:min(78%,380px);height:min(60%,320px);pointer-events:none;z-index:2;overflow:hidden}
+.fm{position:absolute;left:0;bottom:0;max-width:100%;background:rgba(18,8,15,.65);backdrop-filter:blur(6px);padding:7px 12px;border-radius:14px;font-size:14px;word-break:break-word;animation:rise 7s linear forwards}
+.fm b{color:var(--am)}.fm.sys{color:var(--mu);font-size:12px}
+@keyframes rise{0%{bottom:0;opacity:0}6%{opacity:1}80%{opacity:1}100%{bottom:100%;opacity:0}}
+.fbar{position:absolute;top:10px;right:10px;display:flex;gap:6px;z-index:3;opacity:.6;transition:opacity .2s}
+.player:hover .fbar,.fbar:focus-within{opacity:1}
+.fbar .btn{padding:6px 10px;font-size:12px;background:rgba(18,8,15,.78)}
+.player:fullscreen{border:0;border-radius:0;display:flex;align-items:center}
+.player:fullscreen video{height:100vh;max-height:none}
+.player:fullscreen .float{left:24px;bottom:84px;height:min(65%,520px)}
+.player:fullscreen .fm{font-size:17px}
 @media(prefers-reduced-motion:reduce){*{transition:none!important}}
 </style>
 </head>
@@ -104,7 +115,7 @@ video{display:block;width:100%;max-height:75vh;background:#000}
       <h2 id="wt"></h2>
       <div class="room"><span>Room</span><b id="rc">…</b><button class="btn" id="cp">Salin link</button><span id="vw"></span></div>
     </div>
-    <div class="player"><video id="v" controls playsinline preload="auto"></video><div id="hold" hidden>Buffering — semua layar ditahan sampai siap</div></div>
+    <div class="player"><video id="v" controls controlsList="nofullscreen" playsinline preload="auto"></video><div class="float" id="fl"></div><div class="fbar"><button class="btn" id="ftg" aria-pressed="true">Chat melayang: hidup</button><button class="btn" id="ffs">Layar penuh</button></div><div id="hold" hidden>Buffering — semua layar ditahan sampai siap</div></div>
     <aside class="chat"><h3>Komentar live</h3><div id="cm"></div><div class="cin"><input id="ci" placeholder="Tulis komentar…" maxlength="300" aria-label="Komentar"><button class="btn pri" id="cs">Kirim</button></div></aside>
     <div class="ctl">
       <button class="btn" id="b10">Mundur 10 detik</button>
@@ -248,6 +259,7 @@ document.addEventListener('keydown', e => {
   if ($('#watch').hidden || /INPUT|SELECT/.test(e.target.tagName)) return;
   if (e.key === 'ArrowLeft') { e.preventDefault(); skip(-10); }
   if (e.key === 'ArrowRight') { e.preventDefault(); skip(10); }
+  if (e.key === 'f') $('#ffs').click();
 });
 
 /* Resolusi: 1 pilihan → tampil 1 label saja */
@@ -316,7 +328,8 @@ function join(c) {
 function leave(quiet) {
   if (peer) peer.destroy();
   peer = hostConn = null; conns = []; bufSet.clear(); isHost = false;
-  wantPlay = holding = myBuf = false; rt = null; $('#hold').hidden = true; $('#cm').innerHTML = '';
+  wantPlay = holding = myBuf = false; rt = null; $('#hold').hidden = true; $('#cm').innerHTML = ''; fl.innerHTML = ''; fq.length = 0;
+  if (document.fullscreenElement) document.exitFullscreen();
   sup(1500); v.removeAttribute('src'); v.load();
   $('#watch').hidden = true; $('#home').hidden = false;
   if (!quiet) history.replaceState(null, '', location.pathname);
@@ -349,8 +362,8 @@ function addChat(m) {
   d.className = 'msg' + (m.sys ? ' sys' : '') + (m.me ? ' me' : '');
   if (m.sys) d.textContent = String(m.text).slice(0, 120);
   else { const b = document.createElement('b'); b.textContent = String(m.name).slice(0, 20); d.append(b, ' ' + String(m.text).slice(0, 300)); }
-  cm.append(d); while (cm.children.length > 200) cm.firstChild.remove();
-  cm.scrollTop = cm.scrollHeight;
+  cm.prepend(d); while (cm.children.length > 200) cm.lastChild.remove();
+  cm.scrollTop = 0; floatMsg(m);
 }
 const sys = text => { const m = { t: 'chat', sys: 1, text }; addChat(m); broadcast(m); };
 function sendChat() {
@@ -360,6 +373,36 @@ function sendChat() {
 }
 $('#cs').onclick = sendChat;
 $('#ci').onkeydown = e => { if (e.key === 'Enter') sendChat(); };
+
+/* ---------- Chat melayang & layar penuh ---------- */
+const fl = $('#fl'), fq = [], pl = $('.player');
+let floatOn = true;
+try { floatOn = localStorage.getItem('nobar_float') !== '0'; } catch {}
+function setFloat(on) {
+  floatOn = on; try { localStorage.setItem('nobar_float', on ? '1' : '0'); } catch {}
+  $('#ftg').textContent = on ? 'Chat melayang: hidup' : 'Chat melayang: mati';
+  $('#ftg').setAttribute('aria-pressed', on);
+  if (!on) { fq.length = 0; fl.innerHTML = ''; }
+}
+$('#ftg').onclick = () => setFloat(!floatOn);
+setFloat(floatOn);
+function floatMsg(m) { if (!floatOn) return; if (fq.length > 15) fq.shift(); fq.push(m); }
+setInterval(() => {
+  const m = fq.shift(); if (!m) return;
+  const d = document.createElement('div');
+  d.className = 'fm' + (m.sys ? ' sys' : '');
+  if (m.sys) d.textContent = String(m.text).slice(0, 120);
+  else { const b = document.createElement('b'); b.textContent = String(m.name).slice(0, 20); d.append(b, ' ' + String(m.text).slice(0, 300)); }
+  d.style.animationDuration = Math.max(3, fl.clientHeight / 45) + 's';
+  d.onanimationend = () => d.remove();
+  fl.append(d);
+}, 1100);
+$('#ffs').onclick = () => {
+  if (document.fullscreenElement) return document.exitFullscreen();
+  if (pl.requestFullscreen) pl.requestFullscreen().catch(() => toast('Layar penuh tidak didukung browser ini.'));
+  else if (v.webkitEnterFullscreen) { v.webkitEnterFullscreen(); toast('Di iPhone, chat melayang tidak tampil saat layar penuh.'); }
+};
+document.onfullscreenchange = () => { $('#ffs').textContent = document.fullscreenElement ? 'Keluar layar penuh' : 'Layar penuh'; };
 
 const hm = location.hash.match(/room=([A-Za-z0-9]+)/);
 if (hm) askName(() => join(hm[1]));
