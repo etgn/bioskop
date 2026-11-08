@@ -25,10 +25,11 @@ h2{font-size:17px;margin:26px 0 12px}
 h1{letter-spacing:-.02em}
 .mu{color:var(--mu)}.mt{margin-top:16px}
 .back{display:inline-flex;gap:10px;align-items:center;color:var(--mu);font-weight:600;margin:6px 0 18px}
-.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(145px,1fr));gap:14px}
-.po{position:relative;aspect-ratio:3/4;border-radius:18px;padding:12px;display:flex;flex-direction:column;justify-content:flex-end;background:linear-gradient(160deg,hsl(var(--h) 70% 40%),hsl(calc(var(--h) + 45) 75% 13%));border:1px solid #ffffff14;overflow:hidden}
+.grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
+@media(min-width:600px){.grid{grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:14px}}
+.po{position:relative;aspect-ratio:2/3;border-radius:22px;padding:12px;display:flex;flex-direction:column;justify-content:flex-end;background:linear-gradient(160deg,hsl(var(--h) 70% 40%),hsl(calc(var(--h) + 45) 75% 13%));border:1px solid #ffffff14;overflow:hidden}
 .po img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
-.po:has(img[src]):after{content:"";position:absolute;inset:0;background:linear-gradient(transparent 35%,#05050add)}
+.po:has(img[src]):after{content:"";position:absolute;inset:0;background:linear-gradient(transparent 40%,#05050aee)}
 .po b{position:relative;z-index:1;font-size:13px;line-height:1.3;display:-webkit-box;-webkit-line-clamp:4;-webkit-box-orient:vertical;overflow:hidden}
 .tg{position:absolute;z-index:2;top:10px;left:10px;padding:2px 10px;border-radius:8px;background:#000a;font:700 11px "JetBrains Mono",monospace;color:var(--a2)}
 .cd small{display:block;margin-top:6px;color:var(--mu)}
@@ -145,6 +146,13 @@ input[type=color]::-moz-color-swatch{border:0}
 .xe[open] summary{border-bottom:1px solid var(--ln)}
 .xb{display:grid;gap:8px;padding:12px}
 .btns.mb{position:sticky;bottom:0;margin:6px -22px -22px;padding:12px 22px 22px;background:var(--cd);border-top:1px solid var(--ln)}
+/* kartu gaya baru */
+.cd .po{padding:10px;border-radius:20px}
+.cd .po b{-webkit-line-clamp:2;font-size:14px;text-shadow:0 1px 8px #000b}
+.sub{position:relative;z-index:1;margin-top:3px;font-size:11px;color:#ffffffb8}
+.rt{position:absolute;z-index:2;top:0;right:0;display:flex;align-items:center;gap:4px;padding:5px 10px 6px 12px;border-radius:0 0 0 14px;background:#0b0a14d9;font:700 12px Inter,sans-serif;color:#fff}
+.rt:before{content:"★";color:#fbbf24}
+.rt[hidden]{display:none}
 </style>
 </head>
 <body>
@@ -221,13 +229,13 @@ async function auth(m,u,p){
 
 /* ===== tampilan ===== */
 const hue=s=>[...s].reduce((n,c)=>(n*31+c.charCodeAt(0))&65535,7)%360;
-const card=a=>`<a class="cd" href="#/film/${encodeURIComponent(a.id)}"><div class="po" style="--h:${hue(a.title)}"><img data-t="${esc(a.title)}" data-k="${isS(a)?'tv':''}" alt="" onerror="this.remove()"><span class="tg">${isS(a)?a.episodes.length+' episode':a.sources.length+' kualitas'}</span><b>${esc(a.title)}</b></div><small>${qualsOf(a).map(esc).join(' • ')}</small></a>`;
+const card=a=>`<a class="cd" href="#/film/${encodeURIComponent(a.id)}"><div class="po" style="--h:${hue(a.title)}"><img data-id="${esc(a.id)}" alt="" onerror="this.remove()"><span class="rt" hidden></span><b>${esc(a.title)}</b>${isS(a)?`<span class="sub">${a.episodes.length} episode</span>`:''}</div></a>`;
 const histCard=x=>{const a=catalog.find(z=>z.id===x.id);if(!a)return'';const p=x.d?Math.min(100,x.t/x.d*100):0;
- return`<a class="hi" href="${wl(a,x.ep)}"><div class="po s" style="--h:${hue(a.title)}"><img data-t="${esc(a.title)}" data-k="${isS(a)?'tv':''}" alt=""></div><div class="hm"><b>${esc(a.title)}${x.ep?' · Ep '+x.ep:''}</b><small>${ft(x.t)} / ${ft(x.d)}</small><div class="pg"><i style="width:${p}%"></i></div></div></a>`};
+ return`<a class="hi" href="${wl(a,x.ep)}"><div class="po s" style="--h:${hue(a.title)}"><img data-id="${esc(a.id)}" alt=""></div><div class="hm"><b>${esc(a.title)}${x.ep?' · Ep '+x.ep:''}</b><small>${ft(x.t)} / ${ft(x.d)}</small><div class="pg"><i style="width:${p}%"></i></div></div></a>`};
 function detail(a){
  const h=hist.find(x=>x.id===a.id&&!x.ep),p=h&&h.d?Math.min(100,Math.round(h.t/h.d*100)):0;
  return`<a class="back" href="#/">${ic('back',20)}Beranda</a>
-<div class="sh"><div class="po" style="--h:${hue(a.title)}"><img data-t="${esc(a.title)}" alt=""></div>
+<div class="sh"><div class="po" style="--h:${hue(a.title)}"><img data-id="${esc(a.id)}" alt=""></div>
 <h1>${esc(a.title)}</h1>
 <div class="chips" id="chips"><span class="chip">Film</span><span class="chip">${qualsOf(a).map(esc).join(' • ')}</span></div>
 <div class="syn" id="syn" hidden><h3>Sinopsis</h3><p></p></div>
@@ -258,25 +266,13 @@ function pump(){
 }
 /* sinopsis, rating, tahun dari TMDB */
 async function loadMeta(a){
- const k='bs:m:'+a.title.toLowerCase();let m=ls.get(k,null);
- if(!m){
-  const y=(a.title.match(/\((\d{4})\)/)||[])[1],q=a.title.replace(/\(.*?\)/g,'').trim(),ser=isS(a);
-  try{
-   for(const kind of ser?['tv','movie']:['movie','tv']){
-    for(const l of['id-ID','en-US']){
-     const r=await fetch(`https://api.themoviedb.org/3/search/${kind}?api_key=${TMDB_KEY}&language=${l}&query=${encodeURIComponent(q)}`+(y&&kind==='movie'?'&year='+y:''));
-     if(!r.ok)break;const h=((await r.json()).results||[])[0];if(!h)break;
-     m={o:h.overview||'',r:h.vote_average||0,y:(h.first_air_date||h.release_date||'').slice(0,4)};if(m.o)break
-    }
-    if(m&&m.o)break
-   }
-  }catch{}
-  if(m)ls.set(k,m)
- }
- const s=$('#syn'),c=$('#chips');if(!m||!s||!c||s.dataset.d)return;s.dataset.d=1;
+ const m=await meta(a);if(!m)return;
+ let o=m.o;
+ if(!o&&m.id){try{const r=await tfetch(`https://api.themoviedb.org/3/${m.k}/${m.id}?api_key=${TMDB_KEY}&language=en-US`);o=r.overview||''}catch{}}
+ const s=$('#syn'),c=$('#chips');if(!s||!c||s.dataset.d)return;s.dataset.d=1;
  if(m.r>0)c.insertAdjacentHTML('beforeend',`<span class="chip">★ ${m.r.toFixed(1)}</span>`);
  if(m.y)c.insertAdjacentHTML('beforeend',`<span class="chip">${esc(m.y)}</span>`);
- if(m.o){s.querySelector('p').textContent=m.o;s.hidden=false}
+ if(o){s.querySelector('p').textContent=o;s.hidden=false}
 }
 /* serial lain dengan awalan judul sama (Season 2, The Movie, dst.) */
 function related(a){
@@ -290,7 +286,7 @@ function seriesDetail(a){
   done=new Set(hist.filter(h=>h.id===a.id&&h.ep&&h.d&&h.t/h.d>.95).map(h=>h.ep)).size,
   pc=Math.round(done/tot*100),tg=resumeTarget(a),st=hist.some(h=>h.id===a.id&&h.ep);
  return`<a class="back" href="#/">${ic('back',20)}Beranda</a>
-<div class="sh"><div class="po" style="--h:${hue(a.title)}"><img data-t="${esc(a.title)}" data-k="tv" alt=""></div>
+<div class="sh"><div class="po" style="--h:${hue(a.title)}"><img data-id="${esc(a.id)}" alt=""></div>
 <h1>${esc(a.title)}</h1>
 <div class="chips" id="chips"><span class="chip">${tot} Episode</span><span class="chip">${qualsOf(a).map(esc).join(' • ')}</span></div>
 <div class="syn" id="syn" hidden><h3>Sinopsis</h3><p></p></div>
@@ -626,15 +622,66 @@ function filmModal(id){
  };
 }
 
-/* ===== poster otomatis (TMDB) ===== */
-const pcache=new Map();
-function poster(t,tv){const k='bs:p:'+(tv?'tv:':'')+t.toLowerCase();if(pcache.has(k))return pcache.get(k);const c=ls.get(k,null);
- const pr=c?Promise.resolve(c):tmdbPoster(t,tv).then(u=>{if(u)ls.set(k,u);return u});pcache.set(k,pr);return pr}
-function fillPosters(){document.querySelectorAll('img[data-t]').forEach(i=>poster(i.dataset.t,i.dataset.k==='tv').then(u=>{if(u&&i.isConnected)i.src=u}))}
-async function tmdbPoster(title,tv){
- const y=(title.match(/\((\d{4})\)/)||[])[1],q=title.replace(/\(.*?\)/g,'').trim();
- const get=async(kind,withY)=>{try{const r=await fetch(`https://api.themoviedb.org/3/search/${kind}?api_key=${TMDB_KEY}&query=${encodeURIComponent(q)}`+(withY&&y?(kind==='movie'?'&year=':'&first_air_date_year=')+y:''));if(!r.ok)return null;const h=((await r.json()).results||[]).find(x=>x.poster_path);return h?'https://image.tmdb.org/t/p/w500'+h.poster_path:null}catch{return null}};
- return tv?(await get('tv',true)||await get('tv',false)||await get('movie',false)):(await get('movie',true)||await get('movie',false)||await get('tv',false))
+/* ===== poster + rating otomatis (TMDB): antrean, ulang saat gagal, cache ===== */
+const tq=[];let tb=0;
+const tfetch=url=>new Promise((res,rej)=>{tq.push({url,res,rej});tpump()});
+function tpump(){
+ if(tb>=4||!tq.length)return;tb++;const j=tq.shift();
+ const wait=ms=>new Promise(z=>setTimeout(z,ms));
+ const run=async n=>{
+  try{
+   const r=await fetch(j.url);
+   if(r.status===404)return j.res({});
+   if(r.status===429&&n<3){await wait(900*(n+1));return run(n+1)}
+   if(!r.ok)throw 0;
+   j.res(await r.json())
+  }catch{if(n<2){await wait(600);return run(n+1)}j.rej(new Error('tmdb'))}
+ };
+ run(0).finally(()=>{tb--;tpump()})
+}
+async function tmdbFind(a){
+ const y=(a.title.match(/\((\d{4})\)/)||[])[1],
+  t=a.title.replace(/\(.*?\)/g,' ').replace(/\s+/g,' ').trim(),
+  sm=t.match(/\b(?:season|musim)\s*(\d{1,2})\b/i),season=sm?+sm[1]:0,
+  base=t.replace(/[\s\-–:]*\b(?:season|musim)\s*\d{1,2}\b/ig,'').replace(/\blive[\s-]?action\b/ig,'').replace(/[\s\-–:]+$/,'').replace(/\s+/g,' ').trim(),
+  qs=[...new Set([t,base,base.split(/\s*[:\-–]\s*/)[0].trim()].filter(q=>q&&q.length>1))],
+  kinds=isS(a)||season?['tv','movie']:['movie','tv'],T='https://api.themoviedb.org/3/';
+ for(const q of qs)for(const kind of kinds){
+  for(const withY of(y&&q===qs[0])?[true,false]:[false]){
+   const d=await tfetch(`${T}search/${kind}?api_key=${TMDB_KEY}&language=id-ID&query=${encodeURIComponent(q)}`+(withY?(kind==='movie'?'&year=':'&first_air_date_year=')+y:''));
+   const h=(d.results||[]).find(x=>x.poster_path);if(!h)continue;
+   let p=h.poster_path;
+   if(kind==='tv'&&season){try{const sd=await tfetch(`${T}tv/${h.id}/season/${season}?api_key=${TMDB_KEY}&language=id-ID`);if(sd.poster_path)p=sd.poster_path}catch{}}
+   return{p:'https://image.tmdb.org/t/p/w500'+p,r:h.vote_average||0,y:(h.first_air_date||h.release_date||'').slice(0,4),o:h.overview||'',id:h.id,k:kind}
+  }
+ }
+ return null
+}
+const mc=new Map();
+function meta(a){
+ const kk='bs:t2:'+(isS(a)?'s:':'m:')+a.title.toLowerCase();
+ if(mc.has(kk))return mc.get(kk);
+ const c=ls.get(kk,null);
+ const pr=c&&c.p?Promise.resolve(c):c&&c.n&&Date.now()-c.n<6048e5?Promise.resolve(null)
+  :tmdbFind(a).then(m=>{ls.set(kk,m||{n:Date.now()});return m}).catch(()=>{mc.delete(kk);return null});
+ mc.set(kk,pr);return pr
+}
+function paint(i){
+ const a=catalog.find(x=>x.id===i.dataset.id);if(!a)return;
+ meta(a).then(m=>{
+  if(!i.isConnected)return;
+  if(m&&m.p)i.src=m.p;
+  else{const e=isS(a)&&a.episodes.find(z=>z.thumb);if(e)i.src=e.thumb}
+  const r=i.parentNode.querySelector('.rt');if(r&&m&&m.r>0){r.textContent=m.r.toFixed(1);r.hidden=false}
+ })
+}
+let io;
+function fillPosters(){
+ const L=document.querySelectorAll('img[data-id]');
+ if(io)io.disconnect();
+ if(!('IntersectionObserver' in window)){L.forEach(paint);return}
+ io=new IntersectionObserver(es=>es.forEach(e=>{if(e.isIntersecting){io.unobserve(e.target);paint(e.target)}}),{rootMargin:'500px'});
+ L.forEach(i=>io.observe(i))
 }
 /* ===== impor film dari file JSON (admin) ===== */
 const normRes=r=>{r=String(r||'').trim();const n=parseInt(r.replace(/\D/g,''),10);if(/4k/i.test(r)||n===2160)return'4K';return n?n+'p':'720p'};
