@@ -1,411 +1,367 @@
 <!DOCTYPE html>
 <html lang="id">
 <head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Layar Bareng — nonton bareng di detik yang sama</title>
-<!--
-SETUP SUPABASE (SQL Editor):
-create table films(id uuid primary key default gen_random_uuid(), title text not null, sources jsonb not null, created_at timestamptz default now());
-alter table films enable row level security;
-create policy "baca" on films for select using (true);
-create policy "tambah" on films for insert with check (true);
-Lalu isi SB_URL & SB_KEY di bagian <script> bawah.
--->
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:wght@600;800&family=DM+Sans:wght@400;500;700&display=swap">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Bioskop Ana</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
 <style>
-:root{--bg:#12080f;--sf:#1d0f19;--ln:#38212f;--tx:#f7ede5;--mu:#a98f9b;--am:#ffb347;--rd:#c8283f}
 *{box-sizing:border-box;margin:0}
-body{background:var(--bg);color:var(--tx);font:15px/1.5 "DM Sans",system-ui,sans-serif;min-height:100vh}
-h1,h2,h3,.logo{font-family:"Bricolage Grotesque","DM Sans",sans-serif}
-[hidden]{display:none!important}
-:focus-visible{outline:2px solid var(--am);outline-offset:2px}
-header{position:sticky;top:0;z-index:20;display:flex;flex-wrap:wrap;gap:10px;align-items:center;justify-content:space-between;padding:12px 5vw;background:rgba(18,8,15,.85);backdrop-filter:blur(12px);border-bottom:1px solid var(--ln)}
-.logo{font-weight:800;font-size:21px;display:flex;align-items:center;gap:8px}
-.logo i{width:12px;height:12px;border-radius:50%;background:var(--am);box-shadow:0 0 14px var(--am)}
-.hr{display:flex;gap:8px;flex-wrap:wrap}
-input,select{background:var(--sf);border:1px solid var(--ln);color:var(--tx);padding:10px 12px;border-radius:10px;font:inherit;min-width:0}
-input:focus,select:focus{border-color:var(--am);outline:0}
-.btn{border:1px solid var(--ln);background:var(--sf);color:var(--tx);padding:10px 16px;border-radius:10px;font:700 14px "DM Sans",sans-serif;cursor:pointer;transition:border-color .2s,background .2s}
-.btn:hover{border-color:var(--am)}
-.btn.pri{background:var(--am);border-color:var(--am);color:#2a1300}
-.btn.pri:hover{background:#ffc470}
-main{max-width:1180px;margin:auto;padding:0 5vw 70px}
-.hero{padding:clamp(36px,8vw,84px) 0 30px}
-.hero h1{font-size:clamp(34px,7vw,68px);line-height:1;letter-spacing:-.03em;max-width:12ch}
-.hero p{color:var(--mu);margin-top:16px;max-width:46ch}
-.note{background:var(--sf);border:1px dashed var(--am);border-radius:12px;padding:14px;margin-bottom:20px;color:var(--am)}
-.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(165px,1fr));gap:16px}
-.card{background:var(--sf);border:1px solid var(--ln);border-radius:14px;overflow:hidden;display:flex;flex-direction:column;transition:border-color .2s}
-.card:hover{border-color:var(--am)}
-.poster{aspect-ratio:3/4;padding:14px;display:flex;align-items:flex-end;font:800 clamp(20px,3.4vw,26px)/1.05 "Bricolage Grotesque",sans-serif;letter-spacing:-.02em;overflow:hidden;word-break:break-word}
-.stub{padding:12px;border-top:2px dashed var(--bg);display:flex;flex-direction:column;gap:10px}
-.chip{display:inline-block;font:700 12px "DM Sans",sans-serif;padding:3px 9px;border-radius:99px;border:1px solid var(--ln);color:var(--am);margin:0 4px 4px 0}
-.empty{grid-column:1/-1;padding:50px 20px;text-align:center;color:var(--mu);border:1px dashed var(--ln);border-radius:14px}
-.bar{display:flex;flex-wrap:wrap;gap:10px;align-items:center;padding:18px 0}
-.bar h2{font-size:22px;flex:1;min-width:140px}
-.room{display:flex;gap:8px;align-items:center;flex-wrap:wrap;color:var(--mu)}
-.room b{color:var(--am);letter-spacing:.12em;font-size:16px}
-.player{position:relative;background:#000;border-radius:14px;overflow:hidden;border:1px solid var(--ln)}
-video{display:block;width:100%;max-height:75vh;background:#000}
-#hold{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;background:rgba(18,8,15,.72);color:var(--am);font-weight:700;text-align:center;padding:20px;pointer-events:none}
-.ctl{display:flex;flex-wrap:wrap;gap:10px;align-items:center;padding:16px 0}
-.seg{display:flex;border:1px solid var(--ln);border-radius:10px;overflow:hidden;margin-left:auto}
-.seg button{border:0;background:var(--sf);color:var(--mu);padding:10px 14px;font:700 13px "DM Sans",sans-serif;cursor:pointer}
-.seg button.on{background:var(--am);color:#2a1300}
-.seg span{padding:10px 14px;background:var(--sf);color:var(--am);font-weight:700;font-size:13px}
-.modal{position:fixed;inset:0;z-index:50;background:rgba(0,0,0,.7);display:flex;align-items:center;justify-content:center;padding:16px}
-.box{background:var(--sf);border:1px solid var(--ln);border-radius:16px;padding:22px;width:100%;max-width:520px;max-height:92vh;overflow:auto;display:flex;flex-direction:column;gap:10px}
-.box label{font-weight:700;font-size:13px;color:var(--mu)}
-.row{display:flex;gap:6px}.row .u{flex:1}
-.act{display:flex;gap:8px;justify-content:flex-end;margin-top:6px}
-#toast{position:fixed;left:50%;bottom:24px;transform:translateX(-50%);background:var(--am);color:#2a1300;font-weight:700;padding:10px 18px;border-radius:99px;z-index:99;max-width:90vw;text-align:center}
-.poster{position:relative}
-.poster img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
-.poster.th::after{content:"";position:absolute;inset:0;background:linear-gradient(transparent 40%,rgba(18,8,15,.92))}
-.poster span{position:relative;z-index:1}
-.two{display:flex;gap:8px}.two .pri{flex:1}
-#watch{display:grid;gap:0 16px;grid-template-areas:"b" "p" "t" "c"}
-#watch>*{min-width:0}
-.bar{grid-area:b}.player{grid-area:p}.ctl{grid-area:t}.chat{grid-area:c}
-.chat{display:flex;flex-direction:column;background:var(--sf);border:1px solid var(--ln);border-radius:14px;height:340px;overflow:hidden}
-.chat h3{font-size:15px;padding:12px 14px;border-bottom:1px solid var(--ln)}
-#cm{flex:1;min-height:0;overflow:auto;padding:12px 14px;display:flex;flex-direction:column;gap:8px}
-.msg{word-break:break-word}.msg b{color:var(--am)}.msg.me b{color:var(--tx)}.msg.sys{color:var(--mu);font-size:13px}
-.cin{display:flex;gap:6px;padding:10px;border-top:1px solid var(--ln)}.cin input{flex:1}
-.box p{color:var(--mu);font-size:14px}
-@media(min-width:900px){#watch{grid-template-columns:1fr 320px;grid-template-areas:"b b" "p c" "t c";grid-template-rows:auto auto 1fr}.chat{height:min(70vh,560px)}}
-.float{position:absolute;left:14px;bottom:64px;width:min(78%,380px);height:min(60%,320px);pointer-events:none;z-index:2;overflow:hidden}
-.fm{position:absolute;left:0;bottom:0;max-width:100%;background:rgba(18,8,15,.65);backdrop-filter:blur(6px);padding:7px 12px;border-radius:14px;font-size:14px;word-break:break-word;animation:rise 7s linear forwards}
-.fm b{color:var(--am)}.fm.sys{color:var(--mu);font-size:12px}
-@keyframes rise{0%{bottom:0;opacity:0}6%{opacity:1}80%{opacity:1}100%{bottom:100%;opacity:0}}
-.fbar{position:absolute;top:10px;right:10px;display:flex;gap:6px;z-index:3;opacity:.6;transition:opacity .2s}
-.player:hover .fbar,.fbar:focus-within{opacity:1}
-.fbar .btn{padding:6px 10px;font-size:12px;background:rgba(18,8,15,.78)}
-.player:fullscreen{border:0;border-radius:0;display:flex;align-items:center}
-.player:fullscreen video{height:100vh;max-height:none}
-.player:fullscreen .float{left:24px;bottom:84px;height:min(65%,520px)}
-.player:fullscreen .fm{font-size:17px}
-@media(prefers-reduced-motion:reduce){*{transition:none!important}}
+:root{--bg:#05050a;--cd:#0c0b16;--ln:#201d36;--tx:#f4f3fc;--mu:#9b98b8;--g:linear-gradient(135deg,#8b5cf6,#3b82f6)}
+html{background:var(--bg)}
+body{font:15px/1.5 Inter,system-ui,sans-serif;color:var(--tx);min-height:100vh;padding-bottom:88px;background:radial-gradient(700px 360px at 0 -40px,#8b5cf64d,transparent 70%),radial-gradient(600px 340px at 100% 0,#3b82f63d,transparent 70%),var(--bg)}
+a{color:inherit;text-decoration:none}
+button,input,select{font:inherit;color:inherit}
+button{cursor:pointer;background:none;border:0}
+select option{color:#000}
+.hd{position:sticky;top:0;z-index:10;display:flex;justify-content:space-between;align-items:center;padding:12px 18px;background:#05050acc;backdrop-filter:blur(14px);border-bottom:1px solid var(--ln)}
+.logo{font-weight:800;font-size:22px;letter-spacing:-.04em}
+.logo span{background:var(--g);-webkit-background-clip:text;background-clip:text;color:transparent}
+.logo.big{font-size:30px;text-align:center}
+.ib{display:grid;place-items:center;width:40px;height:40px;border-radius:12px;color:var(--mu)}
+.av{display:grid;place-items:center;width:38px;height:38px;border-radius:50%;background:var(--g);font-weight:700;color:#fff}
+main{max-width:760px;margin:auto;padding:18px}
+h2{font-size:17px;margin:26px 0 12px}
+h1{letter-spacing:-.02em}
+.mu{color:var(--mu)}.mt{margin-top:16px}
+.back{display:inline-flex;gap:10px;align-items:center;color:var(--mu);font-weight:600;margin:6px 0 18px}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(145px,1fr));gap:14px}
+.po{position:relative;aspect-ratio:3/4;border-radius:18px;padding:12px;display:flex;flex-direction:column;justify-content:flex-end;background:linear-gradient(160deg,hsl(var(--h) 70% 40%),hsl(calc(var(--h) + 45) 75% 13%));border:1px solid #ffffff14;overflow:hidden}
+.po img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
+.po:has(img):after{content:"";position:absolute;inset:0;background:linear-gradient(transparent 35%,#05050add)}
+.po b{position:relative;z-index:1;font-size:13px;line-height:1.3;display:-webkit-box;-webkit-line-clamp:4;-webkit-box-orient:vertical;overflow:hidden}
+.tg{position:absolute;z-index:2;top:10px;left:10px;padding:2px 10px;border-radius:8px;background:#000a;font:700 11px "JetBrains Mono",monospace;color:#c4b5fd}
+.cd small{display:block;margin-top:6px;color:var(--mu)}
+.list{display:grid;gap:10px}
+.hi{display:flex;align-items:center;gap:14px;padding:10px;border:1px solid var(--ln);background:var(--cd);border-radius:18px}
+.po.s{width:64px;height:84px;flex:none;border-radius:12px}
+.hm{flex:1;min-width:0;display:grid;gap:4px}
+.hm b{font-size:14px;line-height:1.3}.hm small{color:var(--mu)}
+.pg{height:4px;border-radius:4px;background:#ffffff1a;overflow:hidden}
+.pg i{display:block;height:100%;background:var(--g)}
+.dt{display:grid;gap:18px}
+.dt .po{max-width:200px}
+.dt h1{font-size:24px;line-height:1.25;margin-bottom:8px}
+@media(min-width:560px){.dt{grid-template-columns:200px 1fr}}
+.eps{display:flex;flex-wrap:wrap;gap:10px}
+.in{width:100%;padding:14px 16px;border-radius:14px;border:1px solid var(--ln);background:#ffffff08;outline:0}
+.in:focus{border-color:#8b5cf6}
+.pl{position:relative;aspect-ratio:16/9;background:#000;border-radius:24px;overflow:hidden;border:1px solid var(--ln)}
+.pl:fullscreen{border-radius:0;aspect-ratio:auto}
+.pl video{width:100%;height:100%;object-fit:contain;display:block}
+.ov{position:absolute;left:0;right:0;padding:12px;opacity:0;pointer-events:none;transition:opacity .25s}
+.ui .ov{opacity:1;pointer-events:auto}
+.ov.t{top:0;display:flex;gap:10px;align-items:flex-start;background:linear-gradient(#000c,transparent);padding-bottom:30px}
+.ov.t .ib{background:#0008;color:#fff;flex:none}
+.tt{display:grid;gap:2px;min-width:0}.tt b{font-size:14px}.tt small{color:#ffffffb3}
+.ov.b{bottom:0;padding-top:34px;background:linear-gradient(transparent,#000d)}
+.tm{display:flex;align-items:center;gap:10px}
+.tm b{font:500 12px "JetBrains Mono",monospace;color:#ffffffcc}
+.ct{display:flex;align-items:center;gap:4px;margin-top:2px}
+.ct button{display:grid;place-items:center;width:40px;height:40px;color:#fff}
+.ct #sp{margin-left:auto}
+input[type=range]{-webkit-appearance:none;appearance:none;flex:1;height:4px;border-radius:4px;outline:0;background:linear-gradient(90deg,#a78bfa,#60a5fa) 0 0/var(--v,0%) 100% no-repeat,#ffffff33}
+input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:14px;height:14px;border-radius:50%;background:#fff}
+#vo{flex:none;width:65px}
+.buf{position:absolute;inset:0;display:none;place-items:center;pointer-events:none}
+.buf.on{display:grid}
+.buf div{padding:9px 16px;border-radius:99px;background:#0b0a14cc;border:1px solid #ffffff1f;font-size:13px}
+.info{margin-top:18px;border:1px solid var(--ln);background:var(--cd);border-radius:28px;padding:24px 20px}
+.lb{font:700 13px "JetBrains Mono",monospace;letter-spacing:.15em;color:#a78bfa}
+.info h1{font-size:26px;margin:12px 0}
+.eb{display:inline-block;padding:6px 14px;border-radius:10px;border:1px solid #6d4fd1;background:#8b5cf622;color:#c4b5fd;font:700 14px "JetBrains Mono",monospace}
+.btns{display:flex;gap:10px;margin:18px 0 12px;flex-wrap:wrap}
+.b2{display:inline-flex;align-items:center;gap:8px;padding:12px 16px;border:1px solid var(--ln);border-radius:16px;background:#ffffff08;font-weight:600}
+.b2.on{background:var(--g);border-color:transparent;color:#fff}
+.b1{display:flex;align-items:center;justify-content:center;gap:8px;width:100%;padding:15px;border-radius:18px;background:var(--g);color:#fff;font-weight:700;font-size:16px}
+.nv{position:fixed;left:0;right:0;bottom:0;z-index:20;display:flex;padding:10px 4px calc(10px + env(safe-area-inset-bottom));background:#08070ff2;backdrop-filter:blur(14px);border-top:1px solid var(--ln)}
+.nv a{flex:1;display:flex;flex-direction:column;align-items:center;gap:4px;font-size:12px;color:var(--mu)}
+.nv a.on{color:#a78bfa}
+.lg{min-height:100vh;display:grid;place-items:center;padding:20px}
+.lc{width:min(400px,100%);display:grid;gap:12px;padding:28px 24px;border:1px solid var(--ln);background:#0c0b16e6;border-radius:28px}
+.seg{display:flex;padding:4px;border-radius:14px;background:#ffffff0d;margin:4px 0}
+.seg button{flex:1;padding:10px;border-radius:10px;font-weight:600;color:var(--mu)}
+.seg .on{background:var(--g);color:#fff}
+.er{min-height:20px;color:#fca5a5;font-size:13px}
+#ts{position:fixed;left:50%;bottom:98px;z-index:60;transform:translate(-50%,12px);opacity:0;transition:.2s;pointer-events:none;padding:10px 18px;border-radius:99px;background:#17142b;border:1px solid #3b2f7a;font-size:13px;text-align:center;max-width:90vw}
+#ts.on{opacity:1;transform:translate(-50%,0)}
+.status{padding:12px 14px;border:1px solid var(--ln);border-radius:14px;background:var(--cd);color:var(--mu);font-size:13px}
+.room{margin-top:14px;border:1px solid var(--ln);background:var(--cd);border-radius:22px;padding:16px}
+.rc{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+.rc b.code{font:700 20px "JetBrains Mono",monospace;letter-spacing:.2em;color:#c4b5fd}
+.cm{display:flex;flex-direction:column;gap:8px;height:260px;overflow:auto;margin:12px 0}
+.msg{word-break:break-word;font-size:14px}.msg b{color:#a78bfa}.msg.sys{color:var(--mu);font-size:12px}
+.cin{display:flex;gap:8px}
+.md{position:fixed;inset:0;z-index:50;background:#000b;display:grid;place-items:center;padding:16px}
+.md>div{width:min(520px,100%);max-height:92vh;overflow:auto;display:grid;gap:10px;background:var(--cd);border:1px solid var(--ln);border-radius:24px;padding:22px}
+.row{display:flex;gap:6px}.row .in{padding:10px}.row select{width:100px}
 </style>
 </head>
 <body>
-<header>
-  <div class="logo"><i></i>Layar Bareng</div>
-  <div class="hr">
-    <input id="jc" placeholder="Kode room" size="9" maxlength="8" aria-label="Kode room">
-    <button class="btn" id="jb">Gabung room</button>
-    <button class="btn pri" id="ab">Tambah film</button>
-  </div>
-</header>
-
-<main>
-  <section id="home">
-    <div class="hero">
-      <h1>Nonton bareng, di detik yang sama.</h1>
-      <p>Pilih film, buat room, kirim kodenya ke teman. Putar, jeda, geser, dan buffering ikut tersinkron otomatis.</p>
-    </div>
-    <div id="warn"></div>
-    <div class="grid" id="grid"></div>
-  </section>
-
-  <section id="watch" hidden>
-    <div class="bar">
-      <button class="btn" id="leave">Keluar</button>
-      <h2 id="wt"></h2>
-      <div class="room"><span>Room</span><b id="rc">…</b><button class="btn" id="cp">Salin link</button><span id="vw"></span></div>
-    </div>
-    <div class="player"><video id="v" controls controlsList="nofullscreen" playsinline preload="auto"></video><div class="float" id="fl"></div><div class="fbar"><button class="btn" id="ftg" aria-pressed="true">Chat melayang: hidup</button><button class="btn" id="ffs">Layar penuh</button></div><div id="hold" hidden>Buffering — semua layar ditahan sampai siap</div></div>
-    <aside class="chat"><h3>Komentar live</h3><div id="cm"></div><div class="cin"><input id="ci" placeholder="Tulis komentar…" maxlength="300" aria-label="Komentar"><button class="btn pri" id="cs">Kirim</button></div></aside>
-    <div class="ctl">
-      <button class="btn" id="b10">Mundur 10 detik</button>
-      <button class="btn" id="f10">Maju 10 detik</button>
-      <div class="seg" id="res"></div>
-    </div>
-  </section>
-</main>
-
-<div class="modal" id="modal" hidden>
-  <div class="box">
-    <h3 id="mt">Tambah film</h3>
-    <label for="ft">Nama film</label>
-    <input id="ft" placeholder="Contoh: Interstellar (2014)">
-    <label for="fth">Thumbnail (opsional)</label>
-    <input id="fth" placeholder="https://cdn-kamu.com/poster.jpg">
-    <label>Link CDN &amp; resolusinya</label>
-    <div id="rows"></div>
-    <button class="btn" id="ar">Tambah resolusi lain</button>
-    <div class="act"><button class="btn" id="cn">Batal</button><button class="btn pri" id="sv">Simpan film</button></div>
-  </div>
-</div>
-<div class="modal" id="nmodal" hidden><div class="box"><h3>Siapa namamu?</h3><p>Nama ini tampil di komentar saat nobar.</p><input id="nn" placeholder="Nama kamu" maxlength="20" aria-label="Nama"><div class="act"><button class="btn" id="ncn">Batal</button><button class="btn pri" id="nok">Lanjut nobar</button></div></div></div>
-<div id="toast" hidden></div>
-
+<div id="app"></div>
 <script src="https://cdn.jsdelivr.net/npm/peerjs@1.5.4/dist/peerjs.min.js"></script>
 <script>
-// ====== ISI DI SINI (Supabase → Project Settings → API) ======
-const SB_URL = 'https://pdmrafvzkcopfpfwwizi.supabase.co';
-const SB_KEY = 'sb_publishable_U4IdMzfQwUCgIGOOXuctzw_HEtvvFqY';
-// =============================================================
+const SB_URL='https://pdmrafvzkcopfpfwwizi.supabase.co';
+const SB_KEY='sb_publishable_U4IdMzfQwUCgIGOOXuctzw_HEtvvFqY';
+// Akun admin (tidak disimpan di database). Ganti sandinya di sini.
+const ADMIN_USER='admin',ADMIN_PASS='admin123';
 
-const $ = s => document.querySelector(s), v = $('#v');
-const esc = s => String(s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
-const RES = ['360p','480p','720p','1080p','1440p','4K'];
-const rv = r => r === '4K' ? 2160 : parseInt(r) || 0;
-const byRes = a => [...a].sort((x, y) => rv(x.res) - rv(y.res));
-let tt; const toast = m => { const t = $('#toast'); t.textContent = m; t.hidden = false; clearTimeout(tt); tt = setTimeout(() => t.hidden = true, 3200); };
-const api = (p, o = {}) => fetch(SB_URL + '/rest/v1/' + p, { ...o, headers: { apikey: SB_KEY, Authorization: 'Bearer ' + SB_KEY, 'Content-Type': 'application/json', ...o.headers } });
+const $=s=>document.querySelector(s);
+const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const ls={get(k,d){try{const v=localStorage.getItem(k);return v===null?d:JSON.parse(v)}catch{return d}},set(k,v){try{localStorage.setItem(k,JSON.stringify(v))}catch{}}};
+const I={home:'<path d="M3 10.5 12 3l9 7.5V20a1 1 0 0 1-1 1h-5v-6H9v6H4a1 1 0 0 1-1-1z"/>',compass:'<circle cx="12" cy="12" r="9"/><path d="m15.5 8.5-2 5-5 2 2-5z"/>',clock:'<circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/>',dl:'<path d="M12 4v11m0 0-4-4m4 4 4-4M5 20h14"/>',menu:'<path d="M4 7h16M4 12h16M4 17h16"/>',search:'<circle cx="11" cy="11" r="7"/><path d="m20 20-4-4"/>',back:'<path d="M19 12H5m6-6-6 6 6 6"/>',play:'<path d="M7 4v16l13-8z" fill="currentColor"/>',pause:'<path d="M7 4h3.5v16H7zM13.5 4H17v16h-3.5z" fill="currentColor"/>',rw:'<path d="M3 12a9 9 0 1 0 3-6.7L3 8"/><path d="M3 3v5h5"/>',fw:'<path d="M21 12a9 9 0 1 1-3-6.7L21 8"/><path d="M21 3v5h-5"/>',vol:'<path d="M4 9v6h4l5 4V5L8 9z"/><path d="M16.5 8.5a5 5 0 0 1 0 7"/>',mute:'<path d="M4 9v6h4l5 4V5L8 9z"/><path d="m17 9 5 6m0-6-5 6"/>',gear:'<path d="M4 7h10M18 7h2M4 17h2M10 17h10"/><circle cx="16" cy="7" r="2"/><circle cx="8" cy="17" r="2"/>',full:'<path d="M4 9V4h5M20 9V4h-5M4 15v5h5M20 15v5h-5"/>',users:'<circle cx="9" cy="8" r="3.5"/><path d="M2.5 20c0-4 3-6 6.5-6s6.5 2 6.5 6M17 5a3.5 3.5 0 0 1 0 6.5M21.5 20c0-3-1.5-4.8-4-5.5"/>'};
+const ic=(n,s=22)=>`<svg width="${s}" height="${s}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">${I[n]}</svg>`;
+const ft=s=>{s=Math.max(0,s|0);return String(s/60|0).padStart(2,'0')+':'+String(s%60).padStart(2,'0')};
+let tmr;function toast(m){let e=$('#ts');if(!e){e=document.createElement('div');e.id='ts';document.body.append(e)}e.textContent=m;e.className='on';clearTimeout(tmr);tmr=setTimeout(()=>e.className='',3000)}
+const api=(p,o={})=>fetch(SB_URL+'/rest/v1/'+p,{...o,headers:{apikey:SB_KEY,Authorization:'Bearer '+SB_KEY,'Content-Type':'application/json',...o.headers}});
+const rpc=(f,b)=>api('rpc/'+f,{method:'POST',body:JSON.stringify(b)}).then(r=>r.json());
+const resNum=r=>r==='4K'?2160:parseInt(r,10)||0;
+const RES=['360p','480p','720p','1080p','1440p','4K'];
 
-/* ---------- Daftar film (Supabase) ---------- */
-let films = [];
-async function loadFilms() {
-  if (SB_URL.includes('PROJECT_ID')) $('#warn').innerHTML = '<div class="note">Supabase belum diatur. Isi SB_URL dan SB_KEY di index.html, lalu jalankan SQL di bagian atas file.</div>';
-  else try { const r = await api('films?select=*&order=created_at.desc'); if (!r.ok) throw 0; films = await r.json(); } catch { toast('Gagal memuat film. Cek URL, key, dan tabel Supabase.'); }
-  renderFilms();
+let catalog=[],cur=null,mode='in',S={q:''},hist=[];
+function normalize(r){const s=(Array.isArray(r.sources)?r.sources:[]).filter(x=>x&&/^https?:\/\//i.test(x.url||''));return{...r,title:r.title||'Tanpa judul',thumbnail:r.thumbnail||'',sources:s.sort((a,b)=>resNum(a.res)-resNum(b.res))}}
+async function loadCatalog(){
+ $('#app').innerHTML='<div class="lg"><div class="lc"><div class="logo big">Bioskop <span>Ana</span></div><p class="mu">Menghubungkan ke database…</p></div></div>';
+ try{const r=await api('films?select=id,title,sources,thumbnail,created_at&order=created_at.desc');if(!r.ok)throw Error(await r.text()||'HTTP '+r.status);
+  catalog=(await r.json()).map(normalize).filter(f=>f.sources.length);render()
+ }catch(e){$('#app').innerHTML=`<main><div class="logo big">Bioskop <span>Ana</span></div><div class="status mt">Gagal mengambil data.<br><br>${esc(e.message)}</div><button class="b1 mt" onclick="loadCatalog()">Coba lagi</button></main>`}
 }
-function renderFilms() {
-  $('#grid').innerHTML = films.length ? films.map((f, i) => {
-    const h = [...f.title].reduce((a, c) => (a * 31 + c.charCodeAt(0)) & 0xffff, 7) % 360;
-    return `<article class="card"><div class="poster${f.thumbnail ? ' th' : ''}" style="background:linear-gradient(165deg,hsl(${h} 55% 34%),hsl(${(h + 40) % 360} 60% 14%))">${f.thumbnail ? `<img src="${esc(f.thumbnail)}" alt="" loading="lazy" onerror="this.parentNode.classList.remove('th');this.remove()">` : ''}<span>${esc(f.title)}</span></div>
-    <div class="stub"><div>${byRes(f.sources).map(s => `<span class="chip">${esc(s.res)}</span>`).join('')}</div><div class="two"><button class="btn pri" data-i="${i}">Buat room</button><button class="btn" data-e="${i}">Edit</button></div></div></article>`;
-  }).join('') : '<div class="empty">Belum ada film. Klik “Tambah film” untuk memasukkan link CDN pertamamu.</div>';
+async function loadHist(){
+ if(!user())return;
+ try{const r=await api('watch_history?select=film_id,position,duration,updated_at&username=eq.'+encodeURIComponent(user())+'&order=updated_at.desc');
+  if(r.ok)hist=(await r.json()).map(x=>({id:x.film_id,t:x.position,d:x.duration})).filter(x=>catalog.some(a=>a.id===x.id))}catch{}
 }
-$('#grid').onclick = e => {
-  const b = e.target.closest('[data-i],[data-e]'); if (!b) return;
-  if (b.dataset.e !== undefined) return openModal(films[b.dataset.e]);
-  const f = films[b.dataset.i]; askName(() => startHost(f));
-};
 
-/* ---------- Tambah film ---------- */
-const rowHtml = (r = '720p', u = '') => `<div class="row"><input class="u" value="${esc(u)}" placeholder="https://cdn-kamu.com/film.mp4" aria-label="Link CDN"><select class="r" aria-label="Resolusi">${RES.map(x => `<option${x === r ? ' selected' : ''}>${x}</option>`).join('')}</select><button class="btn x" title="Hapus baris">✕</button></div>`;
-let editId = null;
-function openModal(f) {
-  editId = f ? f.id : null;
-  $('#mt').textContent = f ? 'Edit film' : 'Tambah film';
-  $('#ft').value = f ? f.title : ''; $('#fth').value = (f && f.thumbnail) || '';
-  $('#rows').innerHTML = f ? byRes(f.sources).map(s => rowHtml(s.res, s.url)).join('') : rowHtml();
-  $('#sv').textContent = f ? 'Simpan perubahan' : 'Simpan film';
-  $('#modal').hidden = false; $('#ft').focus();
+/* ===== akun ===== */
+const user=()=>ls.get('bs:s',null);
+const isAdmin=()=>user()===ADMIN_USER;
+async function hash(s){const b=await crypto.subtle.digest('SHA-256',new TextEncoder().encode('bioskop-ana:'+s));return[...new Uint8Array(b)].map(x=>x.toString(16).padStart(2,'0')).join('')}
+const loginHtml=()=>`<div class="lg"><form id="lf" class="lc"><div class="logo big">Bioskop <span>Ana</span></div><p class="mu" style="text-align:center">Masuk untuk nonton film dan nobar bareng teman.</p>
+<div class="seg"><button type="button" data-m="in" class="${mode==='in'?'on':''}">Masuk</button><button type="button" data-m="reg" class="${mode==='reg'?'on':''}">Daftar</button></div>
+<input class="in" id="lu" placeholder="Username" required><input class="in" id="lp" type="password" placeholder="Kata sandi" required><div id="le" class="er"></div><button class="b1">${mode==='in'?'Masuk':'Buat akun'}</button></form></div>`;
+function bindLogin(){
+ document.querySelectorAll('[data-m]').forEach(b=>b.onclick=()=>{mode=b.dataset.m;render()});
+ $('#lf').onsubmit=async e=>{e.preventDefault();const btn=e.submitter;btn&&(btn.disabled=true);const err=await auth(mode,$('#lu').value,$('#lp').value);btn&&(btn.disabled=false);if(err)$('#le').textContent=err}
 }
-$('#ab').onclick = () => openModal();
-$('#ar').onclick = () => $('#rows').insertAdjacentHTML('beforeend', rowHtml('1080p'));
-$('#rows').onclick = e => { if (e.target.classList.contains('x') && $('#rows').children.length > 1) e.target.parentNode.remove(); };
-$('#cn').onclick = () => $('#modal').hidden = true;
-$('#sv').onclick = async () => {
-  const title = $('#ft').value.trim();
-  const sources = [...document.querySelectorAll('#rows .row')].map(r => ({ res: r.querySelector('.r').value, url: r.querySelector('.u').value.trim() })).filter(s => s.url);
-  if (!title || !sources.length) return toast('Isi nama film dan minimal satu link.');
-  if (sources.some(s => !/^https:\/\//i.test(s.url))) return toast('Link harus diawali https://');
-  if (new Set(sources.map(s => s.res)).size < sources.length) return toast('Resolusi tidak boleh sama dalam satu film.');
-  try {
-    const thumbnail = $('#fth').value.trim() || null;
-    if (thumbnail && !/^https:\/\//i.test(thumbnail)) return toast('Link thumbnail harus diawali https://');
-    const r = await api(editId ? 'films?id=eq.' + editId : 'films', { method: editId ? 'PATCH' : 'POST', headers: { Prefer: editId ? 'return=representation' : 'return=minimal' }, body: JSON.stringify({ title, sources, thumbnail }) });
-    if (!r.ok) throw 0;
-    if (editId && !(await r.json()).length) throw 0;
-    $('#modal').hidden = true; toast(editId ? 'Film diperbarui' : 'Film ditambahkan'); loadFilms();
-  } catch { toast('Gagal menyimpan. Cek konfigurasi Supabase.'); }
-};
-
-/* ---------- Room & sinkronisasi P2P ---------- */
-let peer, conns = [], hostConn, isHost = false, film, code, curRes;
-let wantPlay = false, holding = false, myBuf = false, rt = null, supUntil = 0;
-const bufSet = new Set();
-const sup = (ms = 300) => supUntil = Date.now() + ms;
-const muted = () => Date.now() < supUntil;
-
-const broadcast = (m, except) => conns.forEach(c => c !== except && c.open && c.send(m));
-const emit = m => isHost ? broadcast(m) : hostConn && hostConn.open && hostConn.send(m);
-const doPlay = () => { sup(); v.play().catch(() => toast('Tekan tombol play untuk lanjut nonton')); };
-const doPause = () => { if (!v.paused) { sup(); v.pause(); } };
-const jump = t => { if (Math.abs(v.currentTime - t) > 0.4) { rt = t; v.currentTime = t; } };
-
-function apply(m) {
-  switch (m.t) {
-    case 'play': wantPlay = true; jump(m.time); if (!holding) doPlay(); break;
-    case 'pause': wantPlay = false; jump(m.time); doPause(); break;
-    case 'seek': jump(m.time); break;
-    case 'hold': holding = m.v; $('#hold').hidden = !m.v;
-      if (m.v) doPause(); else if (wantPlay) doPlay(); break;
-    case 'sync': wantPlay = m.playing;
-      if (Math.abs(v.currentTime - m.time) > 1.5) jump(m.time);
-      if (m.playing && !holding && v.paused) doPlay();
-      if (!m.playing && !v.paused) doPause(); break;
-    case 'count': $('#vw').textContent = m.n + ' penonton'; break;
-    case 'chat': addChat(m); break;
-  }
+async function auth(m,u,p){
+ u=u.trim();
+ if(!/^[\w.]{3,20}$/.test(u))return'Username 3–20 karakter: huruf, angka, titik, atau garis bawah.';
+ if(p.length<6)return'Kata sandi minimal 6 karakter.';
+ if(u.toLowerCase()===ADMIN_USER){
+  if(m==='reg')return'Username sudah dipakai.';
+  if(p!==ADMIN_PASS)return'Username atau kata sandi salah.';
+  ls.set('bs:s',ADMIN_USER);return render()
+ }
+ const h=await hash(p);
+ try{
+  const ok=await rpc(m==='reg'?'register_user':'login_user',{u,h});
+  if(ok!==true)return m==='reg'?'Username sudah dipakai.':'Username atau kata sandi salah.';
+ }catch{return'Gagal terhubung ke database.'}
+ ls.set('bs:s',u.toLowerCase());render()
 }
-function handleBuf(id, b) {
-  b ? bufSet.add(id) : bufSet.delete(id);
-  const h = bufSet.size > 0; if (h === holding) return;
-  apply({ t: 'hold', v: h }); broadcast({ t: 'hold', v: h });
+
+/* ===== tampilan ===== */
+const hue=s=>[...s].reduce((n,c)=>(n*31+c.charCodeAt(0))&65535,7)%360;
+const card=a=>`<a class="cd" href="#/film/${encodeURIComponent(a.id)}"><div class="po" style="--h:${hue(a.title)}">${a.thumbnail?`<img src="${esc(a.thumbnail)}" loading="lazy" onerror="this.remove()">`:''}<span class="tg">${a.sources.length} kualitas</span><b>${esc(a.title)}</b></div><small>${a.sources.map(s=>esc(s.res||'Auto')).join(' • ')}</small></a>`;
+const histCard=x=>{const a=catalog.find(z=>z.id===x.id);if(!a)return'';const p=x.d?Math.min(100,x.t/x.d*100):0;
+ return`<a class="hi" href="#/watch/${encodeURIComponent(a.id)}"><div class="po s" style="--h:${hue(a.title)}">${a.thumbnail?`<img src="${esc(a.thumbnail)}">`:''}</div><div class="hm"><b>${esc(a.title)}</b><small>${ft(x.t)} / ${ft(x.d)}</small><div class="pg"><i style="width:${p}%"></i></div></div></a>`};
+function detail(a){return`<a class="back" href="#/">${ic('back',20)}Beranda</a><div class="dt"><div class="po" style="--h:${hue(a.title)}">${a.thumbnail?`<img src="${esc(a.thumbnail)}">`:''}</div><div><h1>${esc(a.title)}</h1><p class="mu">Pilih kualitas video untuk mulai menonton.</p><div class="eps mt">${a.sources.map((s,i)=>`<a class="b2" href="#/watch/${encodeURIComponent(a.id)}/${i}">${esc(s.res||'Putar')}</a>`).join('')}</div>${isAdmin()?`<button class="b2 mt" data-edit="${esc(a.id)}">Edit film</button>`:''}</div></div>`}
+
+function view(parts){
+ const[p,id,idx]=parts;
+ if(!p){const h=hist.slice(0,3);return[`<div class="fm" style="display:flex;gap:8px;margin-bottom:6px"><input class="in" id="jc" placeholder="Kode room nobar" maxlength="8" style="text-transform:uppercase"><button class="b2" id="jb">${ic('users',18)} Gabung</button></div>
+ ${isAdmin()?'<button class="b2 mt" data-edit="">+ Tambah film</button>':''}
+ ${h.length?`<h2>Lanjutkan menonton</h2><div class="list">${h.map(histCard).join('')}</div>`:''}<h2>Semua film</h2>
+ ${catalog.length?`<div class="grid">${catalog.map(card).join('')}</div>`:'<p class="status">Belum ada film di database.</p>'}`,()=>{
+  const go=()=>{const c=$('#jc').value.trim().toUpperCase();c?joinRoom(c):toast('Masukkan kode room dulu.')};
+  $('#jb').onclick=go;$('#jc').onkeydown=e=>e.key==='Enter'&&go()}]}
+ if(p==='explore')return[`<input id="sq" class="in" placeholder="Cari judul film" value="${esc(S.q)}"><div id="sg" class="grid mt"></div>`,()=>{
+  const f=()=>{$('#sg').innerHTML=catalog.filter(a=>a.title.toLowerCase().includes(S.q.toLowerCase())).map(card).join('')||'<p class="mu">Film tidak ditemukan.</p>'};
+  $('#sq').oninput=e=>{S.q=e.target.value;f()};f()}];
+ if(p==='history')return[`<h2>Riwayat tontonan</h2>${hist.length?`<div class="list">${hist.map(histCard).join('')}</div><button class="b2 mt" id="ch">Hapus riwayat</button>`:'<p class="mu">Belum ada riwayat tontonan.</p>'}`,()=>{
+  const b=$('#ch');if(b)b.onclick=async()=>{await api('watch_history?username=eq.'+encodeURIComponent(user()),{method:'DELETE'});hist=[];render()}}];
+ if(p==='downloads'){const d=ls.get('bs:d:'+user(),[]).filter(x=>catalog.some(a=>a.id===x.id));
+  return[`<h2>Unduhan</h2>${d.length?`<div class="list">${d.map(x=>{const a=catalog.find(z=>z.id===x.id);return`<div class="hi"><div class="hm"><b>${esc(a.title)}</b><small>${esc(x.res||'Video')}</small></div><button class="ib" data-dl="${esc(x.id)}:${x.index}">${ic('dl')}</button></div>`}).join('')}</div>`:'<p class="mu">Belum ada unduhan.</p>'}`]}
+ if(p==='film'){const a=catalog.find(x=>x.id===id);return a?[detail(a)]:['<p class="mu">Film tidak ditemukan.</p>']}
+ if(p==='watch'){
+  const a=catalog.find(x=>x.id===id);if(!a)return['<p class="mu">Film tidak ditemukan.</p>'];
+  const n=Math.max(0,Math.min(Number(idx)||(a.sources.length-1),a.sources.length-1)),src=a.sources[n];
+  return[`<a class="back" href="#/film/${encodeURIComponent(a.id)}">${ic('back',20)}Detail film</a>
+<div class="pl ui" id="pl"><video id="v" playsinline preload="metadata" src="${esc(src.url)}"></video><div class="buf" id="buf"><div id="bt">Memuat video…</div></div>
+<div class="ov t"><a class="ib" href="#/film/${encodeURIComponent(a.id)}">${ic('back',20)}</a><div class="tt"><b>${esc(a.title)}</b><small>${esc(src.res||'Video')}</small></div></div>
+<div class="ov b"><div class="tm"><b id="cur">00:00</b><input id="sk" type="range" min="0" max="100" step=".1" value="0"><b id="dur">00:00</b></div>
+<div class="ct"><button id="pp">${ic('play',26)}</button><button id="rw">${ic('rw')}</button><button id="fw">${ic('fw')}</button><button id="mu">${ic('vol')}</button><input id="vo" type="range" min="0" max="1" step=".05" value="1"><button id="sp">${ic('gear')}</button><button id="fs">${ic('full')}</button></div></div></div>
+<section class="info"><div class="lb">SEDANG DIPUTAR</div><h1>${esc(a.title)}</h1><div class="eb">${esc(src.res||'Video')}</div>
+<div class="btns"><button class="b2" id="dl">${ic('dl')} Unduh</button><button class="b2" id="nb">${ic('users',18)} Nobar</button></div>
+<div class="room" id="room" hidden><div class="rc"><span class="mu">Room</span><b class="code" id="rcode">…</b><button class="b2" id="cp">Salin link</button><span class="mu" id="vw"></span></div>
+<div class="cm" id="cm"></div><div class="cin"><input class="in" id="ci" placeholder="Tulis komentar…" maxlength="300"><button class="b2" id="cs">Kirim</button></div></div>
+<h2>Pilih resolusi</h2><div class="eps">${a.sources.map((s,i)=>`<a class="b2 ${i===n?'on':''}" href="#/watch/${encodeURIComponent(a.id)}/${i}">${esc(s.res||'Putar')}</a>`).join('')}</div></section>`,()=>player(a,n)]}
+ if(p==='more')return[`<h2>Akun</h2><div class="hi"><div class="av">${esc(user()[0].toUpperCase())}</div><div class="hm"><b>${esc(user())}</b><small>${isAdmin()?'Admin':'Pengguna'}</small></div></div>
+ <div class="list mt"><a class="hi" href="#/history">${ic('clock')} Riwayat tontonan</a><a class="hi" href="#/downloads">${ic('dl')} Unduhan</a></div><button class="b2 mt" id="lo">Keluar</button>`,()=>{
+  $('#lo').onclick=()=>{saveNow();leaveRoom();cur=null;hist=[];ls.set('bs:s',null);render()}}];
+ return['<p class="mu">Halaman tidak ditemukan.</p>']
 }
-function setBuf(b) { if (b === myBuf) return; myBuf = b; isHost ? handleBuf('host', b) : emit({ t: 'buf', v: b }); }
 
-v.onplay = () => { if (muted()) return; wantPlay = true; emit({ t: 'play', time: v.currentTime }); };
-v.onpause = () => { if (muted() || v.ended) return; wantPlay = false; emit({ t: 'pause', time: v.currentTime }); };
-v.onseeked = () => {
-  if (rt !== null && Math.abs(v.currentTime - rt) < 0.6) { rt = null; return; }
-  emit({ t: 'seek', time: v.currentTime });
-};
-v.onwaiting = () => setBuf(true);
-v.oncanplay = v.onplaying = () => setBuf(false);
-v.onerror = () => { toast('Video gagal dimuat. Cek link CDN atau coba resolusi lain.'); setBuf(false); };
+/* ===== riwayat ke database ===== */
+function saveNow(){
+ if(!cur||!user())return;const{a,v,n}=cur;if(!isFinite(v.duration)||!v.duration)return;
+ const row={username:user(),film_id:a.id,position:v.currentTime,duration:v.duration,res:a.sources[n].res||null,updated_at:new Date().toISOString()};
+ const i=hist.findIndex(x=>x.id===a.id);if(i>=0)hist.splice(i,1);hist.unshift({id:a.id,t:row.position,d:row.duration});
+ api('watch_history?on_conflict=username,film_id',{method:'POST',keepalive:true,headers:{Prefer:'resolution=merge-duplicates,return=minimal'},body:JSON.stringify(row)}).catch(()=>{});
+}
+async function download(a,i){
+ const s=a.sources[i];if(!s)return;
+ const d=ls.get('bs:d:'+user(),[]).filter(x=>!(x.id===a.id&&x.index===i));d.unshift({id:a.id,index:i,res:s.res});ls.set('bs:d:'+user(),d);
+ const name=(a.title+' '+(s.res||'video')+'.mp4').replace(/[^\w .-]/g,'');
+ try{const r=await fetch(s.url);if(!r.ok)throw 0;const u=URL.createObjectURL(await r.blob()),l=document.createElement('a');l.href=u;l.download=name;l.click();URL.revokeObjectURL(u);toast('Unduhan dimulai')}
+ catch{const l=document.createElement('a');l.href=s.url;l.target='_blank';l.rel='noopener';l.click();toast('Link video dibuka. Gunakan menu browser untuk mengunduh.')}
+}
 
-const skip = d => { v.currentTime = Math.max(0, Math.min(v.duration || 1e9, v.currentTime + d)); };
-$('#b10').onclick = () => skip(-10);
-$('#f10').onclick = () => skip(10);
-document.addEventListener('keydown', e => {
-  if ($('#watch').hidden || /INPUT|SELECT/.test(e.target.tagName)) return;
-  if (e.key === 'ArrowLeft') { e.preventDefault(); skip(-10); }
-  if (e.key === 'ArrowRight') { e.preventDefault(); skip(10); }
-  if (e.key === 'f') $('#ffs').click();
+/* ===== nobar (PeerJS) ===== */
+let peer=null,room=null,supUntil=0;
+const sup=(ms=400)=>supUntil=Date.now()+ms,muted=()=>Date.now()<supUntil;
+const V=()=>cur&&cur.v;
+const bc=(m,ex)=>room.conns.forEach(c=>c!==ex&&c.open&&c.send(m));
+const emit=m=>{if(!room)return;room.host?bc(m):room.hc&&room.hc.open&&room.hc.send(m)};
+const doPlay=()=>{const v=V();if(!v)return;sup();v.play().catch(()=>toast('Tekan play untuk lanjut nonton'))};
+const doPause=()=>{const v=V();if(v&&!v.paused){sup();v.pause()}};
+const jump=t=>{const v=V();if(v&&isFinite(t)&&Math.abs(v.currentTime-t)>.4){room.rt=t;sup(700);v.currentTime=t}};
+function apply(m){
+ switch(m.t){
+ case'play':room.want=true;jump(m.time);if(!room.hold)doPlay();break;
+ case'pause':room.want=false;jump(m.time);doPause();break;
+ case'seek':jump(m.time);break;
+ case'hold':room.hold=m.v;if(m.v)doPause();else if(room.want)doPlay();break;
+ case'sync':room.want=m.playing;if(Math.abs((V()?.currentTime||0)-m.time)>1.5)jump(m.time);if(m.playing&&!room.hold&&V()?.paused)doPlay();if(!m.playing&&V()&&!V().paused)doPause();break;
+ case'count':room.n=m.n;showVw();break;
+ case'chat':addChat(m);break}
+}
+function handleBuf(id,b){b?room.bufs.add(id):room.bufs.delete(id);const h=room.bufs.size>0;if(h===room.hold)return;apply({t:'hold',v:h});bc({t:'hold',v:h})}
+function setBuf(b){if(!room||b===room.myBuf)return;room.myBuf=b;room.host?handleBuf('host',b):emit({t:'buf',v:b})}
+const newRoom=h=>room={host:h,conns:[],bufs:new Set(),hold:false,want:false,myBuf:false,rt:null,log:[],n:1,code:'',hc:null,pend:null};
+
+function showVw(){const e=$('#vw');if(e&&room)e.textContent=room.n+' penonton'}
+function showRoomUI(){
+ if(!room||!$('#room'))return;$('#room').hidden=false;$('#rcode').textContent=room.code;$('#nb').hidden=true;showVw();renderChat();
+ $('#cp').onclick=()=>{const l=location.origin+location.pathname+'#room='+room.code;(navigator.clipboard?navigator.clipboard.writeText(l):Promise.reject()).then(()=>toast('Link room disalin'),()=>toast('Kode room: '+room.code))};
+ $('#cs').onclick=sendChat;$('#ci').onkeydown=e=>e.key==='Enter'&&sendChat();
+}
+function renderChat(){const cm=$('#cm');if(!cm||!room)return;cm.innerHTML='';room.log.forEach(m=>cm.append(chatEl(m)))}
+function chatEl(m){const d=document.createElement('div');d.className='msg'+(m.sys?' sys':'');
+ if(m.sys)d.textContent=String(m.text).slice(0,120);else{const b=document.createElement('b');b.textContent=String(m.name).slice(0,20);d.append(b,' '+String(m.text).slice(0,300))}return d}
+function addChat(m){room.log.unshift(m);if(room.log.length>150)room.log.pop();const cm=$('#cm');if(cm){cm.prepend(chatEl(m));cm.scrollTop=0}}
+function sendChat(){const i=$('#ci'),text=i.value.trim();if(!text)return;i.value='';const m={t:'chat',name:user(),text};addChat(m);emit(m)}
+const sysMsg=text=>{const m={t:'chat',sys:1,text};addChat(m);bc(m)};
+
+function startRoom(a){
+ if(room)return;newRoom(true);room.film=a.id;room.code=Math.random().toString(36).slice(2,7).toUpperCase();
+ try{peer=new Peer('bioskop-'+room.code)}catch{room=null;return toast('PeerJS gagal dimuat.')}
+ peer.on('open',()=>{showRoomUI();addChat({sys:1,text:'Room siap. Kirim kode atau link ke temanmu.'});room.want=!V().paused});
+ peer.on('error',e=>{if(e.type==='unavailable-id'){leaveRoom();startRoom(a)}else toast('Koneksi gagal: '+e.type)});
+ peer.on('connection',c=>{
+  c.on('open',()=>{room.conns.push(c);const v=V();c.send({t:'init',film:room.film,time:v?v.currentTime:0,playing:room.want&&!room.hold});c.send({t:'hold',v:room.hold});cnt()});
+  c.on('data',m=>{if(m.t==='buf')handleBuf(c.peer,m.v);else if(m.t==='hello'){c.nick=String(m.name).slice(0,20);sysMsg(c.nick+' bergabung')}else{apply(m);bc(m,c)}});
+  const drop=()=>{if(!room||!room.conns.includes(c))return;room.conns=room.conns.filter(x=>x!==c);handleBuf(c.peer,false);if(c.nick)sysMsg(c.nick+' keluar');cnt()};
+  c.on('close',drop);c.on('error',drop)});
+}
+function cnt(){room.n=room.conns.length+1;showVw();bc({t:'count',n:room.n})}
+setInterval(()=>{if(room&&room.host&&room.conns.length&&V())bc({t:'sync',time:V().currentTime,playing:room.want})},4000);
+
+function joinRoom(code){
+ leaveRoom();newRoom(false);room.code=code;
+ try{peer=new Peer()}catch{room=null;return toast('PeerJS gagal dimuat.')}
+ peer.on('error',e=>{toast(e.type==='peer-unavailable'?'Room tidak ditemukan. Cek kodenya.':'Koneksi gagal: '+e.type);leaveRoom()});
+ peer.on('open',()=>{
+  const c=room.hc=peer.connect('bioskop-'+code,{reliable:true});
+  c.on('open',()=>c.send({t:'hello',name:user()}));
+  c.on('data',m=>{
+   if(m.t!=='init')return apply(m);
+   room.want=m.playing;room.pend={time:m.time,playing:m.playing};
+   const a=catalog.find(x=>x.id===m.film);if(!a){toast('Film room tidak ada di katalogmu.');return leaveRoom()}
+   location.hash='#/watch/'+encodeURIComponent(a.id);if(V()&&cur.a.id===a.id)bindRoomStart();
+  });
+  c.on('close',()=>{toast('Host menutup room.');leaveRoom()});
+ });
+}
+function bindRoomStart(){const v=V();if(!room||!room.pend||!v)return;const p=room.pend;
+ const go=()=>{room.pend=null;if(p.time>0){room.rt=p.time;v.currentTime=p.time}if(p.playing&&!room.hold)doPlay();showRoomUI()};
+ v.readyState>=1?go():v.addEventListener('loadedmetadata',go,{once:true})}
+function leaveRoom(){if(peer){try{peer.destroy()}catch{}}peer=null;room=null}
+
+/* ===== pemutar ===== */
+function player(a,n){
+ const v=$('#v'),pl=$('#pl'),sk=$('#sk'),vo=$('#vo');cur={a,n,v};
+ let timer,last=0,rate=0;const rates=[1,1.25,1.5,2,.75];
+ const fill=(e,x)=>e.style.setProperty('--v',x+'%');
+ const show=()=>{pl.classList.add('ui');clearTimeout(timer);if(!v.paused)timer=setTimeout(()=>pl.classList.remove('ui'),3000)};
+ const emitT=t=>room&&!muted()&&emit({t,time:v.currentTime});
+ pl.onclick=e=>{if(e.target.closest('button,input,a'))return;pl.classList.contains('ui')&&!v.paused?pl.classList.remove('ui'):show()};
+ $('#pp').onclick=()=>v.paused?v.play():v.pause();
+ $('#rw').onclick=()=>{v.currentTime=Math.max(0,v.currentTime-10);show()};
+ $('#fw').onclick=()=>{v.currentTime=Math.min(v.duration||0,v.currentTime+10);show()};
+ $('#mu').onclick=()=>v.muted=!v.muted;
+ vo.oninput=()=>{v.volume=+vo.value;v.muted=v.volume===0;fill(vo,v.volume*100)};
+ v.onvolumechange=()=>{$('#mu').innerHTML=ic(v.muted?'mute':'vol')};
+ $('#sp').onclick=()=>{rate=(rate+1)%rates.length;v.playbackRate=rates[rate];toast('Kecepatan '+rates[rate]+'x')};
+ $('#fs').onclick=()=>document.fullscreenElement?document.exitFullscreen():pl.requestFullscreen?.();
+ sk.oninput=()=>v.currentTime=+sk.value;
+ v.onloadedmetadata=()=>{
+  sk.max=v.duration;$('#dur').textContent=ft(v.duration);
+  if(room&&room.pend)return;
+  const h=hist.find(x=>x.id===a.id);if(h&&h.t>5&&h.t<v.duration-5)v.currentTime=h.t};
+ v.ontimeupdate=()=>{if(!v.duration)return;sk.value=v.currentTime;fill(sk,v.currentTime/v.duration*100);$('#cur').textContent=ft(v.currentTime);if(Date.now()-last>5000){last=Date.now();saveNow()}};
+ v.onwaiting=()=>{$('#buf').classList.add('on');$('#bt').textContent='Memuat…';setBuf(true)};
+ v.onplaying=()=>{$('#buf').classList.remove('on');$('#pp').innerHTML=ic('pause',26);show();setBuf(false)};
+ v.oncanplay=()=>{$('#buf').classList.remove('on');setBuf(false)};
+ v.onplay=()=>{if(room&&!muted()){room.want=true;emitT('play')}};
+ v.onpause=()=>{$('#pp').innerHTML=ic('play',26);show();saveNow();if(room&&!muted()&&!v.ended){room.want=false;emitT('pause')}};
+ v.onseeked=()=>{if(!room)return;if(room.rt!==null&&Math.abs(v.currentTime-room.rt)<.8){room.rt=null;return}emitT('seek')};
+ v.onerror=()=>{$('#buf').classList.add('on');$('#bt').textContent='Video gagal dimuat. Cek URL CDN.'};
+ $('#dl').onclick=()=>download(a,n);
+ $('#nb').onclick=()=>startRoom(a);
+ if(room){showRoomUI();if(room.pend)bindRoomStart();else{room.rt=null;const t=hist.find(x=>x.id===a.id);if(!room.host&&room.want)v.play().catch(()=>{})}}
+ else v.play().catch(()=>{});
+ show();
+}
+
+/* ===== admin: tambah/edit film ===== */
+const rowH=(r='720p',u='')=>`<div class="row"><input class="in u" value="${esc(u)}" placeholder="https://cdn-kamu.com/film.mp4"><select class="in r">${RES.map(x=>`<option${x===r?' selected':''}>${x}</option>`).join('')}</select><button class="b2 x">✕</button></div>`;
+function filmModal(id){
+ const f=catalog.find(x=>x.id===id),d=document.createElement('div');d.className='md';
+ d.innerHTML=`<div><h2 style="margin:0">${f?'Edit film':'Tambah film'}</h2><input class="in" id="mt" placeholder="Judul film" value="${esc(f?.title||'')}"><input class="in" id="mh" placeholder="Link thumbnail (opsional)" value="${esc(f?.thumbnail||'')}"><div id="mr" style="display:grid;gap:6px">${f?f.sources.map(s=>rowH(s.res,s.url)).join(''):rowH()}</div><button class="b2" id="ma">+ Resolusi</button><div class="btns" style="margin:6px 0 0"><button class="b2" id="mc">Batal</button><button class="b2 on" id="ms">Simpan</button></div></div>`;
+ document.body.append(d);
+ $('#ma').onclick=()=>$('#mr').insertAdjacentHTML('beforeend',rowH('1080p'));
+ $('#mr').onclick=e=>{if(e.target.classList.contains('x')&&$('#mr').children.length>1)e.target.parentNode.remove()};
+ $('#mc').onclick=()=>d.remove();
+ $('#ms').onclick=async()=>{
+  const title=$('#mt').value.trim(),thumbnail=$('#mh').value.trim()||null;
+  const sources=[...d.querySelectorAll('.row')].map(r=>({res:r.querySelector('.r').value,url:r.querySelector('.u').value.trim()})).filter(s=>s.url);
+  if(!title||!sources.length)return toast('Isi judul dan minimal satu link.');
+  if(sources.some(s=>!/^https:\/\//i.test(s.url)))return toast('Link harus diawali https://');
+  try{const r=await api(f?'films?id=eq.'+f.id:'films',{method:f?'PATCH':'POST',headers:{Prefer:'return=minimal'},body:JSON.stringify({title,sources,thumbnail})});if(!r.ok)throw 0;
+   d.remove();toast('Film disimpan');loadCatalog()}catch{toast('Gagal menyimpan film.')}
+ };
+}
+
+async function render(){
+ saveNow();cur=null;const app=$('#app');
+ if(!user()){leaveRoom();app.innerHTML=loginHtml();bindLogin();return}
+ const parts=(location.hash.slice(1)||'/').split('/').filter(Boolean).map(decodeURIComponent);
+ if(parts[0]!=='watch'&&room&&!room.pend)leaveRoom();
+ if(!parts[0]||['history','watch'].includes(parts[0]))await loadHist();
+ const[body,init]=view(parts);
+ const on=['film','watch'].includes(parts[0])?'':(parts[0]||'');
+ const tabs=[['','home','Beranda'],['explore','compass','Jelajahi'],['history','clock','Riwayat'],['downloads','dl','Unduhan'],['more','menu','Lainnya']];
+ app.innerHTML=`<header class="hd"><a href="#/" class="logo">Bioskop <span>Ana</span></a><div style="display:flex;gap:8px"><a href="#/explore" class="ib">${ic('search')}</a><a href="#/more" class="av">${esc(user()[0].toUpperCase())}</a></div></header><main>${body}</main><nav class="nv">${tabs.map(t=>`<a href="#/${t[0]}" class="${on===t[0]?'on':''}">${ic(t[1],24)}${t[2]}</a>`).join('')}</nav>`;
+ scrollTo(0,0);if(init)init();
+}
+document.addEventListener('click',e=>{
+ const b=e.target.closest('[data-dl]');if(b){const[id,i]=b.dataset.dl.split(':'),a=catalog.find(x=>x.id===id);if(a)download(a,+i)}
+ const ed=e.target.closest('[data-edit]');if(ed&&isAdmin())filmModal(ed.dataset.edit)
 });
-
-/* Resolusi: 1 pilihan → tampil 1 label saja */
-function loadSrc(res, t = 0, play = false) {
-  curRes = res; sup(1500);
-  v.src = film.sources.find(s => s.res === res).url;
-  v.addEventListener('loadedmetadata', () => { if (t > 0) { rt = t; v.currentTime = t; } if (play && !holding) doPlay(); }, { once: true });
-  renderRes();
-}
-function renderRes() {
-  const s = byRes(film.sources), box = $('#res');
-  box.hidden = false;
-  box.innerHTML = s.length === 1 ? `<span>${esc(s[0].res)}</span>` : s.map(x => `<button class="${x.res === curRes ? 'on' : ''}" data-r="${esc(x.res)}">${esc(x.res)}</button>`).join('');
-}
-$('#res').onclick = e => { const r = e.target.dataset.r; if (r && r !== curRes) loadSrc(r, v.currentTime, !v.paused); };
-
-function showWatch() {
-  $('#home').hidden = true; $('#watch').hidden = false;
-  $('#wt').textContent = film.title; $('#rc').textContent = code;
-  history.replaceState(null, '', '#room=' + code);
-  scrollTo(0, 0);
-}
-const defRes = () => byRes(film.sources).pop().res;
-
-function startHost(f) {
-  leave(true); isHost = true; film = f;
-  code = Math.random().toString(36).slice(2, 7).toUpperCase();
-  try { peer = new Peer('nobar-' + code); } catch { return toast('Gagal memuat PeerJS. Cek koneksi internet.'); }
-  peer.on('open', () => { showWatch(); loadSrc(defRes()); $('#vw').textContent = '1 penonton'; addChat({ sys: 1, text: 'Room siap. Kirim kode atau link ke temanmu.' }); });
-  peer.on('error', e => { if (e.type === 'unavailable-id') startHost(f); else toast('Koneksi gagal: ' + e.type); });
-  peer.on('connection', c => {
-    c.on('open', () => {
-      conns.push(c);
-      c.send({ t: 'init', film, code, time: v.currentTime, playing: wantPlay && !holding });
-      c.send({ t: 'hold', v: holding }); count();
-    });
-    c.on('data', m => {
-      if (m.t === 'buf') handleBuf(c.peer, m.v);
-      else if (m.t === 'hello') { c.nick = String(m.name).slice(0, 20); sys(c.nick + ' bergabung'); }
-      else { apply(m); broadcast(m, c); }
-    });
-    const drop = () => { if (!conns.includes(c)) return; conns = conns.filter(x => x !== c); handleBuf(c.peer, false); if (c.nick) sys(c.nick + ' keluar'); count(); };
-    c.on('close', drop); c.on('error', drop);
-  });
-}
-function count() { const n = conns.length + 1; $('#vw').textContent = n + ' penonton'; broadcast({ t: 'count', n }); }
-setInterval(() => { if (isHost && conns.length) broadcast({ t: 'sync', time: v.currentTime, playing: wantPlay }); }, 4000);
-
-function join(c) {
-  c = (c || '').trim().toUpperCase(); if (!c) return toast('Masukkan kode room dulu.');
-  leave(true); isHost = false; code = c;
-  try { peer = new Peer(); } catch { return toast('Gagal memuat PeerJS. Cek koneksi internet.'); }
-  peer.on('error', e => { toast(e.type === 'peer-unavailable' ? 'Room tidak ditemukan. Cek kodenya.' : 'Koneksi gagal: ' + e.type); leave(); });
-  peer.on('open', () => {
-    hostConn = peer.connect('nobar-' + c, { reliable: true });
-    hostConn.on('data', m => {
-      if (m.t !== 'init') return apply(m);
-      film = m.film; wantPlay = m.playing; showWatch();
-      const r = defRes(); curRes = r; loadSrc(r, m.time, m.playing);
-    });
-    hostConn.on('open', () => hostConn.send({ t: 'hello', name: myName }));
-    hostConn.on('close', () => { toast('Host menutup room.'); leave(); });
-  });
-}
-
-function leave(quiet) {
-  if (peer) peer.destroy();
-  peer = hostConn = null; conns = []; bufSet.clear(); isHost = false;
-  wantPlay = holding = myBuf = false; rt = null; $('#hold').hidden = true; $('#cm').innerHTML = ''; fl.innerHTML = ''; fq.length = 0;
-  if (document.fullscreenElement) document.exitFullscreen();
-  sup(1500); v.removeAttribute('src'); v.load();
-  $('#watch').hidden = true; $('#home').hidden = false;
-  if (!quiet) history.replaceState(null, '', location.pathname);
-}
-$('#leave').onclick = () => leave();
-const tryJoin = () => { const c = $('#jc').value.trim(); if (!c) return toast('Masukkan kode room dulu.'); askName(() => join(c)); };
-$('#jb').onclick = tryJoin;
-$('#jc').onkeydown = e => { if (e.key === 'Enter') tryJoin(); };
-$('#cp').onclick = () => {
-  const link = location.origin + location.pathname + '#room=' + code;
-  (navigator.clipboard ? navigator.clipboard.writeText(link) : Promise.reject()).then(() => toast('Link room disalin'), () => toast('Kode room: ' + code));
-};
-
-loadFilms();
-/* ---------- Nama & komentar live ---------- */
-let myName = '', nameCb;
-try { myName = localStorage.getItem('nobar_name') || ''; } catch {}
-function askName(cb) { nameCb = cb; $('#nn').value = myName; $('#nmodal').hidden = false; $('#nn').focus(); }
-$('#nok').onclick = () => {
-  const n = $('#nn').value.trim().slice(0, 20);
-  if (!n) return toast('Isi nama dulu untuk komentar.');
-  myName = n; try { localStorage.setItem('nobar_name', n); } catch {}
-  $('#nmodal').hidden = true; nameCb && nameCb();
-};
-$('#ncn').onclick = () => $('#nmodal').hidden = true;
-$('#nn').onkeydown = e => { if (e.key === 'Enter') $('#nok').click(); };
-
-function addChat(m) {
-  const cm = $('#cm'), d = document.createElement('div');
-  d.className = 'msg' + (m.sys ? ' sys' : '') + (m.me ? ' me' : '');
-  if (m.sys) d.textContent = String(m.text).slice(0, 120);
-  else { const b = document.createElement('b'); b.textContent = String(m.name).slice(0, 20); d.append(b, ' ' + String(m.text).slice(0, 300)); }
-  cm.prepend(d); while (cm.children.length > 200) cm.lastChild.remove();
-  cm.scrollTop = 0; floatMsg(m);
-}
-const sys = text => { const m = { t: 'chat', sys: 1, text }; addChat(m); broadcast(m); };
-function sendChat() {
-  const text = $('#ci').value.trim(); if (!text) return;
-  $('#ci').value = '';
-  addChat({ name: myName, text, me: 1 }); emit({ t: 'chat', name: myName, text });
-}
-$('#cs').onclick = sendChat;
-$('#ci').onkeydown = e => { if (e.key === 'Enter') sendChat(); };
-
-/* ---------- Chat melayang & layar penuh ---------- */
-const fl = $('#fl'), fq = [], pl = $('.player');
-let floatOn = true;
-try { floatOn = localStorage.getItem('nobar_float') !== '0'; } catch {}
-function setFloat(on) {
-  floatOn = on; try { localStorage.setItem('nobar_float', on ? '1' : '0'); } catch {}
-  $('#ftg').textContent = on ? 'Chat melayang: hidup' : 'Chat melayang: mati';
-  $('#ftg').setAttribute('aria-pressed', on);
-  if (!on) { fq.length = 0; fl.innerHTML = ''; }
-}
-$('#ftg').onclick = () => setFloat(!floatOn);
-setFloat(floatOn);
-function floatMsg(m) { if (!floatOn) return; if (fq.length > 15) fq.shift(); fq.push(m); }
-setInterval(() => {
-  const m = fq.shift(); if (!m) return;
-  const d = document.createElement('div');
-  d.className = 'fm' + (m.sys ? ' sys' : '');
-  if (m.sys) d.textContent = String(m.text).slice(0, 120);
-  else { const b = document.createElement('b'); b.textContent = String(m.name).slice(0, 20); d.append(b, ' ' + String(m.text).slice(0, 300)); }
-  d.style.animationDuration = Math.max(3, fl.clientHeight / 45) + 's';
-  d.onanimationend = () => d.remove();
-  fl.append(d);
-}, 1100);
-$('#ffs').onclick = () => {
-  if (document.fullscreenElement) return document.exitFullscreen();
-  if (pl.requestFullscreen) pl.requestFullscreen().catch(() => toast('Layar penuh tidak didukung browser ini.'));
-  else if (v.webkitEnterFullscreen) { v.webkitEnterFullscreen(); toast('Di iPhone, chat melayang tidak tampil saat layar penuh.'); }
-};
-document.onfullscreenchange = () => { $('#ffs').textContent = document.fullscreenElement ? 'Keluar layar penuh' : 'Layar penuh'; };
-
-const hm = location.hash.match(/room=([A-Za-z0-9]+)/);
-if (hm) askName(() => join(hm[1]));
+addEventListener('hashchange',()=>{const m=location.hash.match(/room=([A-Za-z0-9]+)/);if(m&&user())return joinRoom(m[1].toUpperCase());render()});
+addEventListener('pagehide',saveNow);
+loadCatalog().then(()=>{const m=location.hash.match(/room=([A-Za-z0-9]+)/);if(m&&user())joinRoom(m[1].toUpperCase())});
 </script>
 </body>
 </html>
