@@ -7,9 +7,9 @@
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
 <style>
 *{box-sizing:border-box;margin:0}
-:root{--bg:#05050a;--cd:#0c0b16;--ln:#201d36;--tx:#f4f3fc;--mu:#9b98b8;--g:linear-gradient(135deg,#8b5cf6,#3b82f6)}
+:root{--bg:#05050a;--cd:#0c0b16;--ln:#201d36;--tx:#f4f3fc;--mu:#9b98b8;--c1:#8b5cf6;--c2:#3b82f6;--c3:#3b82f6;--g:linear-gradient(135deg,var(--c1),var(--c2),var(--c3));--a:color-mix(in srgb,var(--c1) 60%,#fff);--a2:color-mix(in srgb,var(--c1) 38%,#fff);--b:color-mix(in srgb,var(--c2) 60%,#fff);--bd:color-mix(in srgb,var(--c1) 65%,#000);--t1:color-mix(in srgb,var(--c1) 30%,transparent);--t2:color-mix(in srgb,var(--c2) 24%,transparent);--t3:color-mix(in srgb,var(--c1) 15%,transparent)}
 html{background:var(--bg)}
-body{font:15px/1.5 Inter,system-ui,sans-serif;color:var(--tx);min-height:100vh;padding-bottom:88px;background:radial-gradient(700px 360px at 0 -40px,#8b5cf64d,transparent 70%),radial-gradient(600px 340px at 100% 0,#3b82f63d,transparent 70%),var(--bg)}
+body{font:15px/1.5 Inter,system-ui,sans-serif;color:var(--tx);min-height:100vh;padding-bottom:88px;background:radial-gradient(700px 360px at 0 -40px,var(--t1),transparent 70%),radial-gradient(600px 340px at 100% 0,var(--t2),transparent 70%),var(--bg)}
 a{color:inherit;text-decoration:none}
 button,input,select{font:inherit;color:inherit}
 button{cursor:pointer;background:none;border:0}
@@ -30,7 +30,7 @@ h1{letter-spacing:-.02em}
 .po img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
 .po:has(img[src]):after{content:"";position:absolute;inset:0;background:linear-gradient(transparent 35%,#05050add)}
 .po b{position:relative;z-index:1;font-size:13px;line-height:1.3;display:-webkit-box;-webkit-line-clamp:4;-webkit-box-orient:vertical;overflow:hidden}
-.tg{position:absolute;z-index:2;top:10px;left:10px;padding:2px 10px;border-radius:8px;background:#000a;font:700 11px "JetBrains Mono",monospace;color:#c4b5fd}
+.tg{position:absolute;z-index:2;top:10px;left:10px;padding:2px 10px;border-radius:8px;background:#000a;font:700 11px "JetBrains Mono",monospace;color:var(--a2)}
 .cd small{display:block;margin-top:6px;color:var(--mu)}
 .list{display:grid;gap:10px}
 .hi{display:flex;align-items:center;gap:14px;padding:10px;border:1px solid var(--ln);background:var(--cd);border-radius:18px}
@@ -45,7 +45,7 @@ h1{letter-spacing:-.02em}
 @media(min-width:560px){.dt{grid-template-columns:200px 1fr}}
 .eps{display:flex;flex-wrap:wrap;gap:10px}
 .in{width:100%;padding:14px 16px;border-radius:14px;border:1px solid var(--ln);background:#ffffff08;outline:0}
-.in:focus{border-color:#8b5cf6}
+.in:focus{border-color:var(--c1)}
 .pl{position:relative;aspect-ratio:16/9;background:#000;border-radius:24px;overflow:hidden;border:1px solid var(--ln)}
 .pl:fullscreen{border-radius:0;aspect-ratio:auto}
 .pl video{width:100%;height:100%;object-fit:contain;display:block}
@@ -60,37 +60,37 @@ h1{letter-spacing:-.02em}
 .ct{display:flex;align-items:center;gap:4px;margin-top:2px}
 .ct button{display:grid;place-items:center;width:40px;height:40px;color:#fff}
 .ct #sp{margin-left:auto}
-input[type=range]{-webkit-appearance:none;appearance:none;flex:1;height:4px;border-radius:4px;outline:0;background:linear-gradient(90deg,#a78bfa,#60a5fa) 0 0/var(--v,0%) 100% no-repeat,#ffffff33}
+input[type=range]{-webkit-appearance:none;appearance:none;flex:1;height:4px;border-radius:4px;outline:0;background:linear-gradient(90deg,var(--a),var(--b)) 0 0/var(--v,0%) 100% no-repeat,#ffffff33}
 input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:14px;height:14px;border-radius:50%;background:#fff}
 #vo{flex:none;width:65px}
 .buf{position:absolute;inset:0;display:none;place-items:center;pointer-events:none}
 .buf.on{display:grid}
 .buf div{padding:9px 16px;border-radius:99px;background:#0b0a14cc;border:1px solid #ffffff1f;font-size:13px}
 .info{margin-top:18px;border:1px solid var(--ln);background:var(--cd);border-radius:28px;padding:24px 20px}
-.lb{font:700 13px "JetBrains Mono",monospace;letter-spacing:.15em;color:#a78bfa}
+.lb{font:700 13px "JetBrains Mono",monospace;letter-spacing:.15em;color:var(--a)}
 .info h1{font-size:26px;margin:12px 0}
-.eb{display:inline-block;padding:6px 14px;border-radius:10px;border:1px solid #6d4fd1;background:#8b5cf622;color:#c4b5fd;font:700 14px "JetBrains Mono",monospace}
+.eb{display:inline-block;padding:6px 14px;border-radius:10px;border:1px solid var(--bd);background:var(--t3);color:var(--a2);font:700 14px "JetBrains Mono",monospace}
 .btns{display:flex;gap:10px;margin:18px 0 12px;flex-wrap:wrap}
 .b2{display:inline-flex;align-items:center;gap:8px;padding:12px 16px;border:1px solid var(--ln);border-radius:16px;background:#ffffff08;font-weight:600}
 .b2.on{background:var(--g);border-color:transparent;color:#fff}
 .b1{display:flex;align-items:center;justify-content:center;gap:8px;width:100%;padding:15px;border-radius:18px;background:var(--g);color:#fff;font-weight:700;font-size:16px}
 .nv{position:fixed;left:0;right:0;bottom:0;z-index:20;display:flex;padding:10px 4px calc(10px + env(safe-area-inset-bottom));background:#08070ff2;backdrop-filter:blur(14px);border-top:1px solid var(--ln)}
 .nv a{flex:1;display:flex;flex-direction:column;align-items:center;gap:4px;font-size:12px;color:var(--mu)}
-.nv a.on{color:#a78bfa}
+.nv a.on{color:var(--a)}
 .lg{min-height:100vh;display:grid;place-items:center;padding:20px}
 .lc{width:min(400px,100%);display:grid;gap:12px;padding:28px 24px;border:1px solid var(--ln);background:#0c0b16e6;border-radius:28px}
 .seg{display:flex;padding:4px;border-radius:14px;background:#ffffff0d;margin:4px 0}
 .seg button{flex:1;padding:10px;border-radius:10px;font-weight:600;color:var(--mu)}
 .seg .on{background:var(--g);color:#fff}
 .er{min-height:20px;color:#fca5a5;font-size:13px}
-#ts{position:fixed;left:50%;bottom:98px;z-index:60;transform:translate(-50%,12px);opacity:0;transition:.2s;pointer-events:none;padding:10px 18px;border-radius:99px;background:#17142b;border:1px solid #3b2f7a;font-size:13px;text-align:center;max-width:90vw}
+#ts{position:fixed;left:50%;bottom:98px;z-index:60;transform:translate(-50%,12px);opacity:0;transition:.2s;pointer-events:none;padding:10px 18px;border-radius:99px;background:#17142b;border:1px solid var(--bd);font-size:13px;text-align:center;max-width:90vw}
 #ts.on{opacity:1;transform:translate(-50%,0)}
 .status{padding:12px 14px;border:1px solid var(--ln);border-radius:14px;background:var(--cd);color:var(--mu);font-size:13px}
 .room{margin-top:14px;border:1px solid var(--ln);background:var(--cd);border-radius:22px;padding:16px}
 .rc{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
-.rc b.code{font:700 20px "JetBrains Mono",monospace;letter-spacing:.2em;color:#c4b5fd}
+.rc b.code{font:700 20px "JetBrains Mono",monospace;letter-spacing:.2em;color:var(--a2)}
 .cm{display:flex;flex-direction:column;gap:8px;height:260px;overflow:auto;margin:12px 0}
-.msg{word-break:break-word;font-size:14px}.msg b{color:#a78bfa}.msg.sys{color:var(--mu);font-size:12px}
+.msg{word-break:break-word;font-size:14px}.msg b{color:var(--a)}.msg.sys{color:var(--mu);font-size:12px}
 .cin{display:flex;gap:8px}
 .md{position:fixed;inset:0;z-index:50;background:#000b;display:grid;place-items:center;padding:16px}
 .md>div{width:min(520px,100%);max-height:92vh;overflow:auto;display:grid;gap:10px;background:var(--cd);border:1px solid var(--ln);border-radius:24px;padding:22px}
@@ -98,7 +98,7 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:14px;heigh
 .fl{display:none;position:absolute;right:12px;top:64px;width:min(62%,330px);flex-direction:column;gap:6px;pointer-events:none;z-index:3}
 .pl:fullscreen .fl{display:flex}
 .fx{align-self:flex-end;max-width:100%;background:#0b0a14bf;backdrop-filter:blur(6px);border:1px solid #ffffff1a;padding:7px 12px;border-radius:14px;font-size:14px;word-break:break-word;animation:fin .3s,fout .6s 8.4s forwards}
-.fx b{color:#c4b5fd}.fx.sys{color:#ffffffaa;font-size:12px}
+.fx b{color:var(--a2)}.fx.sys{color:#ffffffaa;font-size:12px}
 @keyframes fin{from{opacity:0;transform:translateX(24px)}}
 @keyframes fout{to{opacity:0}}
 .rp{display:none;position:absolute;right:12px;bottom:96px;width:min(70%,360px);gap:6px;z-index:4}
@@ -113,7 +113,7 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:14px;heigh
 .eps .b2.on{border-color:transparent}
 /* tampilan serial */
 .sh{display:grid;justify-items:center;text-align:center;gap:10px;padding-bottom:6px}
-.sh .po{width:170px;aspect-ratio:2/3;box-shadow:0 18px 60px -12px #8b5cf6aa}
+.sh .po{width:170px;aspect-ratio:2/3;box-shadow:0 18px 60px -12px color-mix(in srgb,var(--c1) 67%,transparent)}
 .sh h1{font-size:26px;margin-top:8px}
 .chips{display:flex;flex-wrap:wrap;gap:8px;justify-content:center}
 .chip{padding:6px 12px;border-radius:99px;border:1px solid var(--ln);background:#ffffff0a;font:600 12px Inter,sans-serif}
@@ -127,7 +127,24 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:14px;heigh
 .tb{display:flex;gap:8px}
 .du{position:absolute;z-index:2;right:6px;bottom:6px;padding:1px 8px;border-radius:7px;background:#000b;font:700 11px "JetBrains Mono",monospace;color:#fff}
 .du:empty{display:none}
-.hi .ib[data-dl]{background:#8b5cf626;color:#a78bfa;border-radius:12px;flex:none}
+.hi .ib[data-dl]{background:var(--t3);color:var(--a);border-radius:12px;flex:none}
+/* tema + form edit */
+.cps{display:flex;gap:14px;flex-wrap:wrap;margin:16px 0}
+.cl{display:grid;justify-items:center;gap:6px;color:var(--mu);font-size:12px}
+input[type=color]{-webkit-appearance:none;appearance:none;width:64px;height:64px;padding:0;border:2px solid var(--ln);border-radius:18px;background:none;cursor:pointer;overflow:hidden}
+input[type=color]::-webkit-color-swatch-wrapper{padding:0}
+input[type=color]::-webkit-color-swatch{border:0;border-radius:0}
+input[type=color]::-moz-color-swatch{border:0}
+.pvb{height:14px;border-radius:99px;background:var(--g)}
+.xl,.xs{display:grid;gap:8px}
+.xs{gap:6px}
+.xe{border:1px solid var(--ln);border-radius:14px;background:#ffffff06}
+.xe summary{padding:12px 14px;font-weight:600;cursor:pointer;display:flex;gap:10px;align-items:center;list-style:none}
+.xe summary::-webkit-details-marker{display:none}
+.xe summary span{color:var(--mu);font-weight:400;font-size:13px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.xe[open] summary{border-bottom:1px solid var(--ln)}
+.xb{display:grid;gap:8px;padding:12px}
+.btns.mb{position:sticky;bottom:0;margin:6px -22px -22px;padding:12px 22px 22px;background:var(--cd);border-top:1px solid var(--ln)}
 </style>
 </head>
 <body>
@@ -192,14 +209,14 @@ async function auth(m,u,p){
  if(u.toLowerCase()===ADMIN_USER){
   if(m==='reg')return'Username sudah dipakai.';
   if(p!==ADMIN_PASS)return'Username atau kata sandi salah.';
-  ls.set('bs:s',ADMIN_USER);await render();return resumeHost()
+  ls.set('bs:s',ADMIN_USER);loadTheme();await render();return resumeHost()
  }
  const h=await hash(p);
  try{
   const ok=await rpc(m==='reg'?'register_user':'login_user',{u,h});
   if(ok!==true)return m==='reg'?'Username sudah dipakai.':'Username atau kata sandi salah.';
  }catch{return'Gagal terhubung ke database.'}
- ls.set('bs:s',u.toLowerCase());await render();resumeHost()
+ ls.set('bs:s',u.toLowerCase());loadTheme();await render();resumeHost()
 }
 
 /* ===== tampilan ===== */
@@ -207,7 +224,17 @@ const hue=s=>[...s].reduce((n,c)=>(n*31+c.charCodeAt(0))&65535,7)%360;
 const card=a=>`<a class="cd" href="#/film/${encodeURIComponent(a.id)}"><div class="po" style="--h:${hue(a.title)}"><img data-t="${esc(a.title)}" data-k="${isS(a)?'tv':''}" alt="" onerror="this.remove()"><span class="tg">${isS(a)?a.episodes.length+' episode':a.sources.length+' kualitas'}</span><b>${esc(a.title)}</b></div><small>${qualsOf(a).map(esc).join(' • ')}</small></a>`;
 const histCard=x=>{const a=catalog.find(z=>z.id===x.id);if(!a)return'';const p=x.d?Math.min(100,x.t/x.d*100):0;
  return`<a class="hi" href="${wl(a,x.ep)}"><div class="po s" style="--h:${hue(a.title)}"><img data-t="${esc(a.title)}" data-k="${isS(a)?'tv':''}" alt=""></div><div class="hm"><b>${esc(a.title)}${x.ep?' · Ep '+x.ep:''}</b><small>${ft(x.t)} / ${ft(x.d)}</small><div class="pg"><i style="width:${p}%"></i></div></div></a>`};
-function detail(a){return`<a class="back" href="#/">${ic('back',20)}Beranda</a><div class="dt"><div class="po" style="--h:${hue(a.title)}"><img data-t="${esc(a.title)}" data-k="${isS(a)?'tv':''}" alt=""></div><div><h1>${esc(a.title)}</h1><p class="mu">Pilih kualitas video untuk mulai menonton.</p><div class="eps mt">${a.sources.map((s,i)=>`<a class="b2" href="#/watch/${encodeURIComponent(a.id)}/${i}">${esc(s.res||'Putar')}</a>`).join('')}</div>${isAdmin()?`<button class="b2 mt" data-edit="${esc(a.id)}">Edit film</button>`:''}</div></div>`}
+function detail(a){
+ const h=hist.find(x=>x.id===a.id&&!x.ep),p=h&&h.d?Math.min(100,Math.round(h.t/h.d*100)):0;
+ return`<a class="back" href="#/">${ic('back',20)}Beranda</a>
+<div class="sh"><div class="po" style="--h:${hue(a.title)}"><img data-t="${esc(a.title)}" alt=""></div>
+<h1>${esc(a.title)}</h1>
+<div class="chips" id="chips"><span class="chip">Film</span><span class="chip">${qualsOf(a).map(esc).join(' • ')}</span></div>
+<div class="syn" id="syn" hidden><h3>Sinopsis</h3><p></p></div>
+<a class="b1 mt" href="${wl(a)}">${ic('play',18)} ${h&&p<95?'Lanjutkan':'Tonton'}</a></div>
+${h?`<div class="pcard"><b>Progres menonton</b><div class="pg"><i style="width:${p}%"></i></div><small>${ft(h.t)} / ${ft(h.d)} · ${p}%</small></div>`:''}
+<h2>Pilih kualitas</h2><div class="eps">${a.sources.map((s,i)=>`<a class="b2" href="#/watch/${encodeURIComponent(a.id)}/${i}">${esc(s.res||'Putar')}</a>`).join('')}</div>
+${related(a)}`}
 
 let ES={q:'',asc:false,n:8};
 function resumeTarget(a){const h=hist.find(x=>x.id===a.id&&x.ep),E=a.episodes;if(!h)return E[0].no;
@@ -233,25 +260,29 @@ function pump(){
 async function loadMeta(a){
  const k='bs:m:'+a.title.toLowerCase();let m=ls.get(k,null);
  if(!m){
-  const q=a.title.replace(/\(.*?\)/g,'').trim();
+  const y=(a.title.match(/\((\d{4})\)/)||[])[1],q=a.title.replace(/\(.*?\)/g,'').trim(),ser=isS(a);
   try{
-   for(const l of['id-ID','en-US']){
-    const r=await fetch(`https://api.themoviedb.org/3/search/tv?api_key=${TMDB_KEY}&language=${l}&query=${encodeURIComponent(q)}`);
-    if(!r.ok)break;const h=((await r.json()).results||[])[0];if(!h)break;
-    m={o:h.overview||'',r:h.vote_average||0,y:(h.first_air_date||'').slice(0,4)};if(m.o)break
+   for(const kind of ser?['tv','movie']:['movie','tv']){
+    for(const l of['id-ID','en-US']){
+     const r=await fetch(`https://api.themoviedb.org/3/search/${kind}?api_key=${TMDB_KEY}&language=${l}&query=${encodeURIComponent(q)}`+(y&&kind==='movie'?'&year='+y:''));
+     if(!r.ok)break;const h=((await r.json()).results||[])[0];if(!h)break;
+     m={o:h.overview||'',r:h.vote_average||0,y:(h.first_air_date||h.release_date||'').slice(0,4)};if(m.o)break
+    }
+    if(m&&m.o)break
    }
   }catch{}
   if(m)ls.set(k,m)
  }
- const s=$('#syn'),c=$('#chips');if(!m||!s||!c)return;
+ const s=$('#syn'),c=$('#chips');if(!m||!s||!c||s.dataset.d)return;s.dataset.d=1;
  if(m.r>0)c.insertAdjacentHTML('beforeend',`<span class="chip">★ ${m.r.toFixed(1)}</span>`);
  if(m.y)c.insertAdjacentHTML('beforeend',`<span class="chip">${esc(m.y)}</span>`);
  if(m.o){s.querySelector('p').textContent=m.o;s.hidden=false}
 }
 /* serial lain dengan awalan judul sama (Season 2, The Movie, dst.) */
 function related(a){
- const p=a.title.split(/\s+/).slice(0,2).join(' ').toLowerCase();
- const L=catalog.filter(x=>x.id!==a.id&&x.title.toLowerCase().startsWith(p));
+ const n=t=>t.toLowerCase().replace(/\(.*?\)/g,'').replace(/[^\p{L}\p{N}\s]/gu,' ').replace(/\s+/g,' ').trim(),
+  p=n(a.title).split(' ').slice(0,2).join(' ');
+ const L=p?catalog.filter(x=>{const t=n(x.title);return x.id!==a.id&&(t===p||t.startsWith(p+' '))}):[];
  return L.length?`<h2>Terkait</h2><div class="rr">${L.map(card).join('')}</div>`:''
 }
 function seriesDetail(a){
@@ -278,7 +309,7 @@ function epList(a){
  let L=[...a.episodes].sort((x,y)=>ES.asc?x.no-y.no:y.no-x.no);const q=ES.q.trim().toLowerCase();
  if(q)L=L.filter(e=>String(e.no).includes(q)||(e.title||'').toLowerCase().includes(q));
  $('#el').innerHTML=L.slice(0,ES.n).map(e=>epItem(a,e)).join('')||'<p class="mu">Episode tidak ditemukan.</p>';
- $('#em').innerHTML=L.length>ES.n?`<button class="b2 mt" id="mm" style="width:100%;justify-content:center;color:#a78bfa">Lebih banyak (${L.length-ES.n})</button>`:'';
+ $('#em').innerHTML=L.length>ES.n?`<button class="b2 mt" id="mm" style="width:100%;justify-content:center;color:var(--a)">Lebih banyak (${L.length-ES.n})</button>`:'';
  $('#es').textContent=ES.asc?'↑ Terlama':'↓ Terbaru';
  const m=$('#mm');if(m)m.onclick=()=>{ES.n+=8;epList(a)};
  document.querySelectorAll('#el .du').forEach(el=>{if(!el.textContent)probe(el,el.dataset.u)});
@@ -289,7 +320,6 @@ function epNav(a,E){
 function view(parts){
  const[p,id,idx,epq]=parts;
  if(!p){const sn=new Set(),h=hist.filter(x=>!sn.has(x.id)&&sn.add(x.id)).slice(0,3);return[`<div class="fm" style="display:flex;gap:8px;margin-bottom:6px"><input class="in" id="jc" placeholder="Kode room nobar" maxlength="8" style="text-transform:uppercase"><button class="b2" id="jb">${ic('users',18)} Gabung</button></div>
- ${isAdmin()?'<div class="btns" style="margin:12px 0 0"><button class="b2" data-edit="">+ Tambah film</button><button class="b2" id="ij">Impor file JSON</button><button class="b2" id="is">Impor banyak episode</button><input type="file" id="sf" accept=".json,application/json" multiple hidden><input type="file" id="jf" accept=".json,application/json" multiple hidden></div>':''}
  ${h.length?`<h2>Lanjutkan menonton</h2><div class="list">${h.map(histCard).join('')}</div>`:''}<h2>Semua film</h2>
  ${catalog.length?`<div class="grid">${catalog.map(card).join('')}</div>`:'<p class="status">Belum ada film di database.</p>'}`,()=>{
   const go=()=>{const c=$('#jc').value.trim().toUpperCase();c?joinRoom(c):toast('Masukkan kode room dulu.')};
@@ -302,7 +332,7 @@ function view(parts){
  if(p==='downloads'){const d=ls.get('bs:d:'+user(),[]).filter(x=>catalog.some(a=>a.id===x.id));
   return[`<h2>Unduhan</h2>${d.length?`<div class="list">${d.map(x=>{const a=catalog.find(z=>z.id===x.id);return`<div class="hi"><div class="hm"><b>${esc(a.title)}${x.ep?' · Ep '+x.ep:''}</b><small>${esc(x.res||'Video')}</small></div><button class="ib" data-dl="${esc(x.id)}:${x.index}:${x.ep||0}">${ic('dl')}</button></div>`}).join('')}</div>`:'<p class="mu">Belum ada unduhan.</p>'}`]}
  if(p==='film'){const a=catalog.find(x=>x.id===id);if(!a)return['<p class="mu">Film tidak ditemukan.</p>'];
-  if(!isS(a))return[detail(a)];
+  if(!isS(a))return[detail(a),()=>loadMeta(a)];
   ES={q:'',asc:false,n:8};
   return[seriesDetail(a),()=>{const q=$('#eq');q.oninput=()=>{ES.q=q.value;ES.n=8;epList(a)};$('#es').onclick=()=>{ES.asc=!ES.asc;epList(a)};epList(a)}]}
  if(p==='watch'){
@@ -321,10 +351,47 @@ function view(parts){
 <div class="cm" id="cm"></div><div class="cin"><input class="in" id="ci" placeholder="Tulis komentar…" maxlength="300"><button class="b2" id="cs">Kirim</button></div></div>
 ${E?epNav(a,E):''}<h2>Pilih resolusi</h2><div class="eps">${list.map((s,i)=>`<a class="b2 ${i===n?'on':''}" data-ep href="${rl(i)}">${esc(s.res||'Putar')}</a>`).join('')}</div></section>`,()=>player(a,n,E?E.no:0,nxE?wl(a,nxE.no):'')]}
  if(p==='more')return[`<h2>Akun</h2><div class="hi"><div class="av">${esc(user()[0].toUpperCase())}</div><div class="hm"><b>${esc(user())}</b><small>${isAdmin()?'Admin':'Pengguna'}</small></div></div>
- <div class="list mt"><a class="hi" href="#/history">${ic('clock')} Riwayat tontonan</a><a class="hi" href="#/downloads">${ic('dl')} Unduhan</a></div><button class="b2 mt" id="lo">Keluar</button>`,()=>{
-  $('#lo').onclick=()=>{saveNow();leaveRoom();cur=null;hist=[];ls.set('bs:s',null);render()}}];
+ <div class="list mt"><a class="hi" href="#/history">${ic('clock')} Riwayat tontonan</a><a class="hi" href="#/downloads">${ic('dl')} Unduhan</a></div>${themePanel()}<button class="b2 mt" id="lo">Keluar</button>${isAdmin()?adminPanel():''}`,()=>{themeInit();if(isAdmin())adminInit();
+  $('#lo').onclick=()=>{saveNow();leaveRoom();cur=null;hist=[];ls.set('bs:s',null);loadTheme();render()}}];
  return['<p class="mu">Halaman tidak ditemukan.</p>']
 }
+
+/* ===== tema warna per akun (tabel user_theme) ===== */
+const TH0={mode:2,colors:['#8b5cf6','#3b82f6','#3b82f6']};
+const cleanTheme=t=>{const m=[1,2,3].includes(+t?.mode)?+t.mode:2,c=Array.isArray(t?.colors)?t.colors:[];return{mode:m,colors:[0,1,2].map(i=>/^#[0-9a-f]{6}$/i.test(c[i])?c[i]:TH0.colors[i])}};
+let TH=cleanTheme(null),THs=cleanTheme(null);
+function applyTheme(t){const n=t.mode,c=t.colors,r=document.documentElement.style,c1=c[0],c2=n>1?c[1]:c1,c3=n>2?c[2]:c2;r.setProperty('--c1',c1);r.setProperty('--c2',c2);r.setProperty('--c3',c3)}
+async function loadTheme(){
+ const u=user();TH=cleanTheme(u?ls.get('bs:th:'+u,null):null);THs=cleanTheme(TH);applyTheme(TH);
+ if(!u)return;
+ try{const r=await api('user_theme?select=mode,colors&username=eq.'+encodeURIComponent(u));if(!r.ok||user()!==u)return;const x=(await r.json())[0];if(x){TH=cleanTheme(x);THs=cleanTheme(TH);ls.set('bs:th:'+u,TH);applyTheme(TH)}}catch{}
+}
+async function saveTheme(){
+ const u=user();THs=cleanTheme(TH);ls.set('bs:th:'+u,THs);
+ try{const r=await api('user_theme?on_conflict=username',{method:'POST',headers:{Prefer:'resolution=merge-duplicates,return=minimal'},body:JSON.stringify({username:u,mode:THs.mode,colors:THs.colors,updated_at:new Date().toISOString()})});if(!r.ok)throw 0;toast('Tema disimpan ke akunmu')}
+ catch{toast('Tema tersimpan di perangkat ini. Tabel user_theme belum ada di database.')}
+}
+const themePanel=()=>`<h2>Tema warna</h2><div class="room" style="margin-top:0"><div class="seg" id="thm"><button type="button" data-n="1">1 warna</button><button type="button" data-n="2">2 warna</button><button type="button" data-n="3">3 warna</button></div><div class="cps" id="thc"></div><div class="pvb"></div><div class="btns" style="margin:14px 0 0"><button class="b2" id="thr">Reset</button><button class="b2 on" id="ths">Simpan tema</button></div></div>`;
+function themeInit(){
+ const draw=()=>{
+  document.querySelectorAll('#thm button').forEach(b=>b.classList.toggle('on',+b.dataset.n===TH.mode));
+  $('#thc').innerHTML=[...Array(TH.mode).keys()].map(i=>`<label class="cl"><input type="color" data-i="${i}" value="${TH.colors[i]}">Warna ${i+1}</label>`).join('');
+  $('#thc').querySelectorAll('input').forEach(inp=>inp.oninput=()=>{TH.colors[+inp.dataset.i]=inp.value;applyTheme(TH)})
+ };
+ $('#thm').onclick=e=>{const b=e.target.closest('button');if(!b)return;TH.mode=+b.dataset.n;applyTheme(TH);draw()};
+ $('#thr').onclick=()=>{TH=cleanTheme(null);applyTheme(TH);draw()};
+ $('#ths').onclick=saveTheme;draw()
+}
+
+/* ===== kelola film (admin, di menu Lainnya) ===== */
+function adminPanel(){return`<h2>Kelola film</h2>
+<div class="btns" style="margin:0"><button class="b2" data-edit="">+ Tambah film</button><button class="b2" id="ij">Impor file JSON</button><button class="b2" id="is">Impor banyak episode</button><input type="file" id="sf" accept=".json,application/json" multiple hidden><input type="file" id="jf" accept=".json,application/json" multiple hidden></div>
+<input class="in mt" id="aq" placeholder="Cari film untuk diedit…"><div class="list mt" id="al"></div>`}
+function adminList(){
+ const q=($('#aq').value||'').trim().toLowerCase();
+ $('#al').innerHTML=q?(catalog.filter(a=>a.title.toLowerCase().includes(q)).map(a=>`<div class="hi"><div class="hm"><b>${esc(a.title)}</b><small>${isS(a)?a.episodes.length+' episode':a.sources.map(x=>esc(x.res||'Video')).join(' • ')}</small></div><button class="b2" data-edit="${esc(a.id)}">Edit</button></div>`).join('')||'<p class="mu">Film tidak ditemukan.</p>'):''
+}
+const adminInit=()=>{$('#aq').oninput=adminList;adminList()};
 
 /* ===== riwayat ke database ===== */
 function saveNow(){
@@ -510,19 +577,51 @@ function player(a,n,ep,nextHref){
 
 /* ===== admin: tambah/edit film ===== */
 const rowH=(r='720p',u='')=>`<div class="row"><input class="in u" value="${esc(u)}" placeholder="https://cdn-kamu.com/film.mp4"><select class="in r">${RES.map(x=>`<option${x===r?' selected':''}>${x}</option>`).join('')}</select><button class="b2 x">✕</button></div>`;
+const xeH=(e,open)=>`<details class="xe" data-no="${e.no}"${open?' open':''}><summary>Ep ${e.no}<span>${esc(e.title||'')}</span></summary><div class="xb"><input class="in xt" placeholder="Judul episode" value="${esc(e.title||'')}"><input class="in xh" placeholder="Link thumbnail (https://…)" value="${esc(e.thumb||'')}"><div class="xs">${e.sources.map(s=>rowH(s.res,s.url)).join('')}</div><div class="btns" style="margin:2px 0 0"><button type="button" class="b2 xa">+ Resolusi</button><button type="button" class="b2 xd" style="color:#fca5a5">Hapus episode</button></div></div></details>`;
 function filmModal(id){
- const f=catalog.find(x=>x.id===id),d=document.createElement('div');d.className='md';
- d.innerHTML=`<div><h2 style="margin:0">${f?'Edit film':'Tambah film'}</h2><input class="in" id="mt" placeholder="Judul film" value="${esc(f?.title||'')}"><div id="mr" style="display:grid;gap:6px">${f?f.sources.map(s=>rowH(s.res,s.url)).join(''):rowH()}</div><button class="b2" id="ma">+ Resolusi</button><div class="btns" style="margin:6px 0 0"><button class="b2" id="mc">Batal</button><button class="b2 on" id="ms">Simpan</button></div></div>`;
+ if(!isAdmin())return;
+ const f=catalog.find(x=>x.id===id),ser=!!f&&isS(f),d=document.createElement('div');d.className='md';
+ const inner=ser
+  ?`<p class="mu">${f.episodes.length} episode. Ketuk episode untuk mengedit judul, thumbnail, dan link videonya.</p><div class="xl" id="xl">${f.episodes.map(e=>xeH(e)).join('')}</div><button type="button" class="b2" id="xn">+ Episode</button>`
+  :`<div id="mr" class="xs">${f?f.sources.map(s=>rowH(s.res,s.url)).join(''):rowH()}</div><button class="b2" id="ma">+ Resolusi</button>`;
+ d.innerHTML=`<div><h2 style="margin:0">${ser?'Edit serial':f?'Edit film':'Tambah film'}</h2><input class="in" id="mt" placeholder="Judul film" value="${esc(f?.title||'')}">${inner}<div class="btns mb"><button class="b2" id="mc">Batal</button>${f?'<button class="b2" id="mx" style="color:#fca5a5">Hapus</button>':''}<button class="b2 on" id="ms">Simpan</button></div></div>`;
  document.body.append(d);
- $('#ma').onclick=()=>$('#mr').insertAdjacentHTML('beforeend',rowH('1080p'));
- $('#mr').onclick=e=>{if(e.target.classList.contains('x')&&$('#mr').children.length>1)e.target.parentNode.remove()};
+ d.onclick=e=>{const t=e.target;
+  if(t.classList.contains('x')){const b=t.closest('.xs');if(b&&b.children.length>1)t.parentNode.remove()}
+  else if(t.classList.contains('xa'))t.closest('.xb').querySelector('.xs').insertAdjacentHTML('beforeend',rowH('1080p'));
+  else if(t.classList.contains('xd')){const x=t.closest('.xe');if(x&&confirm('Hapus Ep '+x.dataset.no+'?'))x.remove()}};
+ const ma=$('#ma');if(ma)ma.onclick=()=>$('#mr').insertAdjacentHTML('beforeend',rowH('1080p'));
+ const xn=$('#xn');if(xn)xn.onclick=()=>{
+  const no=Math.max(0,...[...d.querySelectorAll('.xe')].map(x=>+x.dataset.no))+1;
+  $('#xl').insertAdjacentHTML('beforeend',xeH({no,title:'Episode '+no,thumb:'',sources:[{res:'720p',url:''}]},1));
+  $('#xl').lastElementChild.scrollIntoView({block:'center'})};
  $('#mc').onclick=()=>d.remove();
+ const dx=$('#mx');
+ if(dx)dx.onclick=async()=>{
+  if(!confirm('Hapus "'+f.title+'" dari database?'))return;
+  try{const r=await api('films?id=eq.'+f.id,{method:'DELETE',headers:{Prefer:'return=representation'}});if(!r.ok||!(await r.json()).length)throw 0;
+   d.remove();toast('Film dihapus');loadCatalog()}catch{toast('Gagal menghapus film.')}
+ };
  $('#ms').onclick=async()=>{
-  const title=$('#mt').value.trim();
-  const sources=[...d.querySelectorAll('.row')].map(r=>({res:r.querySelector('.r').value,url:r.querySelector('.u').value.trim()})).filter(s=>s.url);
-  if(!title||!sources.length)return toast('Isi judul dan minimal satu link.');
-  if(sources.some(s=>!/^https:\/\//i.test(s.url)))return toast('Link harus diawali https://');
-  try{const r=await api(f?'films?id=eq.'+f.id:'films',{method:f?'PATCH':'POST',headers:{Prefer:'return=minimal'},body:JSON.stringify({title,sources})});if(!r.ok)throw 0;
+  const title=$('#mt').value.trim();if(!title)return toast('Isi judul film.');
+  const rd=r=>({res:r.querySelector('.r').value,url:r.querySelector('.u').value.trim()}),ok=u=>/^https:\/\//i.test(u);
+  let data;
+  if(ser){
+   const eps=[];
+   for(const x of d.querySelectorAll('.xe')){
+    const no=+x.dataset.no,src=[...x.querySelectorAll('.xs .row')].map(rd).filter(q=>q.url),th=x.querySelector('.xh').value.trim();
+    if(!src.length||src.some(q=>!ok(q.url))||(th&&!ok(th))){x.open=true;x.scrollIntoView({block:'center'});return toast('Ep '+no+': isi minimal satu link video, semua link harus https://')}
+    eps.push({no,title:x.querySelector('.xt').value.trim()||'Episode '+no,thumb:th,sources:src})
+   }
+   if(!eps.length)return toast('Minimal satu episode. Pakai Hapus untuk menghapus serial.');
+   data={title,episodes:eps.sort((a,b)=>a.no-b.no)}
+  }else{
+   const sources=[...d.querySelectorAll('.row')].map(rd).filter(q=>q.url);
+   if(!sources.length)return toast('Isi minimal satu link.');
+   if(sources.some(q=>!ok(q.url)))return toast('Link harus diawali https://');
+   data={title,sources}
+  }
+  try{const r=await api(f?'films?id=eq.'+f.id:'films',{method:f?'PATCH':'POST',headers:{Prefer:'return=minimal'},body:JSON.stringify(data)});if(!r.ok)throw 0;
    d.remove();toast('Film disimpan');loadCatalog()}catch{toast('Gagal menyimpan film.')}
  };
 }
@@ -611,7 +710,8 @@ async function render(){
  if(!user()){leaveRoom();app.innerHTML=loginHtml();bindLogin();return}
  const parts=(location.hash.slice(1)||'/').split('/').filter(Boolean).map(decodeURIComponent);
  if(parts[0]!=='watch'&&room&&!room.pend)leaveRoom();
- if(!parts[0]||['history','watch'].includes(parts[0]))await loadHist();
+ if(parts[0]!=='more'&&JSON.stringify(TH)!==JSON.stringify(THs)){TH=cleanTheme(THs);applyTheme(TH)}
+ if(!parts[0]||['history','watch','film'].includes(parts[0]))await loadHist();
  const[body,init]=view(parts);
  const on=['film','watch'].includes(parts[0])?'':(parts[0]||'');
  const tabs=[['','home','Beranda'],['explore','compass','Jelajahi'],['history','clock','Riwayat'],['downloads','dl','Unduhan'],['more','menu','Lainnya']];
@@ -627,6 +727,7 @@ document.addEventListener('click',e=>{
 });
 addEventListener('hashchange',()=>{const m=location.hash.match(/room=([A-Za-z0-9]+)/);if(m&&user())return joinRoom(m[1].toUpperCase());render()});
 addEventListener('pagehide',saveNow);
+loadTheme();
 loadCatalog().then(()=>{const m=location.hash.match(/room=([A-Za-z0-9]+)/);if(m&&user())joinRoom(m[1].toUpperCase());else if(user())resumeHost()});
 </script>
 </body>
