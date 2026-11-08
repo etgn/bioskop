@@ -1,0 +1,296 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Layar Bareng — nonton bareng di detik yang sama</title>
+<!--
+SETUP SUPABASE (SQL Editor):
+create table films(id uuid primary key default gen_random_uuid(), title text not null, sources jsonb not null, created_at timestamptz default now());
+alter table films enable row level security;
+create policy "baca" on films for select using (true);
+create policy "tambah" on films for insert with check (true);
+Lalu isi SB_URL & SB_KEY di bagian <script> bawah.
+-->
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:wght@600;800&family=DM+Sans:wght@400;500;700&display=swap">
+<style>
+:root{--bg:#12080f;--sf:#1d0f19;--ln:#38212f;--tx:#f7ede5;--mu:#a98f9b;--am:#ffb347;--rd:#c8283f}
+*{box-sizing:border-box;margin:0}
+body{background:var(--bg);color:var(--tx);font:15px/1.5 "DM Sans",system-ui,sans-serif;min-height:100vh}
+h1,h2,h3,.logo{font-family:"Bricolage Grotesque","DM Sans",sans-serif}
+[hidden]{display:none!important}
+:focus-visible{outline:2px solid var(--am);outline-offset:2px}
+header{position:sticky;top:0;z-index:20;display:flex;flex-wrap:wrap;gap:10px;align-items:center;justify-content:space-between;padding:12px 5vw;background:rgba(18,8,15,.85);backdrop-filter:blur(12px);border-bottom:1px solid var(--ln)}
+.logo{font-weight:800;font-size:21px;display:flex;align-items:center;gap:8px}
+.logo i{width:12px;height:12px;border-radius:50%;background:var(--am);box-shadow:0 0 14px var(--am)}
+.hr{display:flex;gap:8px;flex-wrap:wrap}
+input,select{background:var(--sf);border:1px solid var(--ln);color:var(--tx);padding:10px 12px;border-radius:10px;font:inherit;min-width:0}
+input:focus,select:focus{border-color:var(--am);outline:0}
+.btn{border:1px solid var(--ln);background:var(--sf);color:var(--tx);padding:10px 16px;border-radius:10px;font:700 14px "DM Sans",sans-serif;cursor:pointer;transition:border-color .2s,background .2s}
+.btn:hover{border-color:var(--am)}
+.btn.pri{background:var(--am);border-color:var(--am);color:#2a1300}
+.btn.pri:hover{background:#ffc470}
+main{max-width:1180px;margin:auto;padding:0 5vw 70px}
+.hero{padding:clamp(36px,8vw,84px) 0 30px}
+.hero h1{font-size:clamp(34px,7vw,68px);line-height:1;letter-spacing:-.03em;max-width:12ch}
+.hero p{color:var(--mu);margin-top:16px;max-width:46ch}
+.note{background:var(--sf);border:1px dashed var(--am);border-radius:12px;padding:14px;margin-bottom:20px;color:var(--am)}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(165px,1fr));gap:16px}
+.card{background:var(--sf);border:1px solid var(--ln);border-radius:14px;overflow:hidden;display:flex;flex-direction:column;transition:border-color .2s}
+.card:hover{border-color:var(--am)}
+.poster{aspect-ratio:3/4;padding:14px;display:flex;align-items:flex-end;font:800 clamp(20px,3.4vw,26px)/1.05 "Bricolage Grotesque",sans-serif;letter-spacing:-.02em;overflow:hidden;word-break:break-word}
+.stub{padding:12px;border-top:2px dashed var(--bg);display:flex;flex-direction:column;gap:10px}
+.chip{display:inline-block;font:700 12px "DM Sans",sans-serif;padding:3px 9px;border-radius:99px;border:1px solid var(--ln);color:var(--am);margin:0 4px 4px 0}
+.empty{grid-column:1/-1;padding:50px 20px;text-align:center;color:var(--mu);border:1px dashed var(--ln);border-radius:14px}
+.bar{display:flex;flex-wrap:wrap;gap:10px;align-items:center;padding:18px 0}
+.bar h2{font-size:22px;flex:1;min-width:140px}
+.room{display:flex;gap:8px;align-items:center;flex-wrap:wrap;color:var(--mu)}
+.room b{color:var(--am);letter-spacing:.12em;font-size:16px}
+.player{position:relative;background:#000;border-radius:14px;overflow:hidden;border:1px solid var(--ln)}
+video{display:block;width:100%;max-height:75vh;background:#000}
+#hold{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;background:rgba(18,8,15,.72);color:var(--am);font-weight:700;text-align:center;padding:20px;pointer-events:none}
+.ctl{display:flex;flex-wrap:wrap;gap:10px;align-items:center;padding:16px 0}
+.seg{display:flex;border:1px solid var(--ln);border-radius:10px;overflow:hidden;margin-left:auto}
+.seg button{border:0;background:var(--sf);color:var(--mu);padding:10px 14px;font:700 13px "DM Sans",sans-serif;cursor:pointer}
+.seg button.on{background:var(--am);color:#2a1300}
+.seg span{padding:10px 14px;background:var(--sf);color:var(--am);font-weight:700;font-size:13px}
+.modal{position:fixed;inset:0;z-index:50;background:rgba(0,0,0,.7);display:flex;align-items:center;justify-content:center;padding:16px}
+.box{background:var(--sf);border:1px solid var(--ln);border-radius:16px;padding:22px;width:100%;max-width:520px;max-height:92vh;overflow:auto;display:flex;flex-direction:column;gap:10px}
+.box label{font-weight:700;font-size:13px;color:var(--mu)}
+.row{display:flex;gap:6px}.row .u{flex:1}
+.act{display:flex;gap:8px;justify-content:flex-end;margin-top:6px}
+#toast{position:fixed;left:50%;bottom:24px;transform:translateX(-50%);background:var(--am);color:#2a1300;font-weight:700;padding:10px 18px;border-radius:99px;z-index:99;max-width:90vw;text-align:center}
+@media(prefers-reduced-motion:reduce){*{transition:none!important}}
+</style>
+</head>
+<body>
+<header>
+  <div class="logo"><i></i>Layar Bareng</div>
+  <div class="hr">
+    <input id="jc" placeholder="Kode room" size="9" maxlength="8" aria-label="Kode room">
+    <button class="btn" id="jb">Gabung room</button>
+    <button class="btn pri" id="ab">Tambah film</button>
+  </div>
+</header>
+
+<main>
+  <section id="home">
+    <div class="hero">
+      <h1>Nonton bareng, di detik yang sama.</h1>
+      <p>Pilih film, buat room, kirim kodenya ke teman. Putar, jeda, geser, dan buffering ikut tersinkron otomatis.</p>
+    </div>
+    <div id="warn"></div>
+    <div class="grid" id="grid"></div>
+  </section>
+
+  <section id="watch" hidden>
+    <div class="bar">
+      <button class="btn" id="leave">Keluar</button>
+      <h2 id="wt"></h2>
+      <div class="room"><span>Room</span><b id="rc">…</b><button class="btn" id="cp">Salin link</button><span id="vw"></span></div>
+    </div>
+    <div class="player"><video id="v" controls playsinline preload="auto"></video><div id="hold" hidden>Buffering — semua layar ditahan sampai siap</div></div>
+    <div class="ctl">
+      <button class="btn" id="b10">Mundur 10 detik</button>
+      <button class="btn" id="f10">Maju 10 detik</button>
+      <div class="seg" id="res"></div>
+    </div>
+  </section>
+</main>
+
+<div class="modal" id="modal" hidden>
+  <div class="box">
+    <h3>Tambah film</h3>
+    <label for="ft">Nama film</label>
+    <input id="ft" placeholder="Contoh: Interstellar (2014)">
+    <label>Link CDN &amp; resolusinya</label>
+    <div id="rows"></div>
+    <button class="btn" id="ar">Tambah resolusi lain</button>
+    <div class="act"><button class="btn" id="cn">Batal</button><button class="btn pri" id="sv">Simpan film</button></div>
+  </div>
+</div>
+<div id="toast" hidden></div>
+
+<script src="https://cdn.jsdelivr.net/npm/peerjs@1.5.4/dist/peerjs.min.js"></script>
+<script>
+// ====== ISI DI SINI (Supabase → Project Settings → API) ======
+const SB_URL = 'https://pdmrafvzkcopfpfwwizi.supabase.co';
+const SB_KEY = 'sb_publishable_U4IdMzfQwUCgIGOOXuctzw_HEtvvFqY';
+// =============================================================
+
+const $ = s => document.querySelector(s), v = $('#v');
+const esc = s => String(s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const RES = ['360p','480p','720p','1080p','1440p','4K'];
+const rv = r => r === '4K' ? 2160 : parseInt(r) || 0;
+const byRes = a => [...a].sort((x, y) => rv(x.res) - rv(y.res));
+let tt; const toast = m => { const t = $('#toast'); t.textContent = m; t.hidden = false; clearTimeout(tt); tt = setTimeout(() => t.hidden = true, 3200); };
+const api = (p, o = {}) => fetch(SB_URL + '/rest/v1/' + p, { ...o, headers: { apikey: SB_KEY, Authorization: 'Bearer ' + SB_KEY, 'Content-Type': 'application/json', ...o.headers } });
+
+/* ---------- Daftar film (Supabase) ---------- */
+let films = [];
+async function loadFilms() {
+  if (SB_URL.includes('PROJECT_ID')) $('#warn').innerHTML = '<div class="note">Supabase belum diatur. Isi SB_URL dan SB_KEY di index.html, lalu jalankan SQL di bagian atas file.</div>';
+  else try { const r = await api('films?select=*&order=created_at.desc'); if (!r.ok) throw 0; films = await r.json(); } catch { toast('Gagal memuat film. Cek URL, key, dan tabel Supabase.'); }
+  renderFilms();
+}
+function renderFilms() {
+  $('#grid').innerHTML = films.length ? films.map((f, i) => {
+    const h = [...f.title].reduce((a, c) => (a * 31 + c.charCodeAt(0)) & 0xffff, 7) % 360;
+    return `<article class="card"><div class="poster" style="background:linear-gradient(165deg,hsl(${h} 55% 34%),hsl(${(h + 40) % 360} 60% 14%))">${esc(f.title)}</div>
+    <div class="stub"><div>${byRes(f.sources).map(s => `<span class="chip">${esc(s.res)}</span>`).join('')}</div><button class="btn pri" data-i="${i}">Buat room</button></div></article>`;
+  }).join('') : '<div class="empty">Belum ada film. Klik “Tambah film” untuk memasukkan link CDN pertamamu.</div>';
+}
+$('#grid').onclick = e => { const b = e.target.closest('[data-i]'); if (b) startHost(films[b.dataset.i]); };
+
+/* ---------- Tambah film ---------- */
+const rowHtml = (r = '720p') => `<div class="row"><input class="u" placeholder="https://cdn-kamu.com/film.mp4" aria-label="Link CDN"><select class="r" aria-label="Resolusi">${RES.map(x => `<option${x === r ? ' selected' : ''}>${x}</option>`).join('')}</select><button class="btn x" title="Hapus baris">✕</button></div>`;
+$('#ab').onclick = () => { $('#ft').value = ''; $('#rows').innerHTML = rowHtml(); $('#modal').hidden = false; $('#ft').focus(); };
+$('#ar').onclick = () => $('#rows').insertAdjacentHTML('beforeend', rowHtml('1080p'));
+$('#rows').onclick = e => { if (e.target.classList.contains('x') && $('#rows').children.length > 1) e.target.parentNode.remove(); };
+$('#cn').onclick = () => $('#modal').hidden = true;
+$('#sv').onclick = async () => {
+  const title = $('#ft').value.trim();
+  const sources = [...document.querySelectorAll('#rows .row')].map(r => ({ res: r.querySelector('.r').value, url: r.querySelector('.u').value.trim() })).filter(s => s.url);
+  if (!title || !sources.length) return toast('Isi nama film dan minimal satu link.');
+  if (sources.some(s => !/^https:\/\//i.test(s.url))) return toast('Link harus diawali https://');
+  if (new Set(sources.map(s => s.res)).size < sources.length) return toast('Resolusi tidak boleh sama dalam satu film.');
+  try {
+    const r = await api('films', { method: 'POST', headers: { Prefer: 'return=minimal' }, body: JSON.stringify({ title, sources }) });
+    if (!r.ok) throw 0;
+    $('#modal').hidden = true; toast('Film ditambahkan'); loadFilms();
+  } catch { toast('Gagal menyimpan. Cek konfigurasi Supabase.'); }
+};
+
+/* ---------- Room & sinkronisasi P2P ---------- */
+let peer, conns = [], hostConn, isHost = false, film, code, curRes;
+let wantPlay = false, holding = false, myBuf = false, rt = null, supUntil = 0;
+const bufSet = new Set();
+const sup = (ms = 300) => supUntil = Date.now() + ms;
+const muted = () => Date.now() < supUntil;
+
+const broadcast = (m, except) => conns.forEach(c => c !== except && c.open && c.send(m));
+const emit = m => isHost ? broadcast(m) : hostConn && hostConn.open && hostConn.send(m);
+const doPlay = () => { sup(); v.play().catch(() => toast('Tekan tombol play untuk lanjut nonton')); };
+const doPause = () => { if (!v.paused) { sup(); v.pause(); } };
+const jump = t => { if (Math.abs(v.currentTime - t) > 0.4) { rt = t; v.currentTime = t; } };
+
+function apply(m) {
+  switch (m.t) {
+    case 'play': wantPlay = true; jump(m.time); if (!holding) doPlay(); break;
+    case 'pause': wantPlay = false; jump(m.time); doPause(); break;
+    case 'seek': jump(m.time); break;
+    case 'hold': holding = m.v; $('#hold').hidden = !m.v;
+      if (m.v) doPause(); else if (wantPlay) doPlay(); break;
+    case 'sync': wantPlay = m.playing;
+      if (Math.abs(v.currentTime - m.time) > 1.5) jump(m.time);
+      if (m.playing && !holding && v.paused) doPlay();
+      if (!m.playing && !v.paused) doPause(); break;
+    case 'count': $('#vw').textContent = m.n + ' penonton'; break;
+  }
+}
+function handleBuf(id, b) {
+  b ? bufSet.add(id) : bufSet.delete(id);
+  const h = bufSet.size > 0; if (h === holding) return;
+  apply({ t: 'hold', v: h }); broadcast({ t: 'hold', v: h });
+}
+function setBuf(b) { if (b === myBuf) return; myBuf = b; isHost ? handleBuf('host', b) : emit({ t: 'buf', v: b }); }
+
+v.onplay = () => { if (muted()) return; wantPlay = true; emit({ t: 'play', time: v.currentTime }); };
+v.onpause = () => { if (muted() || v.ended) return; wantPlay = false; emit({ t: 'pause', time: v.currentTime }); };
+v.onseeked = () => {
+  if (rt !== null && Math.abs(v.currentTime - rt) < 0.6) { rt = null; return; }
+  emit({ t: 'seek', time: v.currentTime });
+};
+v.onwaiting = () => setBuf(true);
+v.oncanplay = v.onplaying = () => setBuf(false);
+v.onerror = () => { toast('Video gagal dimuat. Cek link CDN atau coba resolusi lain.'); setBuf(false); };
+
+const skip = d => { v.currentTime = Math.max(0, Math.min(v.duration || 1e9, v.currentTime + d)); };
+$('#b10').onclick = () => skip(-10);
+$('#f10').onclick = () => skip(10);
+document.addEventListener('keydown', e => {
+  if ($('#watch').hidden || /INPUT|SELECT/.test(e.target.tagName)) return;
+  if (e.key === 'ArrowLeft') { e.preventDefault(); skip(-10); }
+  if (e.key === 'ArrowRight') { e.preventDefault(); skip(10); }
+});
+
+/* Resolusi: 1 pilihan → tampil 1 label saja */
+function loadSrc(res, t = 0, play = false) {
+  curRes = res; sup(1500);
+  v.src = film.sources.find(s => s.res === res).url;
+  v.addEventListener('loadedmetadata', () => { if (t > 0) { rt = t; v.currentTime = t; } if (play && !holding) doPlay(); }, { once: true });
+  renderRes();
+}
+function renderRes() {
+  const s = byRes(film.sources), box = $('#res');
+  box.hidden = false;
+  box.innerHTML = s.length === 1 ? `<span>${esc(s[0].res)}</span>` : s.map(x => `<button class="${x.res === curRes ? 'on' : ''}" data-r="${esc(x.res)}">${esc(x.res)}</button>`).join('');
+}
+$('#res').onclick = e => { const r = e.target.dataset.r; if (r && r !== curRes) loadSrc(r, v.currentTime, !v.paused); };
+
+function showWatch() {
+  $('#home').hidden = true; $('#watch').hidden = false;
+  $('#wt').textContent = film.title; $('#rc').textContent = code;
+  history.replaceState(null, '', '#room=' + code);
+  scrollTo(0, 0);
+}
+const defRes = () => byRes(film.sources).pop().res;
+
+function startHost(f) {
+  leave(true); isHost = true; film = f;
+  code = Math.random().toString(36).slice(2, 7).toUpperCase();
+  try { peer = new Peer('nobar-' + code); } catch { return toast('Gagal memuat PeerJS. Cek koneksi internet.'); }
+  peer.on('open', () => { showWatch(); loadSrc(defRes()); $('#vw').textContent = '1 penonton'; });
+  peer.on('error', e => { if (e.type === 'unavailable-id') startHost(f); else toast('Koneksi gagal: ' + e.type); });
+  peer.on('connection', c => {
+    c.on('open', () => {
+      conns.push(c);
+      c.send({ t: 'init', film, code, time: v.currentTime, playing: wantPlay && !holding });
+      c.send({ t: 'hold', v: holding }); count();
+    });
+    c.on('data', m => { if (m.t === 'buf') handleBuf(c.peer, m.v); else { apply(m); broadcast(m, c); } });
+    const drop = () => { conns = conns.filter(x => x !== c); handleBuf(c.peer, false); count(); };
+    c.on('close', drop); c.on('error', drop);
+  });
+}
+function count() { const n = conns.length + 1; $('#vw').textContent = n + ' penonton'; broadcast({ t: 'count', n }); }
+setInterval(() => { if (isHost && conns.length) broadcast({ t: 'sync', time: v.currentTime, playing: wantPlay }); }, 4000);
+
+function join(c) {
+  c = (c || '').trim().toUpperCase(); if (!c) return toast('Masukkan kode room dulu.');
+  leave(true); isHost = false; code = c;
+  try { peer = new Peer(); } catch { return toast('Gagal memuat PeerJS. Cek koneksi internet.'); }
+  peer.on('error', e => { toast(e.type === 'peer-unavailable' ? 'Room tidak ditemukan. Cek kodenya.' : 'Koneksi gagal: ' + e.type); leave(); });
+  peer.on('open', () => {
+    hostConn = peer.connect('nobar-' + c, { reliable: true });
+    hostConn.on('data', m => {
+      if (m.t !== 'init') return apply(m);
+      film = m.film; wantPlay = m.playing; showWatch();
+      const r = defRes(); curRes = r; loadSrc(r, m.time, m.playing);
+    });
+    hostConn.on('close', () => { toast('Host menutup room.'); leave(); });
+  });
+}
+
+function leave(quiet) {
+  if (peer) peer.destroy();
+  peer = hostConn = null; conns = []; bufSet.clear(); isHost = false;
+  wantPlay = holding = myBuf = false; rt = null; $('#hold').hidden = true;
+  sup(1500); v.removeAttribute('src'); v.load();
+  $('#watch').hidden = true; $('#home').hidden = false;
+  if (!quiet) history.replaceState(null, '', location.pathname);
+}
+$('#leave').onclick = () => leave();
+$('#jb').onclick = () => join($('#jc').value);
+$('#jc').onkeydown = e => { if (e.key === 'Enter') join($('#jc').value); };
+$('#cp').onclick = () => {
+  const link = location.origin + location.pathname + '#room=' + code;
+  (navigator.clipboard ? navigator.clipboard.writeText(link) : Promise.reject()).then(() => toast('Link room disalin'), () => toast('Kode room: ' + code));
+};
+
+loadFilms();
+const hm = location.hash.match(/room=([A-Za-z0-9]+)/);
+if (hm) join(hm[1]);
+</script>
+</body>
+</html>
