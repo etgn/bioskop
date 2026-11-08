@@ -106,6 +106,28 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:14px;heigh
 .rp .in{padding:10px 14px;background:#0b0a14d9}
 #ctg{display:none!important}
 .pl.rm:fullscreen #ctg{display:grid!important}
+.et{position:relative;width:120px;aspect-ratio:16/10;flex:none;border-radius:12px;overflow:hidden;background:linear-gradient(160deg,hsl(var(--h) 60% 35%),#0c0b16)}
+.et img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
+.et:after{content:"▶";position:absolute;z-index:1;inset:0;margin:auto;width:30px;height:30px;border-radius:50%;background:#0009;display:grid;place-items:center;font-size:11px;color:#fff;padding-left:2px}
+.en{position:absolute;z-index:2;left:6px;bottom:6px;padding:1px 8px;border-radius:7px;background:#000b;font:700 11px "JetBrains Mono",monospace;color:#fff}
+.eps .b2.on{border-color:transparent}
+/* tampilan serial */
+.sh{display:grid;justify-items:center;text-align:center;gap:10px;padding-bottom:6px}
+.sh .po{width:170px;aspect-ratio:2/3;box-shadow:0 18px 60px -12px #8b5cf6aa}
+.sh h1{font-size:26px;margin-top:8px}
+.chips{display:flex;flex-wrap:wrap;gap:8px;justify-content:center}
+.chip{padding:6px 12px;border-radius:99px;border:1px solid var(--ln);background:#ffffff0a;font:600 12px Inter,sans-serif}
+.syn{text-align:left;width:100%;border:1px solid var(--ln);background:var(--cd);border-radius:20px;padding:16px}
+.syn h3{font-size:14px;margin-bottom:6px}.syn p{color:var(--mu);font-size:14px;line-height:1.6}
+.sh .b1{max-width:420px}
+.pcard{margin-top:14px;border:1px solid var(--ln);background:var(--cd);border-radius:20px;padding:14px 16px;display:grid;gap:8px}
+.pcard small{color:var(--mu)}
+.rr{display:flex;gap:12px;overflow-x:auto;padding-bottom:6px}
+.rr .cd{width:128px;flex:none}
+.tb{display:flex;gap:8px}
+.du{position:absolute;z-index:2;right:6px;bottom:6px;padding:1px 8px;border-radius:7px;background:#000b;font:700 11px "JetBrains Mono",monospace;color:#fff}
+.du:empty{display:none}
+.hi .ib[data-dl]{background:#8b5cf626;color:#a78bfa;border-radius:12px;flex:none}
 </style>
 </head>
 <body>
@@ -132,17 +154,24 @@ const resNum=r=>r==='4K'?2160:parseInt(r,10)||0;
 const RES=['360p','480p','720p','1080p','1440p','4K'];
 
 let catalog=[],cur=null,mode='in',S={q:''},hist=[];
-function normalize(r){const s=(Array.isArray(r.sources)?r.sources:[]).filter(x=>x&&/^https?:\/\//i.test(x.url||''));return{...r,title:r.title||'Tanpa judul',sources:s.sort((a,b)=>resNum(a.res)-resNum(b.res))}}
+const isS=a=>!!(a.episodes&&a.episodes.length);
+const qualsOf=a=>[...new Set((isS(a)?a.episodes.flatMap(e=>e.sources):a.sources).map(x=>x.res||'Auto'))].sort((x,y)=>resNum(x)-resNum(y));
+const wl=(a,ep)=>'#/watch/'+encodeURIComponent(a.id)+(ep?'/auto/'+ep:'');
+function normalize(r){
+ const ok=x=>x&&/^https?:\/\//i.test(x.url||''),ss=a=>(Array.isArray(a)?a:[]).filter(ok).sort((a,b)=>resNum(a.res)-resNum(b.res));
+ const episodes=(Array.isArray(r.episodes)?r.episodes:[]).map(e=>({no:Number(e.no),title:e.title||'',thumb:e.thumb||'',sources:ss(e.sources)})).filter(e=>Number.isFinite(e.no)&&e.sources.length).sort((a,b)=>a.no-b.no);
+ return{...r,title:r.title||'Tanpa judul',sources:ss(r.sources),episodes}
+}
 async function loadCatalog(){
  $('#app').innerHTML='<div class="lg"><div class="lc"><div class="logo big">Bioskop <span>Ana</span></div><p class="mu">Menghubungkan ke database…</p></div></div>';
- try{const r=await api('films?select=id,title,sources,created_at&order=created_at.desc');if(!r.ok)throw Error(await r.text()||'HTTP '+r.status);
-  catalog=(await r.json()).map(normalize).filter(f=>f.sources.length);render()
+ try{const r=await api('films?select=id,title,sources,episodes,created_at&order=created_at.desc');if(!r.ok)throw Error(await r.text()||'HTTP '+r.status);
+  catalog=(await r.json()).map(normalize).filter(f=>f.sources.length||f.episodes.length);render()
  }catch(e){$('#app').innerHTML=`<main><div class="logo big">Bioskop <span>Ana</span></div><div class="status mt">Gagal mengambil data.<br><br>${esc(e.message)}</div><button class="b1 mt" onclick="loadCatalog()">Coba lagi</button></main>`}
 }
 async function loadHist(){
  if(!user())return;
- try{const r=await api('watch_history?select=film_id,position,duration,updated_at&username=eq.'+encodeURIComponent(user())+'&order=updated_at.desc');
-  if(r.ok)hist=(await r.json()).map(x=>({id:x.film_id,t:x.position,d:x.duration})).filter(x=>catalog.some(a=>a.id===x.id))}catch{}
+ try{const r=await api('watch_history?select=film_id,episode,position,duration,updated_at&username=eq.'+encodeURIComponent(user())+'&order=updated_at.desc');
+  if(r.ok)hist=(await r.json()).map(x=>({id:x.film_id,ep:x.episode||0,t:x.position,d:x.duration})).filter(x=>catalog.some(a=>a.id===x.id))}catch{}
 }
 
 /* ===== akun ===== */
@@ -175,15 +204,92 @@ async function auth(m,u,p){
 
 /* ===== tampilan ===== */
 const hue=s=>[...s].reduce((n,c)=>(n*31+c.charCodeAt(0))&65535,7)%360;
-const card=a=>`<a class="cd" href="#/film/${encodeURIComponent(a.id)}"><div class="po" style="--h:${hue(a.title)}"><img data-t="${esc(a.title)}" alt="" onerror="this.remove()"><span class="tg">${a.sources.length} kualitas</span><b>${esc(a.title)}</b></div><small>${a.sources.map(s=>esc(s.res||'Auto')).join(' • ')}</small></a>`;
+const card=a=>`<a class="cd" href="#/film/${encodeURIComponent(a.id)}"><div class="po" style="--h:${hue(a.title)}"><img data-t="${esc(a.title)}" data-k="${isS(a)?'tv':''}" alt="" onerror="this.remove()"><span class="tg">${isS(a)?a.episodes.length+' episode':a.sources.length+' kualitas'}</span><b>${esc(a.title)}</b></div><small>${qualsOf(a).map(esc).join(' • ')}</small></a>`;
 const histCard=x=>{const a=catalog.find(z=>z.id===x.id);if(!a)return'';const p=x.d?Math.min(100,x.t/x.d*100):0;
- return`<a class="hi" href="#/watch/${encodeURIComponent(a.id)}"><div class="po s" style="--h:${hue(a.title)}"><img data-t="${esc(a.title)}" alt=""></div><div class="hm"><b>${esc(a.title)}</b><small>${ft(x.t)} / ${ft(x.d)}</small><div class="pg"><i style="width:${p}%"></i></div></div></a>`};
-function detail(a){return`<a class="back" href="#/">${ic('back',20)}Beranda</a><div class="dt"><div class="po" style="--h:${hue(a.title)}"><img data-t="${esc(a.title)}" alt=""></div><div><h1>${esc(a.title)}</h1><p class="mu">Pilih kualitas video untuk mulai menonton.</p><div class="eps mt">${a.sources.map((s,i)=>`<a class="b2" href="#/watch/${encodeURIComponent(a.id)}/${i}">${esc(s.res||'Putar')}</a>`).join('')}</div>${isAdmin()?`<button class="b2 mt" data-edit="${esc(a.id)}">Edit film</button>`:''}</div></div>`}
+ return`<a class="hi" href="${wl(a,x.ep)}"><div class="po s" style="--h:${hue(a.title)}"><img data-t="${esc(a.title)}" data-k="${isS(a)?'tv':''}" alt=""></div><div class="hm"><b>${esc(a.title)}${x.ep?' · Ep '+x.ep:''}</b><small>${ft(x.t)} / ${ft(x.d)}</small><div class="pg"><i style="width:${p}%"></i></div></div></a>`};
+function detail(a){return`<a class="back" href="#/">${ic('back',20)}Beranda</a><div class="dt"><div class="po" style="--h:${hue(a.title)}"><img data-t="${esc(a.title)}" data-k="${isS(a)?'tv':''}" alt=""></div><div><h1>${esc(a.title)}</h1><p class="mu">Pilih kualitas video untuk mulai menonton.</p><div class="eps mt">${a.sources.map((s,i)=>`<a class="b2" href="#/watch/${encodeURIComponent(a.id)}/${i}">${esc(s.res||'Putar')}</a>`).join('')}</div>${isAdmin()?`<button class="b2 mt" data-edit="${esc(a.id)}">Edit film</button>`:''}</div></div>`}
 
+let ES={q:'',asc:false,n:8};
+function resumeTarget(a){const h=hist.find(x=>x.id===a.id&&x.ep),E=a.episodes;if(!h)return E[0].no;
+ if(h.d&&h.t/h.d>.95){const nx=E.find(e=>e.no>h.ep);return nx?nx.no:h.ep}return h.ep}
+
+/* durasi episode: diambil dari metadata video (2 sekaligus), disimpan di cache */
+const dq=[];let dbusy=0;
+const setDur=(el,d)=>{if(el.isConnected)el.textContent=Math.max(1,Math.round(d/60))+'m'};
+function probe(el,url){
+ const k='bs:dur:'+url,c=ls.get(k,0);if(c)return setDur(el,c);
+ dq.push({el,url,k});pump()
+}
+function pump(){
+ if(dbusy>=2||!dq.length)return;dbusy++;
+ const j=dq.shift(),v=document.createElement('video');let done=0;
+ v.preload='metadata';
+ const end=()=>{if(done)return;done=1;clearTimeout(t);v.onloadedmetadata=v.onerror=null;v.removeAttribute('src');dbusy--;pump()};
+ const t=setTimeout(end,15000);
+ v.onloadedmetadata=()=>{if(isFinite(v.duration)){ls.set(j.k,v.duration);setDur(j.el,v.duration)}end()};
+ v.onerror=end;v.src=j.url
+}
+/* sinopsis, rating, tahun dari TMDB */
+async function loadMeta(a){
+ const k='bs:m:'+a.title.toLowerCase();let m=ls.get(k,null);
+ if(!m){
+  const q=a.title.replace(/\(.*?\)/g,'').trim();
+  try{
+   for(const l of['id-ID','en-US']){
+    const r=await fetch(`https://api.themoviedb.org/3/search/tv?api_key=${TMDB_KEY}&language=${l}&query=${encodeURIComponent(q)}`);
+    if(!r.ok)break;const h=((await r.json()).results||[])[0];if(!h)break;
+    m={o:h.overview||'',r:h.vote_average||0,y:(h.first_air_date||'').slice(0,4)};if(m.o)break
+   }
+  }catch{}
+  if(m)ls.set(k,m)
+ }
+ const s=$('#syn'),c=$('#chips');if(!m||!s||!c)return;
+ if(m.r>0)c.insertAdjacentHTML('beforeend',`<span class="chip">★ ${m.r.toFixed(1)}</span>`);
+ if(m.y)c.insertAdjacentHTML('beforeend',`<span class="chip">${esc(m.y)}</span>`);
+ if(m.o){s.querySelector('p').textContent=m.o;s.hidden=false}
+}
+/* serial lain dengan awalan judul sama (Season 2, The Movie, dst.) */
+function related(a){
+ const p=a.title.split(/\s+/).slice(0,2).join(' ').toLowerCase();
+ const L=catalog.filter(x=>x.id!==a.id&&x.title.toLowerCase().startsWith(p));
+ return L.length?`<h2>Terkait</h2><div class="rr">${L.map(card).join('')}</div>`:''
+}
+function seriesDetail(a){
+ const tot=a.episodes.length,
+  done=new Set(hist.filter(h=>h.id===a.id&&h.ep&&h.d&&h.t/h.d>.95).map(h=>h.ep)).size,
+  pc=Math.round(done/tot*100),tg=resumeTarget(a),st=hist.some(h=>h.id===a.id&&h.ep);
+ return`<a class="back" href="#/">${ic('back',20)}Beranda</a>
+<div class="sh"><div class="po" style="--h:${hue(a.title)}"><img data-t="${esc(a.title)}" data-k="tv" alt=""></div>
+<h1>${esc(a.title)}</h1>
+<div class="chips" id="chips"><span class="chip">${tot} Episode</span><span class="chip">${qualsOf(a).map(esc).join(' • ')}</span></div>
+<div class="syn" id="syn" hidden><h3>Sinopsis</h3><p></p></div>
+<a class="b1 mt" href="${wl(a,tg)}">${ic('play',18)} ${st?'Lanjutkan':'Tonton'} Episode ${tg}</a></div>
+<div class="pcard"><b>Progres menonton</b><div class="pg"><i style="width:${pc}%"></i></div><small>${done} dari ${tot} episode selesai · ${pc}%</small></div>
+${related(a)}
+<h2>Episode (${tot})</h2>
+<div class="tb"><input class="in" id="eq" placeholder="Cari episode… (mis. 15)"><button class="b2" id="es" style="white-space:nowrap"></button></div>
+<div class="list mt" id="el"></div><div id="em"></div>`}
+function epItem(a,e){
+ const h=hist.find(x=>x.id===a.id&&x.ep===e.no),p=h&&h.d?Math.min(100,h.t/h.d*100):0,
+  t=!h?'Belum ditonton':p>95?'Selesai ✓':ft(h.t)+' / '+ft(h.d),
+  d=h&&h.d?Math.max(1,Math.round(h.d/60))+'m':'';
+ return`<a class="hi" href="${wl(a,e.no)}"><div class="et" style="--h:${hue(a.title)}">${e.thumb?`<img src="${esc(e.thumb)}" loading="lazy" alt="" onerror="this.remove()">`:''}<span class="en">Ep ${e.no}</span><span class="du" data-u="${esc(e.sources[0].url)}">${d}</span></div><div class="hm"><b>${esc(e.title||'Episode '+e.no)}</b><small>${t}</small>${h&&p<=95?`<div class="pg"><i style="width:${p}%"></i></div>`:''}</div><button class="ib" data-dl="${esc(a.id)}:${e.sources.length-1}:${e.no}">${ic('dl')}</button></a>`}
+function epList(a){
+ let L=[...a.episodes].sort((x,y)=>ES.asc?x.no-y.no:y.no-x.no);const q=ES.q.trim().toLowerCase();
+ if(q)L=L.filter(e=>String(e.no).includes(q)||(e.title||'').toLowerCase().includes(q));
+ $('#el').innerHTML=L.slice(0,ES.n).map(e=>epItem(a,e)).join('')||'<p class="mu">Episode tidak ditemukan.</p>';
+ $('#em').innerHTML=L.length>ES.n?`<button class="b2 mt" id="mm" style="width:100%;justify-content:center;color:#a78bfa">Lebih banyak (${L.length-ES.n})</button>`:'';
+ $('#es').textContent=ES.asc?'↑ Terlama':'↓ Terbaru';
+ const m=$('#mm');if(m)m.onclick=()=>{ES.n+=8;epList(a)};
+ document.querySelectorAll('#el .du').forEach(el=>{if(!el.textContent)probe(el,el.dataset.u)});
+ const s=$('#syn');if(s&&!s.dataset.l){s.dataset.l=1;loadMeta(a)}}
+function epNav(a,E){
+ const asc=[...a.episodes].sort((x,y)=>x.no-y.no),i=asc.findIndex(e=>e.no===E.no),pv=asc[i-1],nx=asc[i+1];
+ return`<div class="btns" style="margin:0 0 6px">${pv?`<a class="b2" data-ep href="${wl(a,pv.no)}">‹ Ep ${pv.no}</a>`:''}${nx?`<a class="b2 on" data-ep href="${wl(a,nx.no)}">Ep ${nx.no} ›</a>`:''}</div><h2>Pilih episode</h2><div class="eps" style="max-height:150px;overflow:auto">${asc.map(e=>`<a class="b2 ${e.no===E.no?'on':''}" data-ep href="${wl(a,e.no)}" style="padding:8px 14px">${e.no}</a>`).join('')}</div>`}
 function view(parts){
- const[p,id,idx]=parts;
- if(!p){const h=hist.slice(0,3);return[`<div class="fm" style="display:flex;gap:8px;margin-bottom:6px"><input class="in" id="jc" placeholder="Kode room nobar" maxlength="8" style="text-transform:uppercase"><button class="b2" id="jb">${ic('users',18)} Gabung</button></div>
- ${isAdmin()?'<div class="btns" style="margin:12px 0 0"><button class="b2" data-edit="">+ Tambah film</button><button class="b2" id="ij">Impor file JSON</button><input type="file" id="jf" accept=".json,application/json" multiple hidden></div>':''}
+ const[p,id,idx,epq]=parts;
+ if(!p){const sn=new Set(),h=hist.filter(x=>!sn.has(x.id)&&sn.add(x.id)).slice(0,3);return[`<div class="fm" style="display:flex;gap:8px;margin-bottom:6px"><input class="in" id="jc" placeholder="Kode room nobar" maxlength="8" style="text-transform:uppercase"><button class="b2" id="jb">${ic('users',18)} Gabung</button></div>
+ ${isAdmin()?'<div class="btns" style="margin:12px 0 0"><button class="b2" data-edit="">+ Tambah film</button><button class="b2" id="ij">Impor file JSON</button><button class="b2" id="is">Impor banyak episode</button><input type="file" id="sf" accept=".json,application/json" multiple hidden><input type="file" id="jf" accept=".json,application/json" multiple hidden></div>':''}
  ${h.length?`<h2>Lanjutkan menonton</h2><div class="list">${h.map(histCard).join('')}</div>`:''}<h2>Semua film</h2>
  ${catalog.length?`<div class="grid">${catalog.map(card).join('')}</div>`:'<p class="status">Belum ada film di database.</p>'}`,()=>{
   const go=()=>{const c=$('#jc').value.trim().toUpperCase();c?joinRoom(c):toast('Masukkan kode room dulu.')};
@@ -194,21 +300,26 @@ function view(parts){
  if(p==='history')return[`<h2>Riwayat tontonan</h2>${hist.length?`<div class="list">${hist.map(histCard).join('')}</div><button class="b2 mt" id="ch">Hapus riwayat</button>`:'<p class="mu">Belum ada riwayat tontonan.</p>'}`,()=>{
   const b=$('#ch');if(b)b.onclick=async()=>{await api('watch_history?username=eq.'+encodeURIComponent(user()),{method:'DELETE'});hist=[];render()}}];
  if(p==='downloads'){const d=ls.get('bs:d:'+user(),[]).filter(x=>catalog.some(a=>a.id===x.id));
-  return[`<h2>Unduhan</h2>${d.length?`<div class="list">${d.map(x=>{const a=catalog.find(z=>z.id===x.id);return`<div class="hi"><div class="hm"><b>${esc(a.title)}</b><small>${esc(x.res||'Video')}</small></div><button class="ib" data-dl="${esc(x.id)}:${x.index}">${ic('dl')}</button></div>`}).join('')}</div>`:'<p class="mu">Belum ada unduhan.</p>'}`]}
- if(p==='film'){const a=catalog.find(x=>x.id===id);return a?[detail(a)]:['<p class="mu">Film tidak ditemukan.</p>']}
+  return[`<h2>Unduhan</h2>${d.length?`<div class="list">${d.map(x=>{const a=catalog.find(z=>z.id===x.id);return`<div class="hi"><div class="hm"><b>${esc(a.title)}${x.ep?' · Ep '+x.ep:''}</b><small>${esc(x.res||'Video')}</small></div><button class="ib" data-dl="${esc(x.id)}:${x.index}:${x.ep||0}">${ic('dl')}</button></div>`}).join('')}</div>`:'<p class="mu">Belum ada unduhan.</p>'}`]}
+ if(p==='film'){const a=catalog.find(x=>x.id===id);if(!a)return['<p class="mu">Film tidak ditemukan.</p>'];
+  if(!isS(a))return[detail(a)];
+  ES={q:'',asc:false,n:8};
+  return[seriesDetail(a),()=>{const q=$('#eq');q.oninput=()=>{ES.q=q.value;ES.n=8;epList(a)};$('#es').onclick=()=>{ES.asc=!ES.asc;epList(a)};epList(a)}]}
  if(p==='watch'){
   const a=catalog.find(x=>x.id===id);if(!a)return['<p class="mu">Film tidak ditemukan.</p>'];
-  const n=Math.max(0,Math.min(Number(idx)||(a.sources.length-1),a.sources.length-1)),src=a.sources[n];
+  const E=isS(a)?(a.episodes.find(e=>e.no===Number(epq))||a.episodes[0]):null,list=E?E.sources:a.sources;
+  const n=/^\d+$/.test(idx||'')?Math.min(+idx,list.length-1):list.length-1,src=list[n],T=a.title+(E?' · Episode '+E.no:'');
+  const nxE=E?a.episodes.find(e=>e.no>E.no):null,rl=i=>'#/watch/'+encodeURIComponent(a.id)+'/'+i+(E?'/'+E.no:'');
   return[`<a class="back" href="#/film/${encodeURIComponent(a.id)}">${ic('back',20)}Detail film</a>
 <div class="pl ui" id="pl"><video id="v" playsinline preload="metadata" src="${esc(src.url)}"></video><div class="buf" id="buf"><div id="bt">Memuat video…</div></div><div class="fl" id="fl"></div><div class="rp" id="rp"><input class="in" id="ri" placeholder="Balas komentar…" maxlength="300"><button class="b2" id="rs">Kirim</button></div>
-<div class="ov t"><a class="ib" href="#/film/${encodeURIComponent(a.id)}">${ic('back',20)}</a><div class="tt"><b>${esc(a.title)}</b><small>${esc(src.res||'Video')}</small></div></div>
+<div class="ov t"><a class="ib" href="#/film/${encodeURIComponent(a.id)}">${ic('back',20)}</a><div class="tt"><b>${esc(T)}</b><small>${esc(src.res||'Video')}</small></div></div>
 <div class="ov b"><div class="tm"><b id="cur">00:00</b><input id="sk" type="range" min="0" max="100" step=".1" value="0"><b id="dur">00:00</b></div>
 <div class="ct"><button id="pp">${ic('play',26)}</button><button id="rw">${ic('rw')}</button><button id="fw">${ic('fw')}</button><button id="mu">${ic('vol')}</button><input id="vo" type="range" min="0" max="1" step=".05" value="1"><button id="ctg" title="Balas komentar">${ic('chat')}</button><button id="sp">${ic('gear')}</button><button id="fs">${ic('full')}</button></div></div></div>
-<section class="info"><div class="lb">SEDANG DIPUTAR</div><h1>${esc(a.title)}</h1><div class="eb">${esc(src.res||'Video')}</div>
+<section class="info"><div class="lb">SEDANG DIPUTAR</div><h1>${esc(T)}</h1><div class="eb">${esc(src.res||'Video')}</div>
 <div class="btns"><button class="b2" id="dl">${ic('dl')} Unduh</button><button class="b2" id="nb">${ic('users',18)} Nobar</button></div>
 <div class="room" id="room" hidden><div class="rc"><span class="mu">Room</span><b class="code" id="rcode">…</b><button class="b2" id="cp">Salin link</button><span class="mu" id="vw"></span></div>
 <div class="cm" id="cm"></div><div class="cin"><input class="in" id="ci" placeholder="Tulis komentar…" maxlength="300"><button class="b2" id="cs">Kirim</button></div></div>
-<h2>Pilih resolusi</h2><div class="eps">${a.sources.map((s,i)=>`<a class="b2 ${i===n?'on':''}" href="#/watch/${encodeURIComponent(a.id)}/${i}">${esc(s.res||'Putar')}</a>`).join('')}</div></section>`,()=>player(a,n)]}
+${E?epNav(a,E):''}<h2>Pilih resolusi</h2><div class="eps">${list.map((s,i)=>`<a class="b2 ${i===n?'on':''}" data-ep href="${rl(i)}">${esc(s.res||'Putar')}</a>`).join('')}</div></section>`,()=>player(a,n,E?E.no:0,nxE?wl(a,nxE.no):'')]}
  if(p==='more')return[`<h2>Akun</h2><div class="hi"><div class="av">${esc(user()[0].toUpperCase())}</div><div class="hm"><b>${esc(user())}</b><small>${isAdmin()?'Admin':'Pengguna'}</small></div></div>
  <div class="list mt"><a class="hi" href="#/history">${ic('clock')} Riwayat tontonan</a><a class="hi" href="#/downloads">${ic('dl')} Unduhan</a></div><button class="b2 mt" id="lo">Keluar</button>`,()=>{
   $('#lo').onclick=()=>{saveNow();leaveRoom();cur=null;hist=[];ls.set('bs:s',null);render()}}];
@@ -217,15 +328,15 @@ function view(parts){
 
 /* ===== riwayat ke database ===== */
 function saveNow(){
- if(!cur||!user())return;const{a,v,n}=cur;if(!isFinite(v.duration)||!v.duration)return;
- const row={username:user(),film_id:a.id,position:v.currentTime,duration:v.duration,res:a.sources[n].res||null,updated_at:new Date().toISOString()};
- const i=hist.findIndex(x=>x.id===a.id);if(i>=0)hist.splice(i,1);hist.unshift({id:a.id,t:row.position,d:row.duration});
- api('watch_history?on_conflict=username,film_id',{method:'POST',keepalive:true,headers:{Prefer:'resolution=merge-duplicates,return=minimal'},body:JSON.stringify(row)}).catch(()=>{});
+ if(!cur||!user())return;const{a,v,ep}=cur;if(!isFinite(v.duration)||!v.duration)return;
+ const row={username:user(),film_id:a.id,position:v.currentTime,duration:v.duration,res:null,episode:ep||0,updated_at:new Date().toISOString()};
+ const i=hist.findIndex(x=>x.id===a.id&&x.ep===(ep||0));if(i>=0)hist.splice(i,1);hist.unshift({id:a.id,ep:ep||0,t:row.position,d:row.duration});
+ api('watch_history?on_conflict=username,film_id,episode',{method:'POST',keepalive:true,headers:{Prefer:'resolution=merge-duplicates,return=minimal'},body:JSON.stringify(row)}).catch(()=>{});
 }
-async function download(a,i){
- const s=a.sources[i];if(!s)return;
- const d=ls.get('bs:d:'+user(),[]).filter(x=>!(x.id===a.id&&x.index===i));d.unshift({id:a.id,index:i,res:s.res});ls.set('bs:d:'+user(),d);
- const name=(a.title+' '+(s.res||'video')+'.mp4').replace(/[^\w .-]/g,'');
+async function download(a,i,ep){
+ const E=ep?a.episodes.find(e=>e.no===ep):null,s=(E?E.sources:a.sources)[i];if(!s)return;
+ const d=ls.get('bs:d:'+user(),[]).filter(x=>!(x.id===a.id&&x.index===i&&(x.ep||0)===(ep||0)));d.unshift({id:a.id,index:i,ep:ep||0,res:s.res});ls.set('bs:d:'+user(),d);
+ const name=(a.title+(ep?' Ep '+ep:'')+' '+(s.res||'video')+'.mp4').replace(/[^\w .-]/g,'');
  try{const r=await fetch(s.url);if(!r.ok)throw 0;const u=URL.createObjectURL(await r.blob()),l=document.createElement('a');l.href=u;l.download=name;l.click();URL.revokeObjectURL(u);toast('Unduhan dimulai')}
  catch{const l=document.createElement('a');l.href=s.url;l.target='_blank';l.rel='noopener';l.click();toast('Link video dibuka. Gunakan menu browser untuk mengunduh.')}
 }
@@ -246,6 +357,7 @@ function apply(m){
  case'seek':jump(m.time);break;
  case'hold':room.hold=m.v;if(m.v)doPause();else if(room.want)doPlay();break;
  case'sync':room.want=m.playing;if(Math.abs((V()?.currentTime||0)-m.time)>1.5)jump(m.time);if(m.playing&&!room.hold&&V()?.paused)doPlay();if(!m.playing&&V()&&!V().paused)doPause();break;
+ case'ep':if(!room.host){const a=catalog.find(x=>x.id===room.film);if(a){room.ep=m.ep;room.pend={time:0,playing:false};room.want=false;location.hash=wl(a,m.ep)}}break;
  case'count':room.n=m.n;showVw();break;
  case'chat':addChat(m);break}
 }
@@ -271,7 +383,7 @@ const sysMsg=text=>{const m={t:'chat',sys:1,text};addChat(m);bc(m)};
 const alive=r=>Date.now()-new Date(r.last_seen).getTime()<300000;
 const rget=c=>api('rooms?code=eq.'+encodeURIComponent(c)+'&select=*').then(r=>r.json()).then(x=>x[0]);
 async function startRoom(a,row){
- if(room)return;newRoom(true);room.film=a.id;
+ if(room)return;newRoom(true);room.film=a.id;room.ep=row?(row.episode||0):((cur&&cur.ep)||0);
  const gen=()=>Math.random().toString(36).slice(2,7).toUpperCase();
  room.code=row?row.code:gen();
  const pid='bioskop-'+room.code+'-'+Math.random().toString(36).slice(2,6);
@@ -284,7 +396,7 @@ async function startRoom(a,row){
    if(row){const r=await api('rooms?code=eq.'+row.code,{method:'PATCH',headers:{Prefer:'return=representation'},body:JSON.stringify({host_peer:pid,last_seen:now})});if(!(await r.json()).length)throw 0}
    else{
     await api('rooms?host=eq.'+encodeURIComponent(user()),{method:'DELETE'});
-    for(let i=0;;i++){const r=await api('rooms',{method:'POST',headers:{Prefer:'return=minimal'},body:JSON.stringify({code:room.code,film_id:a.id,host:user(),host_peer:pid,last_seen:now,pos:0,playing:false})});if(r.ok)break;if(i>=4)throw 0;room.code=gen()}
+    for(let i=0;;i++){const r=await api('rooms',{method:'POST',headers:{Prefer:'return=minimal'},body:JSON.stringify({code:room.code,film_id:a.id,episode:room.ep,host:user(),host_peer:pid,last_seen:now,pos:0,playing:false})});if(r.ok)break;if(i>=4)throw 0;room.code=gen()}
    }
   }catch{toast('Gagal menyimpan room ke database.');leaveRoom();return}
   showRoomUI();
@@ -297,14 +409,14 @@ async function startRoom(a,row){
  peer.on('disconnected',()=>{try{peer.reconnect()}catch{}});
  peer.on('error',e=>toast('Koneksi gagal: '+e.type));
  peer.on('connection',c=>{
-  c.on('open',()=>{if(!room)return;room.conns.push(c);const v=V();c.send({t:'init',film:room.film,time:v?v.currentTime:0,playing:room.want&&!room.hold});c.send({t:'hold',v:room.hold});cnt()});
+  c.on('open',()=>{if(!room)return;room.conns.push(c);const v=V();c.send({t:'init',film:room.film,ep:room.ep||0,time:v?v.currentTime:0,playing:room.want&&!room.hold});c.send({t:'hold',v:room.hold});cnt()});
   c.on('data',m=>{if(!room)return;if(m.t==='buf')handleBuf(c.peer,m.v);else if(m.t==='hello'){const fresh=!c.nick;c.nick=String(m.name).slice(0,20);if(fresh)sysMsg(c.nick+' bergabung')}else{apply(m);bc(m,c)}});
   const drop=()=>{if(!room||!room.conns.includes(c))return;room.conns=room.conns.filter(x=>x!==c);handleBuf(c.peer,false);if(c.nick)sysMsg(c.nick+' keluar');cnt()};
   c.on('close',drop);c.on('error',drop)});
 }
 function heartbeat(){
  if(!room||!room.host)return;const v=V();
- api('rooms?code=eq.'+room.code,{method:'PATCH',headers:{Prefer:'return=minimal'},body:JSON.stringify({last_seen:new Date().toISOString(),pos:v?v.currentTime:0,playing:!!room.want})}).catch(()=>{});
+ api('rooms?code=eq.'+room.code,{method:'PATCH',headers:{Prefer:'return=minimal'},body:JSON.stringify({last_seen:new Date().toISOString(),episode:room.ep||0,pos:v?v.currentTime:0,playing:!!room.want})}).catch(()=>{});
 }
 function cnt(){room.n=room.conns.length+1;showVw();bc({t:'count',n:room.n})}
 setInterval(()=>{if(room&&room.host&&room.conns.length&&V())bc({t:'sync',time:V().currentTime,playing:room.want})},4000);
@@ -316,7 +428,7 @@ async function resumeHost(){
   const row=(await r.json())[0];if(!row||!alive(row))return;
   const a=catalog.find(x=>x.id===row.film_id);if(!a)return;
   resumeRow=row;toast('Melanjutkan room '+row.code);
-  const h='#/watch/'+encodeURIComponent(a.id);if(location.hash===h)render();else location.hash=h;
+  const h=wl(a,row.episode);if(location.hash===h)render();else location.hash=h;
  }catch{}
 }
 
@@ -342,7 +454,7 @@ function connectHost(){
   if(m.t!=='init')return apply(m);
   room.joined=true;room.down=false;room.want=m.playing;room.pend={time:m.time,playing:m.playing};
   const a=catalog.find(x=>x.id===m.film);if(!a){toast('Film room tidak ada di katalogmu.');return leaveRoom()}
-  if(V()&&cur.a.id===a.id)bindRoomStart();else location.hash='#/watch/'+encodeURIComponent(a.id);
+  room.film=a.id;room.ep=m.ep||0;if(V()&&cur.a.id===a.id&&(cur.ep||0)===(m.ep||0))bindRoomStart();else location.hash=wl(a,m.ep);
  });
  c.on('close',()=>{if(room&&room.hc===c){room.down=true;room.hold=false;toast('Host terputus. Menunggu host kembali (maks 5 menit)…')}});
 }
@@ -360,8 +472,8 @@ function bindRoomStart(){const v=V();if(!room||!room.pend||!v)return;const p=roo
 function leaveRoom(){if(room){clearInterval(room.poll);clearInterval(room.hb)}if(peer){try{peer.destroy()}catch{}}peer=null;room=null}
 
 /* ===== pemutar ===== */
-function player(a,n){
- const v=$('#v'),pl=$('#pl'),sk=$('#sk'),vo=$('#vo');cur={a,n,v};
+function player(a,n,ep,nextHref){
+ const v=$('#v'),pl=$('#pl'),sk=$('#sk'),vo=$('#vo');cur={a,n,v,ep:ep||0};
  let timer,last=0,rate=0;const rates=[1,1.25,1.5,2,.75];
  const fill=(e,x)=>e.style.setProperty('--v',x+'%');
  const show=()=>{pl.classList.add('ui');clearTimeout(timer);if(!v.paused)timer=setTimeout(()=>pl.classList.remove('ui'),3000)};
@@ -379,7 +491,7 @@ function player(a,n){
  v.onloadedmetadata=()=>{
   sk.max=v.duration;$('#dur').textContent=ft(v.duration);
   if(room&&room.pend)return;
-  const h=hist.find(x=>x.id===a.id);if(h&&h.t>5&&h.t<v.duration-5)v.currentTime=h.t};
+  const h=hist.find(x=>x.id===a.id&&x.ep===(ep||0));if(h&&h.t>5&&h.t<v.duration-5)v.currentTime=h.t};
  v.ontimeupdate=()=>{if(!v.duration)return;sk.value=v.currentTime;fill(sk,v.currentTime/v.duration*100);$('#cur').textContent=ft(v.currentTime);if(Date.now()-last>5000){last=Date.now();saveNow()}};
  v.onwaiting=()=>{$('#buf').classList.add('on');$('#bt').textContent='Memuat…';setBuf(true)};
  v.onplaying=()=>{$('#buf').classList.remove('on');$('#pp').innerHTML=ic('pause',26);show();setBuf(false)};
@@ -388,11 +500,12 @@ function player(a,n){
  v.onpause=()=>{$('#pp').innerHTML=ic('play',26);show();saveNow();if(room&&!muted()&&!v.ended){room.want=false;emitT('pause')}};
  v.onseeked=()=>{if(!room)return;if(room.rt!==null&&Math.abs(v.currentTime-room.rt)<.8){room.rt=null;return}emitT('seek')};
  v.onerror=()=>{$('#buf').classList.add('on');$('#bt').textContent='Video gagal dimuat. Cek URL CDN.'};
- $('#dl').onclick=()=>download(a,n);
+ $('#dl').onclick=()=>download(a,n,ep);v.onended=()=>{if(nextHref&&(!room||room.host))location.hash=nextHref};
  $('#nb').onclick=()=>startRoom(a);
  if(room){showRoomUI();if(room.pend)bindRoomStart();else{room.rt=null;const t=hist.find(x=>x.id===a.id);if(!room.host&&room.want)v.play().catch(()=>{})}}
  else if(resumeRow){const r=resumeRow;resumeRow=null;setTimeout(()=>startRoom(a,r),0)}else v.play().catch(()=>{});
  show();
+ if(room&&room.host&&room.ep!==(ep||0)){room.ep=ep||0;bc({t:'ep',ep:room.ep})}
 }
 
 /* ===== admin: tambah/edit film ===== */
@@ -416,13 +529,13 @@ function filmModal(id){
 
 /* ===== poster otomatis (TMDB) ===== */
 const pcache=new Map();
-function poster(t){if(pcache.has(t))return pcache.get(t);const k='bs:p:'+t.toLowerCase(),c=ls.get(k,null);
- const pr=c?Promise.resolve(c):tmdbPoster(t).then(u=>{if(u)ls.set(k,u);return u});pcache.set(t,pr);return pr}
-function fillPosters(){document.querySelectorAll('img[data-t]').forEach(i=>poster(i.dataset.t).then(u=>{if(u&&i.isConnected)i.src=u}))}
-async function tmdbPoster(title){
+function poster(t,tv){const k='bs:p:'+(tv?'tv:':'')+t.toLowerCase();if(pcache.has(k))return pcache.get(k);const c=ls.get(k,null);
+ const pr=c?Promise.resolve(c):tmdbPoster(t,tv).then(u=>{if(u)ls.set(k,u);return u});pcache.set(k,pr);return pr}
+function fillPosters(){document.querySelectorAll('img[data-t]').forEach(i=>poster(i.dataset.t,i.dataset.k==='tv').then(u=>{if(u&&i.isConnected)i.src=u}))}
+async function tmdbPoster(title,tv){
  const y=(title.match(/\((\d{4})\)/)||[])[1],q=title.replace(/\(.*?\)/g,'').trim();
  const get=async(kind,withY)=>{try{const r=await fetch(`https://api.themoviedb.org/3/search/${kind}?api_key=${TMDB_KEY}&query=${encodeURIComponent(q)}`+(withY&&y?(kind==='movie'?'&year=':'&first_air_date_year=')+y:''));if(!r.ok)return null;const h=((await r.json()).results||[]).find(x=>x.poster_path);return h?'https://image.tmdb.org/t/p/w500'+h.poster_path:null}catch{return null}};
- return await get('movie',true)||await get('movie',false)||await get('tv',false)
+ return tv?(await get('tv',true)||await get('tv',false)||await get('movie',false)):(await get('movie',true)||await get('movie',false)||await get('tv',false))
 }
 /* ===== impor film dari file JSON (admin) ===== */
 const normRes=r=>{r=String(r||'').trim();const n=parseInt(r.replace(/\D/g,''),10);if(/4k/i.test(r)||n===2160)return'4K';return n?n+'p':'720p'};
@@ -457,7 +570,41 @@ async function importJson(inp){
  toast(`${add} film ditambahkan`+(upd?`, ${upd} diperbarui`:'')+(skip?`, ${skip} sudah ada`:'')+(fail?`, ${fail} gagal`:'')+(bad?`, ${bad} file tidak valid`:''));
  loadCatalog();
 }
-document.addEventListener('change',e=>{if(e.target.id==='jf'&&isAdmin())importJson(e.target)});
+document.addEventListener('change',e=>{if(e.target.id==='jf'&&isAdmin())importJson(e.target);if(e.target.id==='sf'&&isAdmin())importSeries(e.target)});
+async function importSeries(inp){
+ const files=[...inp.files];inp.value='';if(!files.length)return;
+ const map=new Map();let bad=0;
+ for(const f of files){try{
+  const j=JSON.parse(await f.text()),arr=Array.isArray(j)?j:Array.isArray(j?.data)?j.data:[j];
+  for(const x of arr){
+   const title=String(x?.anime?.nama_anime||x?.anime_title||'').trim(),no=Number(x?.nomor_episode);
+   if(!title||!Number.isFinite(no))continue;
+   const th=String(x.thumbnail_episode||'').trim(),srcs=[];
+   (Array.isArray(x.qualities)?x.qualities:[]).forEach(q=>{const url=String(q?.source_quality||'').trim();if(/^https:\/\//i.test(url))srcs.push({res:normRes(q.nama_quality),url})});
+   if(!srcs.length)continue;
+   const k=title.toLowerCase();let s=map.get(k);if(!s)map.set(k,s={title,eps:new Map()});
+   let e=s.eps.get(no);if(!e)s.eps.set(no,e={no,title:String(x.judul_episode||'Episode '+no),thumb:/^https:\/\//i.test(th)?th:'',sources:[]});
+   srcs.forEach(q=>{if(!e.sources.some(y=>y.res===q.res))e.sources.push(q)});
+  }}catch{bad++}}
+ if(!map.size)return toast(bad?'File JSON tidak valid.':'Tidak ada data episode yang bisa dibaca.');
+ let addS=0,addE=0,updE=0,fail=0;
+ for(const s of map.values()){
+  const eps=[...s.eps.values()].sort((x,y)=>x.no-y.no),ex=catalog.find(c=>c.title.toLowerCase()===s.title.toLowerCase());
+  try{
+   if(ex){
+    const cu=(ex.episodes||[]).map(e=>({...e,sources:[...e.sources]}));let ch=0;
+    for(const e of eps){const o=cu.find(z=>z.no===e.no);
+     if(!o){cu.push(e);addE++;ch++}
+     else{let c=false;e.sources.forEach(q=>{if(!o.sources.some(y=>y.res===q.res)){o.sources.push(q);c=true}});if(!o.thumb&&e.thumb){o.thumb=e.thumb;c=true}if(c){updE++;ch++}}}
+    if(!ch)continue;
+    cu.sort((x,y)=>x.no-y.no);
+    const r=await api('films?id=eq.'+ex.id,{method:'PATCH',headers:{Prefer:'return=minimal'},body:JSON.stringify({episodes:cu})});if(!r.ok)throw 0;
+   }else{
+    const r=await api('films',{method:'POST',headers:{Prefer:'return=minimal'},body:JSON.stringify({title:s.title,sources:[],episodes:eps})});if(!r.ok)throw 0;addS++;addE+=eps.length}
+  }catch{fail++}}
+ toast((addS?addS+' serial baru, ':'')+`${addE} episode ditambahkan`+(updE?`, ${updE} diperbarui`:'')+(fail?`, ${fail} gagal`:'')+(bad?`, ${bad} file tidak valid`:''));
+ loadCatalog();
+}
 
 async function render(){
  saveNow();cur=null;const app=$('#app');
@@ -472,9 +619,11 @@ async function render(){
  scrollTo(0,0);if(init)init();fillPosters();
 }
 document.addEventListener('click',e=>{
- const b=e.target.closest('[data-dl]');if(b){const[id,i]=b.dataset.dl.split(':'),a=catalog.find(x=>x.id===id);if(a)download(a,+i)}
+ const b=e.target.closest('[data-dl]');if(b){e.preventDefault();const[id,i,ep]=b.dataset.dl.split(':'),a=catalog.find(x=>x.id===id);if(a)download(a,+i,+ep)}
+ const ea=e.target.closest('[data-ep]');if(ea&&room&&!room.host){e.preventDefault();toast('Hanya host yang bisa ganti episode.')}
  const ed=e.target.closest('[data-edit]');if(ed&&isAdmin())filmModal(ed.dataset.edit);
- if(e.target.closest('#ij')&&isAdmin())$('#jf').click()
+ if(e.target.closest('#ij')&&isAdmin())$('#jf').click();
+ if(e.target.closest('#is')&&isAdmin())$('#sf').click()
 });
 addEventListener('hashchange',()=>{const m=location.hash.match(/room=([A-Za-z0-9]+)/);if(m&&user())return joinRoom(m[1].toUpperCase());render()});
 addEventListener('pagehide',saveNow);
