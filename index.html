@@ -76,7 +76,7 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:14px;heigh
 .b2.on{background:var(--g);border-color:transparent;color:#fff}
 .b1{display:flex;align-items:center;justify-content:center;gap:8px;width:100%;padding:15px;border-radius:18px;background:var(--g);color:#fff;font-weight:700;font-size:16px}
 .nv{position:fixed;left:0;right:0;bottom:0;z-index:20;display:flex;padding:10px 4px calc(10px + env(safe-area-inset-bottom));background:#08070ff2;backdrop-filter:blur(14px);border-top:1px solid var(--ln)}
-.nv a{flex:1;display:flex;flex-direction:column;align-items:center;gap:4px;font-size:12px;color:var(--mu)}
+.nv a{flex:1;display:flex;flex-direction:column;align-items:center;gap:4px;font-size:11px;color:var(--mu)}
 .nv a.on{color:var(--a)}
 .lg{min-height:100vh;display:grid;place-items:center;padding:20px}
 .lc{width:min(400px,100%);display:grid;gap:12px;padding:28px 24px;border:1px solid var(--ln);background:#0c0b16e6;border-radius:28px}
@@ -169,6 +169,23 @@ input[type=color]::-moz-color-swatch{border:0}
 /* kategori */
 .cats{display:flex;gap:8px;overflow-x:auto;margin-top:12px;padding-bottom:2px}
 .cats .b2{padding:8px 16px;white-space:nowrap;font-size:14px}
+/* avatar, nobar, suara, soundboard */
+.av img{width:100%;height:100%;object-fit:cover}
+.avg{display:grid;grid-template-columns:repeat(5,1fr);gap:10px}
+.avg button{aspect-ratio:1;border-radius:50%;font-size:28px;display:grid;place-items:center;border:2px solid transparent}
+.avg button.on{border-color:var(--a)}
+.uw{position:relative;flex:none}
+.uw .av{width:40px;height:40px;font-size:18px}
+.uw .dot{position:absolute;right:-1px;bottom:-1px;margin:0;border:2px solid var(--cd)}
+.ct .rv{display:none}
+.pl.rm .ct .rv{display:grid}
+.ct .act{color:var(--a);background:var(--t1);border-radius:12px}
+.sbp{display:none;position:absolute;left:12px;bottom:96px;z-index:4;gap:6px;padding:8px;border-radius:18px;background:#0b0a14e6;border:1px solid #ffffff1f}
+.sbp.on{display:flex}
+.sbp button{width:40px;height:40px;border-radius:12px;background:#ffffff14;font-size:20px;display:grid;place-items:center}
+.sbr{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px}
+.sbr .b2{padding:8px 12px;font-size:13px}
+@media(max-width:480px){.pl.rm:not(:fullscreen) #vo{display:none}}
 </style>
 </head>
 <body>
@@ -185,7 +202,7 @@ const TMDB_KEY='259658c16b4e90de382d7077b44ce297';
 const $=s=>document.querySelector(s);
 const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const ls={get(k,d){try{const v=localStorage.getItem(k);return v===null?d:JSON.parse(v)}catch{return d}},set(k,v){try{localStorage.setItem(k,JSON.stringify(v))}catch{}}};
-const I={shield:'<path d="M12 3 4 6v6c0 4.5 3.2 8 8 9 4.8-1 8-4.5 8-9V6z"/><path d="m9 12 2 2 4-4"/>',chat:'<path d="M21 12a8 8 0 0 1-11.5 7.2L4 20l1-4.5A8 8 0 1 1 21 12z"/>',home:'<path d="M3 10.5 12 3l9 7.5V20a1 1 0 0 1-1 1h-5v-6H9v6H4a1 1 0 0 1-1-1z"/>',compass:'<circle cx="12" cy="12" r="9"/><path d="m15.5 8.5-2 5-5 2 2-5z"/>',clock:'<circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/>',dl:'<path d="M12 4v11m0 0-4-4m4 4 4-4M5 20h14"/>',menu:'<path d="M4 7h16M4 12h16M4 17h16"/>',search:'<circle cx="11" cy="11" r="7"/><path d="m20 20-4-4"/>',back:'<path d="M19 12H5m6-6-6 6 6 6"/>',play:'<path d="M7 4v16l13-8z" fill="currentColor"/>',pause:'<path d="M7 4h3.5v16H7zM13.5 4H17v16h-3.5z" fill="currentColor"/>',rw:'<path d="M3 12a9 9 0 1 0 3-6.7L3 8"/><path d="M3 3v5h5"/>',fw:'<path d="M21 12a9 9 0 1 1-3-6.7L21 8"/><path d="M21 3v5h-5"/>',vol:'<path d="M4 9v6h4l5 4V5L8 9z"/><path d="M16.5 8.5a5 5 0 0 1 0 7"/>',mute:'<path d="M4 9v6h4l5 4V5L8 9z"/><path d="m17 9 5 6m0-6-5 6"/>',gear:'<path d="M4 7h10M18 7h2M4 17h2M10 17h10"/><circle cx="16" cy="7" r="2"/><circle cx="8" cy="17" r="2"/>',full:'<path d="M4 9V4h5M20 9V4h-5M4 15v5h5M20 15v5h-5"/>',users:'<circle cx="9" cy="8" r="3.5"/><path d="M2.5 20c0-4 3-6 6.5-6s6.5 2 6.5 6M17 5a3.5 3.5 0 0 1 0 6.5M21.5 20c0-3-1.5-4.8-4-5.5"/>'};
+const I={plus:'<path d="M12 5v14M5 12h14"/>',mic:'<rect x="9" y="3" width="6" height="11" rx="3"/><path d="M5 11a7 7 0 0 0 14 0M12 18v3"/>',micoff:'<rect x="9" y="3" width="6" height="11" rx="3"/><path d="M5 11a7 7 0 0 0 14 0M12 18v3M3 3l18 18"/>',sb:'<path d="M9 18V5l11-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="17" cy="16" r="3"/>',shield:'<path d="M12 3 4 6v6c0 4.5 3.2 8 8 9 4.8-1 8-4.5 8-9V6z"/><path d="m9 12 2 2 4-4"/>',chat:'<path d="M21 12a8 8 0 0 1-11.5 7.2L4 20l1-4.5A8 8 0 1 1 21 12z"/>',home:'<path d="M3 10.5 12 3l9 7.5V20a1 1 0 0 1-1 1h-5v-6H9v6H4a1 1 0 0 1-1-1z"/>',compass:'<circle cx="12" cy="12" r="9"/><path d="m15.5 8.5-2 5-5 2 2-5z"/>',clock:'<circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/>',dl:'<path d="M12 4v11m0 0-4-4m4 4 4-4M5 20h14"/>',menu:'<path d="M4 7h16M4 12h16M4 17h16"/>',search:'<circle cx="11" cy="11" r="7"/><path d="m20 20-4-4"/>',back:'<path d="M19 12H5m6-6-6 6 6 6"/>',play:'<path d="M7 4v16l13-8z" fill="currentColor"/>',pause:'<path d="M7 4h3.5v16H7zM13.5 4H17v16h-3.5z" fill="currentColor"/>',rw:'<path d="M3 12a9 9 0 1 0 3-6.7L3 8"/><path d="M3 3v5h5"/>',fw:'<path d="M21 12a9 9 0 1 1-3-6.7L21 8"/><path d="M21 3v5h-5"/>',vol:'<path d="M4 9v6h4l5 4V5L8 9z"/><path d="M16.5 8.5a5 5 0 0 1 0 7"/>',mute:'<path d="M4 9v6h4l5 4V5L8 9z"/><path d="m17 9 5 6m0-6-5 6"/>',gear:'<path d="M4 7h10M18 7h2M4 17h2M10 17h10"/><circle cx="16" cy="7" r="2"/><circle cx="8" cy="17" r="2"/>',full:'<path d="M4 9V4h5M20 9V4h-5M4 15v5h5M20 15v5h-5"/>',users:'<circle cx="9" cy="8" r="3.5"/><path d="M2.5 20c0-4 3-6 6.5-6s6.5 2 6.5 6M17 5a3.5 3.5 0 0 1 0 6.5M21.5 20c0-3-1.5-4.8-4-5.5"/>'};
 const ic=(n,s=22)=>`<svg width="${s}" height="${s}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">${I[n]}</svg>`;
 const ft=s=>{s=Math.max(0,s|0);return String(s/60|0).padStart(2,'0')+':'+String(s%60).padStart(2,'0')};
 let tmr;function toast(m){let e=$('#ts');if(!e){e=document.createElement('div');e.id='ts';document.body.append(e)}e.textContent=m;e.className='on';clearTimeout(tmr);tmr=setTimeout(()=>e.className='',3000)}
@@ -241,7 +258,7 @@ async function auth(m,u,p){
   const ah=await hash(p);let ok=false;
   try{ok=(await rpc('admin_ok',{h:ah}))===true}catch{return'Gagal terhubung ke database.'}
   if(!ok)return'Username atau kata sandi salah.';
-  ls.set('bs:at',ah);ls.set('bs:s',ADMIN_USER);loadTheme();await render();return resumeHost()
+  ls.set('bs:at',ah);ls.set('bs:s',ADMIN_USER);loadTheme();loadProfile();await render();return resumeHost()
  }
  try{const ac=await rpc('check_access',{u});if(ac&&ac.banned)return'Akun atau IP kamu diblokir.'+(ac.reason?' Alasan: '+ac.reason:'')}catch{}
  const h=await hash(p);
@@ -249,7 +266,7 @@ async function auth(m,u,p){
   const ok=await rpc(m==='reg'?'register_user':'login_user',{u,h});
   if(ok!==true)return m==='reg'?'Username sudah dipakai.':'Username atau kata sandi salah.';
  }catch{return'Gagal terhubung ke database.'}
- ls.set('bs:s',u.toLowerCase());loadTheme();await render();resumeHost()
+ ls.set('bs:s',u.toLowerCase());loadTheme();loadProfile();await render();resumeHost()
 }
 
 /* ===== tampilan ===== */
@@ -340,12 +357,9 @@ function epNav(a,E){
  return`<div class="btns" style="margin:0 0 6px">${pv?`<a class="b2" data-ep href="${wl(a,pv.no)}">‹ Ep ${pv.no}</a>`:''}${nx?`<a class="b2 on" data-ep href="${wl(a,nx.no)}">Ep ${nx.no} ›</a>`:''}</div><h2>Pilih episode</h2><div class="eps" style="max-height:150px;overflow:auto">${asc.map(e=>`<a class="b2 ${e.no===E.no?'on':''}" data-ep href="${wl(a,e.no)}" style="padding:8px 14px">${e.no}</a>`).join('')}</div>`}
 function view(parts){
  const[p,id,idx,epq]=parts;
- if(!p){const sn=new Set(),h=hist.filter(x=>!sn.has(x.id)&&sn.add(x.id)).slice(0,3);return[`<div class="fm" style="display:flex;gap:8px;margin-bottom:6px"><input class="in" id="jc" placeholder="Kode room nobar" maxlength="8" style="text-transform:uppercase"><button class="b2" id="jb">${ic('users',18)} Gabung</button></div>
- ${h.length?`<h2>Lanjutkan menonton</h2><div class="list">${h.map(histCard).join('')}</div>`:''}<h2>Semua film</h2>${catChips()}<div id="cg" class="grid mt"></div>`,()=>{
+ if(!p){const sn=new Set(),h=hist.filter(x=>!sn.has(x.id)&&sn.add(x.id)).slice(0,3);return[`${h.length?`<h2>Lanjutkan menonton</h2><div class="list">${h.map(histCard).join('')}</div>`:''}<h2>Semua film</h2>${catChips()}<div id="cg" class="grid mt"></div>`,()=>{
   const f=()=>{const L=catalog.filter(inCat);$('#cg').innerHTML=L.map(card).join('')||`<p class="mu" style="grid-column:1/-1">${catalog.length?'Belum ada di kategori ini.':'Belum ada film di database.'}</p>`;fillPosters()};
-  bindCats(f);f();
-  const go=()=>{const c=$('#jc').value.trim().toUpperCase();c?joinRoom(c):toast('Masukkan kode room dulu.')};
-  $('#jb').onclick=go;$('#jc').onkeydown=e=>e.key==='Enter'&&go()}]}
+  bindCats(f);f()}]}
  if(p==='explore')return[`<input id="sq" class="in" placeholder="Cari judul film" value="${esc(S.q)}">${catChips()}<div id="sg" class="grid mt"></div>`,()=>{
   const f=()=>{$('#sg').innerHTML=catalog.filter(a=>inCat(a)&&a.title.toLowerCase().includes(S.q.toLowerCase())).map(card).join('')||'<p class="mu">Film tidak ditemukan.</p>';fillPosters()};
   $('#sq').oninput=e=>{S.q=e.target.value;f()};bindCats(f);f()}];
@@ -363,21 +377,24 @@ function view(parts){
   const n=/^\d+$/.test(idx||'')?Math.min(+idx,list.length-1):list.length-1,src=list[n],T=a.title+(E?' · Episode '+E.no:'');
   const nxE=E?a.episodes.find(e=>e.no>E.no):null,rl=i=>'#/watch/'+encodeURIComponent(a.id)+'/'+i+(E?'/'+E.no:'');
   return[`<a class="back" href="#/film/${encodeURIComponent(a.id)}">${ic('back',20)}Detail film</a>
-<div class="pl ui" id="pl"><video id="v" playsinline preload="metadata" src="${esc(src.url)}"></video><div class="buf" id="buf"><div id="bt">Memuat video…</div></div><div class="fl" id="fl"></div><div class="rp" id="rp"><input class="in" id="ri" placeholder="Balas komentar…" maxlength="300"><button class="b2" id="rs">Kirim</button></div>
+<div class="pl ui" id="pl"><video id="v" playsinline preload="metadata" src="${esc(src.url)}"></video><div class="buf" id="buf"><div id="bt">Memuat video…</div></div><div class="fl" id="fl"></div><div class="rp" id="rp"><input class="in" id="ri" placeholder="Balas komentar…" maxlength="300"><button class="b2" id="rs">Kirim</button></div><div class="sbp" id="sbp"><button type="button" id="sbm">🔊</button>${SBS.map(x=>`<button type="button" data-sb="${x[0]}" title="${x[2]}">${x[1]}</button>`).join('')}</div>
 <div class="ov t"><a class="ib" href="#/film/${encodeURIComponent(a.id)}">${ic('back',20)}</a><div class="tt"><b>${esc(T)}</b><small>${esc(src.res||'Video')}</small></div></div>
 <div class="ov b"><div class="tm"><b id="cur">00:00</b><input id="sk" type="range" min="0" max="100" step=".1" value="0"><b id="dur">00:00</b></div>
-<div class="ct"><button id="pp">${ic('play',26)}</button><button id="rw">${ic('rw')}</button><button id="fw">${ic('fw')}</button><button id="mu">${ic('vol')}</button><input id="vo" type="range" min="0" max="1" step=".05" value="1"><button id="ctg" title="Balas komentar">${ic('chat')}</button><button id="sp">${ic('gear')}</button><button id="fs">${ic('full')}</button></div></div></div>
+<div class="ct"><button id="pp">${ic('play',26)}</button><button id="rw">${ic('rw')}</button><button id="fw">${ic('fw')}</button><button id="mu">${ic('vol')}</button><input id="vo" type="range" min="0" max="1" step=".05" value="1"><button id="ctg" title="Balas komentar">${ic('chat')}</button><button id="cmic" class="rv" title="Mic">${ic('micoff')}</button><button id="csb" class="rv" title="Soundboard">${ic('sb')}</button><button id="sp">${ic('gear')}</button><button id="fs">${ic('full')}</button></div></div></div>
 <section class="info"><div class="lb">SEDANG DIPUTAR</div><h1>${esc(T)}</h1><div class="eb">${esc(src.res||'Video')}</div>
 <div class="btns"><button class="b2" id="dl">${ic('dl')} Unduh</button><button class="b2" id="nb">${ic('users',18)} Nobar</button></div>
 <div class="room" id="room" hidden><div class="rc"><span class="mu">Room</span><b class="code" id="rcode">…</b><button class="b2" id="cp">Salin link</button><span class="mu" id="vw"></span></div>
+<div class="rc" style="margin-top:10px"><button class="b2" id="vm">🎤 Mic: mati</button><button class="b2" id="vis" hidden></button></div><p class="mu" style="font-size:12px;margin-top:8px">Pakai headset agar suara film tidak bergema ke teman.</p><div class="sbr">${SBS.map(x=>`<button type="button" class="b2" data-sb="${x[0]}">${x[1]} ${x[2]}</button>`).join('')}</div>
 <div class="cm" id="cm"></div><div class="cin"><input class="in" id="ci" placeholder="Tulis komentar…" maxlength="300"><button class="b2" id="cs">Kirim</button></div></div>
 ${E?epNav(a,E):''}<h2>Pilih resolusi</h2><div class="eps">${list.map((s,i)=>`<a class="b2 ${i===n?'on':''}" data-ep href="${rl(i)}">${esc(s.res||'Putar')}</a>`).join('')}</div></section>`,()=>player(a,n,E?E.no:0,nxE?wl(a,nxE.no):'')]}
+ if(p==='nobar')return[`<h2 style="margin-top:0">Nobar</h2><div class="room" style="margin-top:0"><p class="mu" style="margin-bottom:10px">Punya kode room? Masukkan di sini.</p><div class="cin"><input class="in" id="nc" placeholder="Kode room" maxlength="8" style="text-transform:uppercase"><button class="b2" id="nj">${ic('users',18)} Gabung</button></div></div><p class="mu" style="font-size:13px;margin-top:10px">Mau bikin room? Buka film, tekan Nobar di bawah pemutar, lalu pilih Privat atau Publik.</p><h2>Room publik</h2><div class="list" id="rl"></div>`,nobarInit];
+ if(p==='request')return[`<a class="back" href="#/more">${ic('back',20)}Lainnya</a><h2 style="margin-top:0">Request</h2><input class="in" id="rq" placeholder="Cari film, anime, atau donghua…"><div class="list mt" id="rr"></div><button class="b2 mt" id="rman" hidden style="width:100%;justify-content:center">Tidak ketemu? Request manual</button><h2>Request saya</h2><div class="list" id="rmy"></div>`,requestInit];
  if(p==='admin'){
   if(!isAdmin())return['<p class="mu">Halaman tidak ditemukan.</p>'];
-  return[`<a class="back" href="#/more">${ic('back',20)}Lainnya</a><h2 style="margin-top:0">Panel admin</h2><div class="seg" id="adt">${[['online','Online'],['film','Film'],['ban','Blokir'],['pw','Sandi']].map(t=>`<button type="button" data-t="${t[0]}">${t[1]}</button>`).join('')}</div><div id="adb"></div>`,adminInit]}
- if(p==='more')return[`<h2>Akun</h2><div class="hi"><div class="av">${esc(user()[0].toUpperCase())}</div><div class="hm"><b>${esc(user())}</b><small>${isAdmin()?'Admin':'Pengguna'}</small></div></div>
- <div class="list mt"><a class="hi" href="#/history">${ic('clock')} Riwayat tontonan</a><a class="hi" href="#/downloads">${ic('dl')} Unduhan</a>${isAdmin()?`<a class="hi" href="#/admin">${ic('shield')} Panel admin</a>`:''}</div>${themePanel()}<button class="b2 mt" id="lo">Keluar</button>`,()=>{themeInit();
-  $('#lo').onclick=()=>{saveNow();leaveRoom();cur=null;hist=[];ls.set('bs:s',null);ls.set('bs:at','');loadTheme();render()}}];
+  return[`<a class="back" href="#/more">${ic('back',20)}Lainnya</a><h2 style="margin-top:0">Panel admin</h2><div class="seg" id="adt">${[['online','Online'],['film','Film'],['req','Request'],['ban','Blokir'],['pw','Sandi']].map(t=>`<button type="button" data-t="${t[0]}">${t[1]}</button>`).join('')}</div><div id="adb"></div>`,adminInit]}
+ if(p==='more')return[`<h2>Akun</h2><div class="hi"><div class="av" id="avb" style="width:60px;height:60px;cursor:pointer;${avSt(MYAV,30)}">${avIn(MYAV,user())}</div><div class="hm"><b>${esc(user())}</b><small>${isAdmin()?'Admin':'Pengguna'} · ketuk foto untuk ganti avatar</small></div></div>
+ <div class="list mt"><a class="hi" href="#/history">${ic('clock')} Riwayat tontonan</a><a class="hi" href="#/downloads">${ic('dl')} Unduhan</a><a class="hi" href="#/request">${ic('plus')} Request film / anime / donghua</a>${isAdmin()?`<a class="hi" href="#/admin">${ic('shield')} Panel admin</a>`:''}</div>${isAdmin()?`<h2 id="rqh">Request masuk</h2><div class="list" id="rqs"></div>`:''}${themePanel()}<button class="b2 mt" id="lo">Keluar</button>`,()=>{$('#avb').onclick=avatarModal;if(isAdmin())homeReq();themeInit();
+  $('#lo').onclick=()=>{saveNow();leaveRoom();cur=null;hist=[];ls.set('bs:s',null);ls.set('bs:at','');loadTheme();loadProfile();render()}}];
  return['<p class="mu">Halaman tidak ditemukan.</p>']
 }
 
@@ -431,7 +448,7 @@ function adminInit(){
 function adminTab(t){
  clearInterval(admTimer);
  document.querySelectorAll('#adt button').forEach(b=>b.classList.toggle('on',b.dataset.t===t));
- ({online:tabOnline,film:tabFilm,ban:tabBan,pw:tabPw})[t]()
+ ({online:tabOnline,film:tabFilm,req:tabReq,ban:tabBan,pw:tabPw})[t]()
 }
 async function doBan(k,v){
  if(!confirm((k==='ip'?'Blokir IP ':'Blokir akun ')+v+'?'))return;
@@ -449,13 +466,13 @@ function adminList(){
 function tabOnline(){
  $('#adb').innerHTML=`<div class="tb" style="margin-top:14px"><input class="in" id="oq" placeholder="Cari username atau IP…"><button class="b2" id="oa" style="white-space:nowrap"></button></div><p class="mu" id="os" style="margin-top:10px;font-size:13px"></p><div class="list mt" id="ol"></div>`;
  $('#oq').oninput=drawOnline;$('#oa').onclick=()=>{OLY=!OLY;drawOnline()};
- const load=async()=>{const r=await arpc('admin_online',{});if(Array.isArray(r)){OL=r;drawOnline()}else clearInterval(admTimer)};
+ const load=async()=>{const r=await arpc('admin_online',{});if(Array.isArray(r)){OL=r;drawOnline();loadAvs(r.map(x=>x.username)).then(n=>{if(n)drawOnline()})}else clearInterval(admTimer)};
  load();admTimer=setInterval(()=>{if($('#ol'))load();else clearInterval(admTimer)},10000)
 }
 const userRow=x=>{
  const st=!x.online?'Terakhir online '+ago(x.last_seen):x.film_title?(x.watching?'▶ Menonton: ':'⏸ Membuka: ')+esc(x.film_title)+(x.episode?' · Ep '+x.episode:''):'Sedang menjelajah';
  const me=x.username===ADMIN_USER;
- return`<div class="hi ur"><div class="uh"><span class="dot${x.online?' on':''}"></span><div class="hm"><b>${esc(x.username)}${x.ban_user?' <span class="bdg">akun diblokir</span>':''}${x.ban_ip?' <span class="bdg">IP diblokir</span>':''}</b><small>${st}</small><small>${esc(x.ip||'?')} · ${esc(x.device||'perangkat tidak diketahui')}</small></div></div>${me?'':`<div class="ura">${x.ban_user?'':`<button class="b2" data-ban="user" data-v="${esc(x.username)}">Blokir akun</button>`}${x.ban_ip||!x.ip||x.ip==='unknown'?'':`<button class="b2" data-ban="ip" data-v="${esc(x.ip)}">Blokir IP</button>`}</div>`}</div>`
+ return`<div class="hi ur"><div class="uh"><div class="uw"><div class="av" style="${avSt(PF[x.username],18)}">${avIn(PF[x.username],x.username)}</div><span class="dot${x.online?' on':''}"></span></div><div class="hm"><b>${esc(x.username)}${x.ban_user?' <span class="bdg">akun diblokir</span>':''}${x.ban_ip?' <span class="bdg">IP diblokir</span>':''}</b><small>${st}</small><small>${esc(x.ip||'?')} · ${esc(x.device||'perangkat tidak diketahui')}</small></div></div>${me?'':`<div class="ura">${x.ban_user?'':`<button class="b2" data-ban="user" data-v="${esc(x.username)}">Blokir akun</button>`}${x.ban_ip||!x.ip||x.ip==='unknown'?'':`<button class="b2" data-ban="ip" data-v="${esc(x.ip)}">Blokir IP</button>`}</div>`}</div>`
 };
 function drawOnline(){
  const ol=$('#ol');if(!ol)return;
@@ -490,7 +507,7 @@ function tabPw(){
 /* ===== online/presence + blokir (dicek dari server) ===== */
 let BAN=null,lastPing=0;
 const bannedHtml=()=>`<div class="lg"><div class="lc" style="text-align:center"><div class="logo big">Bioskop <span>Ana</span></div><h2 style="margin:6px 0 0">Akses diblokir</h2><p class="mu">Akun atau alamat IP kamu diblokir oleh admin.${BAN?'<br>Alasan: '+esc(BAN):''}</p><button class="b1" id="bk2">Kembali</button></div></div>`;
-function kicked(r){if(BAN!==null)return;BAN=r||'';ls.set('bs:s',null);ls.set('bs:at','');leaveRoom();loadTheme();render()}
+function kicked(r){if(BAN!==null)return;BAN=r||'';ls.set('bs:s',null);ls.set('bs:at','');leaveRoom();loadTheme();loadProfile();render()}
 function uaInfo(){
  const ua=navigator.userAgent;let os='',br='',model='';
  if(/Android/i.test(ua)){os='Android '+((ua.match(/Android\s([\d.]+)/)||[])[1]||'');model=((ua.match(/;\s*([^;)]+?)\s+Build\//)||ua.match(/Android[^;)]*;\s*([^;)]+)/)||[])[1]||'').trim();if(model==='K')model=''}
@@ -513,6 +530,245 @@ async function ping(force){
  try{const r=await rpc('touch_presence',{u,dev:DEV,fid:c?String(c.a.id):null,ftitle:c?c.a.title:null,ep:c?(c.ep||0):0,w:!!(c&&c.v&&!c.v.paused)});if(r&&r.banned===true)kicked(r.reason)}catch{}
 }
 setInterval(()=>ping(true),20000);
+
+/* ===== suara peer-to-peer (mesh: yang bicara memanggil semua orang) ===== */
+const peerList=()=>room.host?room.conns.filter(c=>c.open).map(c=>c.peer):(room.peers||[]);
+function callPeer(id){
+ if(!room||!room.mic||!peer||room.calls.has(id)||id===peer.id)return;
+ const c=peer.call(id,room.mic);if(!c)return;
+ room.calls.set(id,c);const drop=()=>{if(room&&room.calls.get(id)===c)room.calls.delete(id)};
+ c.on('close',drop);c.on('error',drop)
+}
+const callAll=()=>peerList().forEach(callPeer);
+function bindVoice(){
+ peer.on('call',c=>{c.answer();c.on('stream',st=>playVoice(c.peer,st));const bye=()=>dropVoice(c.peer);c.on('close',bye);c.on('error',bye)})
+}
+function playVoice(id,st){
+ if(!room)return;let a=room.auds.get(id);
+ if(!a){a=document.createElement('audio');a.autoplay=true;a.playsInline=true;document.body.append(a);room.auds.set(id,a)}
+ a.srcObject=st;a.play().catch(()=>{})
+}
+function dropVoice(id){const a=room&&room.auds.get(id);if(a){a.srcObject=null;a.remove();room.auds.delete(id)}}
+function stopMic(){
+ if(!room)return;room.calls.forEach(c=>{try{c.close()}catch{}});room.calls.clear();
+ if(room.mic){room.mic.getTracks().forEach(t=>t.stop());room.mic=null}
+}
+async function toggleMic(){
+ if(!room||!peer)return toast('Masuk ke room dulu.');
+ if(room.mic){stopMic();roomBtns();return}
+ if(!navigator.mediaDevices?.getUserMedia)return toast('Browser tidak mendukung mikrofon.');
+ try{room.mic=await navigator.mediaDevices.getUserMedia({audio:{echoCancellation:true,noiseSuppression:true,autoGainControl:true}})}
+ catch{return toast('Izin mikrofon ditolak.')}
+ if(!room){stopMic();return}
+ callAll();roomBtns();toast('Mikrofon menyala. Pakai headset agar tidak bergema.')
+}
+function roomBtns(){
+ if(!room)return;const on=!!room.mic;
+ const m=$('#cmic');if(m){m.innerHTML=ic(on?'mic':'micoff');m.classList.toggle('act',on)}
+ const vm=$('#vm');if(vm){vm.textContent=on?'🎤 Mic: nyala':'🎤 Mic: mati';vm.classList.toggle('on',on)}
+ const sm=$('#sbm');if(sm)sm.textContent=SBM?'🔇':'🔊';
+ const vs=$('#vis');if(vs&&room.host){vs.hidden=false;vs.textContent=room.pub?'🌐 Publik':'🔒 Privat'}
+}
+async function toggleVis(){
+ if(!room||!room.host)return;room.pub=!room.pub;roomBtns();
+ try{await api('rooms?code=eq.'+room.code,{method:'PATCH',headers:{Prefer:'return=minimal'},body:JSON.stringify({is_public:room.pub})})}catch{}
+ toast(room.pub?'Room jadi publik':'Room jadi privat')
+}
+function pickVis(a){
+ const d=document.createElement('div');d.className='md';
+ d.innerHTML=`<div><h2 style="margin:0">Buat room nobar</h2><button class="b2" data-p="0" style="justify-content:flex-start;text-align:left;padding:16px">🔒<span><b>Privat</b><br><small class="mu">Hanya yang memasukkan kode room</small></span></button><button class="b2" data-p="1" style="justify-content:flex-start;text-align:left;padding:16px">🌐<span><b>Publik</b><br><small class="mu">Tampil di tab Nobar, siapa saja bisa gabung</small></span></button><button class="b2" data-p="x">Batal</button></div>`;
+ document.body.append(d);
+ d.onclick=e=>{const b=e.target.closest('[data-p]');if(!b)return;d.remove();if(b.dataset.p!=='x')startRoom(a,null,b.dataset.p==='1')}
+}
+function nobarInit(){
+ const go=()=>{const c=$('#nc').value.trim().toUpperCase();c?joinRoom(c):toast('Masukkan kode room dulu.')};
+ $('#nj').onclick=go;$('#nc').onkeydown=e=>e.key==='Enter'&&go();
+ $('#rl').onclick=e=>{const b=e.target.closest('[data-room]');if(b)joinRoom(b.dataset.room)};
+ let last='';
+ const load=async()=>{
+  const el=$('#rl');if(!el)return;
+  try{
+   const since=new Date(Date.now()-45000).toISOString();
+   const r=await api('rooms?is_public=eq.true&last_seen=gt.'+encodeURIComponent(since)+'&select=code,film_id,episode,host,viewers&order=last_seen.desc&limit=30');
+   if(!r.ok)throw 0;
+   const L=(await r.json()).filter(x=>catalog.some(a=>a.id===x.film_id)),sig=JSON.stringify(L);
+   if(sig===last||!$('#rl'))return;last=sig;
+   $('#rl').innerHTML=L.map(x=>{const a=catalog.find(z=>z.id===x.film_id);return`<div class="hi"><div class="po s" style="--h:${hue(a.title)}"><img data-id="${esc(a.id)}" alt=""></div><div class="hm"><b>${esc(a.title)}${x.episode?' · Ep '+x.episode:''}</b><small>Host: ${esc(x.host)} · ${x.viewers||1} penonton</small></div><button class="b2" data-room="${esc(x.code)}">Gabung</button></div>`}).join('')||'<p class="mu">Belum ada room publik yang aktif.</p>';
+   fillPosters()
+  }catch{if(el.isConnected&&!el.innerHTML)el.innerHTML='<p class="mu">Gagal memuat room publik.</p>'}
+ };
+ load();const t=setInterval(()=>{if($('#rl'))load();else clearInterval(t)},8000)
+}
+
+/* ===== soundboard (disintesis di perangkat; dikirim ke semua anggota room) ===== */
+const SBS=[['ha','😂','Ketawa'],['clap','👏','Tepuk tangan'],['boom','💣','Ledakan'],['no','🙅','No no'],['yes','🙆','Yes yes']];
+let AC=null,SBM=ls.get('bs:sbm',false),sbLast=0;
+const actx=()=>{AC=AC||new(window.AudioContext||window.webkitAudioContext)();if(AC.state==='suspended')AC.resume();return AC};
+const noiseBuf=(c,sec)=>{const b=c.createBuffer(1,c.sampleRate*sec|0,c.sampleRate),d=b.getChannelData(0);for(let i=0;i<d.length;i++)d[i]=Math.random()*2-1;return b};
+function say(txt,pitch){
+ if(!('speechSynthesis' in window))return false;
+ try{const u=new SpeechSynthesisUtterance(txt);u.lang='en-US';u.rate=1.1;u.pitch=pitch;speechSynthesis.cancel();speechSynthesis.speak(u);return true}catch{return false}
+}
+function sbPlay(k){
+ if(SBM)return;
+ try{
+  const c=actx(),t=c.currentTime,g=c.createGain();g.gain.value=.9;g.connect(c.destination);
+  const env=(s,peak,dur)=>{const e=c.createGain();e.gain.setValueAtTime(.0001,s);e.gain.exponentialRampToValueAtTime(peak,s+.015);e.gain.exponentialRampToValueAtTime(.001,s+dur);return e};
+  if(k==='boom'){
+   const n=c.createBufferSource();n.buffer=noiseBuf(c,1.8);const f=c.createBiquadFilter();f.type='lowpass';f.frequency.setValueAtTime(1800,t);f.frequency.exponentialRampToValueAtTime(60,t+1.6);
+   n.connect(f).connect(env(t,1,1.7)).connect(g);n.start(t);
+   const o=c.createOscillator();o.frequency.setValueAtTime(120,t);o.frequency.exponentialRampToValueAtTime(28,t+1);o.connect(env(t,1,1.2)).connect(g);o.start(t);o.stop(t+1.3)
+  }else if(k==='clap'){
+   for(let i=0;i<46;i++){const s=t+Math.random()*2.2,n=c.createBufferSource();n.buffer=noiseBuf(c,.08);const f=c.createBiquadFilter();f.type='bandpass';f.frequency.value=1200+Math.random()*2500;f.Q.value=.8;n.connect(f).connect(env(s,.55,.07)).connect(g);n.start(s)}
+  }else if(k==='ha'){
+   for(let i=0;i<6;i++){const s=t+i*.17,o=c.createOscillator();o.type='sawtooth';o.frequency.setValueAtTime(330-i*18,s);o.frequency.exponentialRampToValueAtTime(240-i*14,s+.13);const f=c.createBiquadFilter();f.type='bandpass';f.frequency.value=900;f.Q.value=2;o.connect(f).connect(env(s,.8,.14)).connect(g);o.start(s);o.stop(s+.16)}
+  }else if(!say(k==='no'?'no no!':'yes yes!',k==='no'?.6:1.6)){
+   [0,.22].forEach((d,i)=>{const o=c.createOscillator();o.type='square';o.frequency.value=k==='no'?210-i*50:300+i*140;o.connect(env(t+d,.4,.18)).connect(g);o.start(t+d);o.stop(t+d+.2)})
+  }
+ }catch{}
+}
+function sbSend(k){
+ if(Date.now()-sbLast<1200)return;sbLast=Date.now();
+ const d=SBS.find(x=>x[0]===k);if(!d)return;
+ sbPlay(k);
+ if(room){floatMsg({sys:1,text:'Kamu: '+d[1]});emit({t:'sb',k,name:user()})}
+}
+
+/* ===== avatar profil ===== */
+const AVS=['🐱','🐶','🐰','🐻','🐼','🐨','🦊','🐯','🦁','🐸','🐵','🐷','🐮','🐹','🐭','🐔','🐧','🐥','🦄','🐙','🦉','🐢','🐳','🦦','🦝','🐺','🦔','🐴','🐝','🦋'];
+let MYAV='';const PF={};
+const avIn=(a,n)=>a&&a.startsWith('img:data:image/')?`<img src="${esc(a.slice(4))}" alt="">`:a&&a.startsWith('e:')?esc(a.slice(2)):esc((n||'?')[0].toUpperCase());
+const avSt=(a,fs=20)=>a&&a.startsWith('e:')?`background:hsl(${hue(a)} 55% 30%);font-size:${fs}px`:a&&a.startsWith('img:data:image/')?'background:#000;overflow:hidden':'';
+async function loadProfile(){
+ const u=user();MYAV=u?ls.get('bs:av:'+u,''):'';if(!u)return;
+ try{const r=await api('profiles?select=avatar&username=eq.'+encodeURIComponent(u));if(!r.ok||user()!==u)return;
+  const x=(await r.json())[0];if(x&&(x.avatar||'')!==MYAV){MYAV=x.avatar||'';ls.set('bs:av:'+u,MYAV);if(catalog.length)render()}}catch{}
+}
+async function loadAvs(names){
+ const m=[...new Set(names)].filter(n=>!(n in PF));if(!m.length)return 0;
+ try{const r=await api('profiles?select=username,avatar&username=in.('+m.map(n=>'"'+n+'"').join(',')+')');if(!r.ok)return 0;
+  m.forEach(n=>PF[n]='');(await r.json()).forEach(x=>PF[x.username]=x.avatar||'');return 1}catch{return 0}
+}
+async function setAvatar(a){
+ MYAV=a;const u=user();ls.set('bs:av:'+u,a);
+ try{const r=await api('profiles?on_conflict=username',{method:'POST',headers:{Prefer:'resolution=merge-duplicates,return=minimal'},body:JSON.stringify({username:u,avatar:a,updated_at:new Date().toISOString()})});if(!r.ok)throw 0;toast('Avatar disimpan')}
+ catch{toast('Avatar hanya tersimpan di perangkat ini (gagal ke database).')}
+ render()
+}
+const resizeImg=f=>new Promise((res,rej)=>{
+ const u=URL.createObjectURL(f),i=new Image();
+ i.onload=()=>{const S=128,c=document.createElement('canvas');c.width=c.height=S;const m=Math.min(i.width,i.height);c.getContext('2d').drawImage(i,(i.width-m)/2,(i.height-m)/2,m,m,0,0,S,S);URL.revokeObjectURL(u);res(c.toDataURL('image/jpeg',.82))};
+ i.onerror=()=>{URL.revokeObjectURL(u);rej()};i.src=u
+});
+function avatarModal(){
+ const d=document.createElement('div');d.className='md';
+ d.innerHTML=`<div><h2 style="margin:0">Pilih avatar</h2><div class="avg">${AVS.map(e=>`<button type="button" data-e="${e}" class="${MYAV==='e:'+e?'on':''}" style="background:hsl(${hue('e:'+e)} 55% 30%)">${e}</button>`).join('')}</div><input type="file" id="avf" accept="image/*" hidden><div class="btns" style="margin:4px 0 0"><button class="b2" id="avu">Unggah foto</button><button class="b2" id="avr">Hapus</button><button class="b2" id="avc">Tutup</button></div></div>`;
+ document.body.append(d);
+ d.onclick=e=>{const b=e.target.closest('[data-e]');if(b){d.remove();setAvatar('e:'+b.dataset.e)}};
+ $('#avc').onclick=()=>d.remove();
+ $('#avr').onclick=()=>{d.remove();setAvatar('')};
+ $('#avu').onclick=()=>$('#avf').click();
+ $('#avf').onchange=async e=>{
+  const f=e.target.files[0];if(!f)return;
+  if(!/^image\//.test(f.type)||f.size>10e6)return toast('Pilih file gambar (maks 10 MB).');
+  try{const u=await resizeImg(f);d.remove();setAvatar('img:'+u)}catch{toast('Gambar tidak bisa dibaca.')}
+ }
+}
+
+/* ===== request film/anime/donghua ===== */
+let MYREQ=[],REQ=[];
+const nrm=t=>String(t).toLowerCase().replace(/\(.*?\)/g,' ').replace(/[^\p{L}\p{N}]+/gu,' ').trim();
+const inCatalog=t=>catalog.find(a=>nrm(a.title)===nrm(t));
+const guessCat=x=>{const an=(x.genre_ids||[]).includes(16);return an&&x.original_language==='ja'?'anime':an&&/^(zh|cn)$/.test(x.original_language||'')?'donghua':'film'};
+const stTxt={pending:'Menunggu',done:'Sudah ditambahkan',rejected:'Ditolak'};
+async function reqSearch(q){
+ const d=await tfetch(`https://api.themoviedb.org/3/search/multi?api_key=${TMDB_KEY}&language=id-ID&include_adult=false&query=${encodeURIComponent(q)}`);
+ return(d.results||[]).filter(x=>(x.media_type==='movie'||x.media_type==='tv')&&x.poster_path).slice(0,14)
+}
+async function sendReq(o){
+ if(MYREQ.filter(x=>x.status==='pending').length>=5)return toast('Maksimal 5 request yang masih menunggu.');
+ try{
+  const r=await api('requests',{method:'POST',headers:{Prefer:'return=minimal'},body:JSON.stringify({username:user(),...o})});
+  if(r.status===409)return toast('Kamu sudah pernah request judul ini.');
+  if(!r.ok)throw 0;toast('Request terkirim');loadMyReq()
+ }catch{toast('Gagal mengirim request.')}
+}
+function reqModal(o){
+ const d=document.createElement('div');d.className='md';let cat=o.category||'film';
+ d.innerHTML=`<div><h2 style="margin:0">Kirim request</h2>${o.poster?`<div class="hi"><div class="po s" style="--h:200"><img src="${esc(o.poster)}" alt=""></div><div class="hm"><b>${esc(o.title)}</b><small>${esc(o.year||'')}</small></div></div>`:`<input class="in" id="qt" placeholder="Judul (mis. Naruto Shippuden)" maxlength="120" value="${esc(o.title||'')}">`}<p class="mu" style="font-size:13px;margin-bottom:-4px">Kategori</p><div class="seg" id="qcat">${CATS.map(c=>`<button type="button" data-v="${c[0]}" class="${cat===c[0]?'on':''}">${c[1]}</button>`).join('')}</div><input class="in" id="qn" placeholder="Catatan (opsional, mis. season atau tahun)" maxlength="200"><div class="btns" style="margin:4px 0 0"><button class="b2" id="qx">Batal</button><button class="b2 on" id="qg">Kirim</button></div></div>`;
+ document.body.append(d);
+ $('#qcat').onclick=e=>{const b=e.target.closest('button');if(!b)return;cat=b.dataset.v;document.querySelectorAll('#qcat button').forEach(x=>x.classList.toggle('on',x===b))};
+ $('#qx').onclick=()=>d.remove();
+ $('#qg').onclick=()=>{
+  const title=o.poster?o.title:$('#qt').value.trim();if(!title)return toast('Isi judulnya dulu.');
+  d.remove();sendReq({title:title.slice(0,120),category:cat,tmdb_id:o.tmdb_id||null,tmdb_type:o.tmdb_type||null,poster:o.poster||null,year:o.year||null,note:$('#qn')?.value.trim()||null})
+ }
+}
+async function loadMyReq(){
+ const el=$('#rmy');if(!el)return;
+ try{
+  const r=await api('requests?select=*&username=eq.'+encodeURIComponent(user())+'&order=created_at.desc&limit=30');if(!r.ok)throw 0;
+  MYREQ=await r.json();if(!$('#rmy'))return;
+  $('#rmy').innerHTML=MYREQ.map(x=>`<div class="hi">${x.poster?`<div class="po s" style="--h:200"><img src="${esc(x.poster)}" alt=""></div>`:''}<div class="hm"><b>${esc(x.title)}${x.year?' ('+esc(x.year)+')':''}</b><small>${catName(x.category)} · ${stTxt[x.status]||x.status}</small></div>${x.status==='pending'?`<button class="b2" data-cancel="${x.id}">Batal</button>`:''}</div>`).join('')||'<p class="mu">Belum ada request.</p>'
+ }catch{el.innerHTML='<p class="mu">Gagal memuat request.</p>'}
+}
+function requestInit(){
+ let tm,seq=0,res=[];const box=$('#rr'),man=$('#rman');
+ const row=(x,i)=>{
+  const t=x.title||x.name,y=(x.release_date||x.first_air_date||'').slice(0,4),have=inCatalog(t);
+  return`<div class="hi"><div class="po s" style="--h:200"><img src="https://image.tmdb.org/t/p/w185${esc(x.poster_path)}" alt=""></div><div class="hm"><b>${esc(t)}${y?' ('+y+')':''}</b><small>${x.media_type==='tv'?'Serial':'Film'}${x.vote_average?' · ★ '+x.vote_average.toFixed(1):''}</small></div>${have?`<a class="b2" href="#/film/${encodeURIComponent(have.id)}">Tersedia</a>`:`<button class="b2" data-rq="${i}">Request</button>`}</div>`
+ };
+ $('#rq').oninput=e=>{
+  clearTimeout(tm);const q=e.target.value.trim(),my=++seq;
+  if(q.length<2){box.innerHTML='';man.hidden=true;return}
+  tm=setTimeout(async()=>{
+   box.innerHTML='<p class="mu">Mencari di TMDB…</p>';man.hidden=true;
+   try{const r=await reqSearch(q);if(my!==seq)return;res=r;box.innerHTML=r.map(row).join('')||'<p class="mu">Tidak ada hasil di TMDB.</p>'}
+   catch{if(my!==seq)return;box.innerHTML='<p class="mu">Pencarian TMDB gagal.</p>'}
+   if(my===seq)man.hidden=false
+  },450)
+ };
+ box.onclick=e=>{
+  const b=e.target.closest('[data-rq]');if(!b)return;const x=res[+b.dataset.rq];if(!x)return;
+  reqModal({title:x.title||x.name,year:(x.release_date||x.first_air_date||'').slice(0,4),poster:'https://image.tmdb.org/t/p/w185'+x.poster_path,tmdb_id:x.id,tmdb_type:x.media_type,category:guessCat(x)})
+ };
+ man.onclick=()=>reqModal({title:$('#rq').value.trim(),category:'film'});
+ $('#rmy').onclick=async e=>{
+  const b=e.target.closest('[data-cancel]');if(!b)return;
+  try{const r=await api('requests?id=eq.'+b.dataset.cancel+'&username=eq.'+encodeURIComponent(user())+'&status=eq.pending',{method:'DELETE',headers:{Prefer:'return=minimal'}});if(!r.ok)throw 0;toast('Request dibatalkan');loadMyReq()}
+  catch{toast('Gagal membatalkan.')}
+ };
+ loadMyReq()
+}
+/* sisi admin */
+async function loadAdminReq(){try{const r=await api('requests?select=*&order=created_at.desc&limit=100');REQ=r.ok?await r.json():[]}catch{REQ=[]}}
+const reqRowA=x=>`<div class="hi ur"><div class="uh"><div class="po s" style="--h:${x.poster?200:hue(x.title)}">${x.poster?`<img src="${esc(x.poster)}" alt="">`:''}</div><div class="hm"><b>${esc(x.title)}${x.year?' ('+esc(x.year)+')':''}</b><small>${catName(x.category)}${x.tmdb_type?'':' · manual'} · oleh ${esc(x.username)} · ${ago(x.created_at)}</small>${x.note?`<small>“${esc(x.note)}”</small>`:''}${x.status!=='pending'?`<small>${stTxt[x.status]||x.status}</small>`:''}</div></div><div class="ura"><button class="b2" data-ra="add" data-id="${x.id}" style="color:var(--a)">Tambah ke katalog</button>${x.status==='pending'?`<button class="b2" data-ra="done" data-id="${x.id}">Selesai</button><button class="b2" data-ra="rej" data-id="${x.id}">Tolak</button>`:''}<button class="b2" data-ra="del" data-id="${x.id}">Hapus</button></div></div>`;
+async function reqAct(e,after){
+ const b=e.target.closest('[data-ra]');if(!b)return;
+ const x=REQ.find(z=>String(z.id)===b.dataset.id);if(!x)return;const a=b.dataset.ra;
+ if(a==='add')return filmModal('',{title:x.title,category:x.category});
+ try{
+  const r=a==='del'?await api('requests?id=eq.'+x.id,{method:'DELETE',headers:{Prefer:'return=minimal'}})
+   :await api('requests?id=eq.'+x.id,{method:'PATCH',headers:{Prefer:'return=minimal'},body:JSON.stringify({status:a==='done'?'done':'rejected'})});
+  if(!r.ok)throw 0;toast(a==='del'?'Request dihapus':'Status diperbarui');after()
+ }catch{toast('Gagal memperbarui request.')}
+}
+async function homeReq(){
+ if(!$('#rqs'))return;await loadAdminReq();const el=$('#rqs');if(!el)return;
+ const P=REQ.filter(x=>x.status==='pending');
+ $('#rqh').textContent=P.length?`Request masuk (${P.length})`:'Request masuk';
+ el.innerHTML=P.slice(0,5).map(reqRowA).join('')||'<p class="mu">Belum ada request baru.</p>';
+ if(P.length>5)el.insertAdjacentHTML('beforeend',`<a class="b2" href="#/admin" data-at="req" style="justify-content:center">Lihat semua (${P.length})</a>`);
+ el.onclick=e=>reqAct(e,homeReq)
+}
+function tabReq(){
+ $('#adb').innerHTML='<div class="list" id="rql" style="margin-top:14px"></div>';
+ const draw=async()=>{
+  await loadAdminReq();const el=$('#rql');if(!el)return;
+  el.innerHTML=[...REQ].sort((a,b)=>(a.status==='pending'?0:1)-(b.status==='pending'?0:1)).map(reqRowA).join('')||'<p class="mu">Belum ada request.</p>'
+ };
+ $('#rql').onclick=e=>reqAct(e,draw);draw()
+}
 
 /* ===== riwayat ke database ===== */
 function saveNow(){
@@ -547,11 +803,13 @@ function apply(m){
  case'sync':room.want=m.playing;if(Math.abs((V()?.currentTime||0)-m.time)>1.5)jump(m.time);if(m.playing&&!room.hold&&V()?.paused)doPlay();if(!m.playing&&V()&&!V().paused)doPause();break;
  case'ep':if(!room.host){const a=catalog.find(x=>x.id===room.film);if(a){room.ep=m.ep;room.pend={time:0,playing:false};room.want=false;location.hash=wl(a,m.ep)}}break;
  case'count':room.n=m.n;showVw();break;
+ case'peers':if(!room.host&&peer){const L=(m.list||[]).filter(id=>id!==peer.id);room.peers=L;room.calls.forEach((c,id)=>{if(!L.includes(id)){try{c.close()}catch{}room.calls.delete(id)}});room.auds.forEach((a,id)=>{if(!L.includes(id))dropVoice(id)});if(room.mic)callAll()}break;
+ case'sb':{const d=SBS.find(x=>x[0]===m.k);if(d){sbPlay(m.k);floatMsg({sys:1,text:String(m.name||'').slice(0,20)+': '+d[1]})}break}
  case'chat':addChat(m);break}
 }
 function handleBuf(id,b){b?room.bufs.add(id):room.bufs.delete(id);const h=room.bufs.size>0;if(h===room.hold)return;apply({t:'hold',v:h});bc({t:'hold',v:h})}
 function setBuf(b){if(!room||b===room.myBuf)return;room.myBuf=b;room.host?handleBuf('host',b):emit({t:'buf',v:b})}
-const newRoom=h=>room={host:h,conns:[],bufs:new Set(),hold:false,want:false,myBuf:false,rt:null,log:[],n:1,code:'',hc:null,pend:null,hostPeer:'',joined:false,down:false,poll:null,hb:null};
+const newRoom=h=>room={host:h,conns:[],bufs:new Set(),hold:false,want:false,myBuf:false,rt:null,log:[],n:1,code:'',hc:null,pend:null,hostPeer:'',joined:false,down:false,poll:null,hb:null,mic:null,calls:new Map(),peers:[],auds:new Map(),pub:false};
 
 function showVw(){const e=$('#vw');if(e&&room)e.textContent=room.n+' penonton'}
 function showRoomUI(){
@@ -559,6 +817,8 @@ function showRoomUI(){
  $('#cp').onclick=()=>{const l=location.origin+location.pathname+'#room='+room.code;(navigator.clipboard?navigator.clipboard.writeText(l):Promise.reject()).then(()=>toast('Link room disalin'),()=>toast('Kode room: '+room.code))};
  $('#cs').onclick=()=>sendChat();$('#ci').onkeydown=e=>e.key==='Enter'&&sendChat();
  $('#pl').classList.add('rm');const rp=$('#rp'),ri=$('#ri');$('#ctg').onclick=()=>{rp.classList.toggle('on');if(rp.classList.contains('on'))ri.focus()};$('#rs').onclick=()=>sendChat(ri);ri.onkeydown=e=>e.key==='Enter'&&sendChat(ri);
+ $('#cmic').onclick=toggleMic;$('#vm').onclick=toggleMic;$('#csb').onclick=()=>$('#sbp').classList.toggle('on');
+ $('#sbm').onclick=()=>{SBM=!SBM;ls.set('bs:sbm',SBM);roomBtns()};$('#vis').onclick=toggleVis;roomBtns();
 }
 function renderChat(){const cm=$('#cm');if(!cm||!room)return;cm.innerHTML='';room.log.forEach(m=>cm.append(chatEl(m)))}
 function chatEl(m){const d=document.createElement('div');d.className='msg'+(m.sys?' sys':'');
@@ -570,12 +830,13 @@ const sysMsg=text=>{const m={t:'chat',sys:1,text};addChat(m);bc(m)};
 
 const alive=r=>Date.now()-new Date(r.last_seen).getTime()<300000;
 const rget=c=>api('rooms?code=eq.'+encodeURIComponent(c)+'&select=*').then(r=>r.json()).then(x=>x[0]);
-async function startRoom(a,row){
- if(room)return;newRoom(true);room.film=a.id;room.ep=row?(row.episode||0):((cur&&cur.ep)||0);
+async function startRoom(a,row,pub){
+ if(room)return;newRoom(true);room.pub=row?!!row.is_public:!!pub;room.film=a.id;room.ep=row?(row.episode||0):((cur&&cur.ep)||0);
  const gen=()=>Math.random().toString(36).slice(2,7).toUpperCase();
  room.code=row?row.code:gen();
  const pid='bioskop-'+room.code+'-'+Math.random().toString(36).slice(2,6);
  try{peer=new Peer(pid)}catch{room=null;return toast('PeerJS gagal dimuat.')}
+ bindVoice();
  peer.on('open',async()=>{
   if(!room||!room.host)return;
   const now=new Date().toISOString();
@@ -584,7 +845,7 @@ async function startRoom(a,row){
    if(row){const r=await api('rooms?code=eq.'+row.code,{method:'PATCH',headers:{Prefer:'return=representation'},body:JSON.stringify({host_peer:pid,last_seen:now})});if(!(await r.json()).length)throw 0}
    else{
     await api('rooms?host=eq.'+encodeURIComponent(user()),{method:'DELETE'});
-    for(let i=0;;i++){const r=await api('rooms',{method:'POST',headers:{Prefer:'return=minimal'},body:JSON.stringify({code:room.code,film_id:a.id,episode:room.ep,host:user(),host_peer:pid,last_seen:now,pos:0,playing:false})});if(r.ok)break;if(i>=4)throw 0;room.code=gen()}
+    for(let i=0;;i++){const r=await api('rooms',{method:'POST',headers:{Prefer:'return=minimal'},body:JSON.stringify({code:room.code,film_id:a.id,episode:room.ep,host:user(),host_peer:pid,last_seen:now,pos:0,playing:false,is_public:!!room.pub,viewers:1})});if(r.ok)break;if(i>=4)throw 0;room.code=gen()}
    }
   }catch{toast('Gagal menyimpan room ke database.');leaveRoom();return}
   showRoomUI();
@@ -599,14 +860,14 @@ async function startRoom(a,row){
  peer.on('connection',c=>{
   c.on('open',()=>{if(!room)return;room.conns.push(c);const v=V();c.send({t:'init',film:room.film,ep:room.ep||0,time:v?v.currentTime:0,playing:room.want&&!room.hold});c.send({t:'hold',v:room.hold});cnt()});
   c.on('data',m=>{if(!room)return;if(m.t==='buf')handleBuf(c.peer,m.v);else if(m.t==='hello'){const fresh=!c.nick;c.nick=String(m.name).slice(0,20);if(fresh)sysMsg(c.nick+' bergabung')}else{apply(m);bc(m,c)}});
-  const drop=()=>{if(!room||!room.conns.includes(c))return;room.conns=room.conns.filter(x=>x!==c);handleBuf(c.peer,false);if(c.nick)sysMsg(c.nick+' keluar');cnt()};
+  const drop=()=>{if(!room||!room.conns.includes(c))return;room.conns=room.conns.filter(x=>x!==c);handleBuf(c.peer,false);if(c.nick)sysMsg(c.nick+' keluar');dropVoice(c.peer);const k=room.calls.get(c.peer);if(k){try{k.close()}catch{}room.calls.delete(c.peer)}cnt()};
   c.on('close',drop);c.on('error',drop)});
 }
 function heartbeat(){
  if(!room||!room.host)return;const v=V();
- api('rooms?code=eq.'+room.code,{method:'PATCH',headers:{Prefer:'return=minimal'},body:JSON.stringify({last_seen:new Date().toISOString(),episode:room.ep||0,pos:v?v.currentTime:0,playing:!!room.want})}).catch(()=>{});
+ api('rooms?code=eq.'+room.code,{method:'PATCH',headers:{Prefer:'return=minimal'},body:JSON.stringify({last_seen:new Date().toISOString(),episode:room.ep||0,pos:v?v.currentTime:0,playing:!!room.want,viewers:room.n})}).catch(()=>{});
 }
-function cnt(){room.n=room.conns.length+1;showVw();bc({t:'count',n:room.n})}
+function cnt(){room.n=room.conns.length+1;showVw();bc({t:'count',n:room.n});bc({t:'peers',list:[peer.id,...room.conns.filter(c=>c.open).map(c=>c.peer)]});if(room.mic)callAll()}
 setInterval(()=>{if(room&&room.host&&room.conns.length&&V())bc({t:'sync',time:V().currentTime,playing:room.want})},4000);
 
 async function resumeHost(){
@@ -626,6 +887,7 @@ async function joinRoom(code){
  if(!row||!alive(row))return toast('Room tidak ditemukan atau sudah berakhir.');
  newRoom(false);room.code=code;room.hostPeer=row.host_peer;
  try{peer=new Peer()}catch{room=null;return toast('PeerJS gagal dimuat.')}
+ bindVoice();
  peer.on('disconnected',()=>{try{peer.reconnect()}catch{}});
  peer.on('error',e=>{
   if(!room)return;
@@ -657,7 +919,7 @@ async function checkRoom(){
 function bindRoomStart(){const v=V();if(!room||!room.pend||!v)return;const p=room.pend;
  const go=()=>{room.pend=null;if(p.time>0){room.rt=p.time;v.currentTime=p.time}if(p.playing&&!room.hold)doPlay();else if(!p.playing)doPause();showRoomUI()};
  v.readyState>=1?go():v.addEventListener('loadedmetadata',go,{once:true})}
-function leaveRoom(){if(room){clearInterval(room.poll);clearInterval(room.hb)}if(peer){try{peer.destroy()}catch{}}peer=null;room=null}
+function leaveRoom(){if(room){clearInterval(room.poll);clearInterval(room.hb);stopMic();room.auds.forEach(a=>{a.srcObject=null;a.remove()})}if(peer){try{peer.destroy()}catch{}}peer=null;room=null}
 
 /* ===== pemutar ===== */
 function player(a,n,ep,nextHref){
@@ -689,7 +951,7 @@ function player(a,n,ep,nextHref){
  v.onseeked=()=>{if(!room)return;if(room.rt!==null&&Math.abs(v.currentTime-room.rt)<.8){room.rt=null;return}emitT('seek')};
  v.onerror=()=>{$('#buf').classList.add('on');$('#bt').textContent='Video gagal dimuat. Cek URL CDN.'};
  $('#dl').onclick=()=>download(a,n,ep);v.onended=()=>{if(nextHref&&(!room||room.host))location.hash=nextHref};
- $('#nb').onclick=()=>startRoom(a);
+ $('#nb').onclick=()=>pickVis(a);
  if(room){showRoomUI();if(room.pend)bindRoomStart();else{room.rt=null;const t=hist.find(x=>x.id===a.id);if(!room.host&&room.want)v.play().catch(()=>{})}}
  else if(resumeRow){const r=resumeRow;resumeRow=null;setTimeout(()=>startRoom(a,r),0)}else v.play().catch(()=>{});
  show();
@@ -699,13 +961,13 @@ function player(a,n,ep,nextHref){
 /* ===== admin: tambah/edit film ===== */
 const rowH=(r='720p',u='')=>`<div class="row"><input class="in u" value="${esc(u)}" placeholder="https://cdn-kamu.com/film.mp4"><select class="in r">${RES.map(x=>`<option${x===r?' selected':''}>${x}</option>`).join('')}</select><button class="b2 x">✕</button></div>`;
 const xeH=(e,open)=>`<details class="xe" data-no="${e.no}"${open?' open':''}><summary>Ep ${e.no}<span>${esc(e.title||'')}</span></summary><div class="xb"><input class="in xt" placeholder="Judul episode" value="${esc(e.title||'')}"><input class="in xh" placeholder="Link thumbnail (https://…)" value="${esc(e.thumb||'')}"><div class="xs">${e.sources.map(s=>rowH(s.res,s.url)).join('')}</div><div class="btns" style="margin:2px 0 0"><button type="button" class="b2 xa">+ Resolusi</button><button type="button" class="b2 xd" style="color:#fca5a5">Hapus episode</button></div></div></details>`;
-function filmModal(id){
+function filmModal(id,pre){
  if(!isAdmin())return;
- const f=catalog.find(x=>x.id===id),ser=!!f&&isS(f),d=document.createElement('div'),cat0=f?f.category:(CAT==='all'?'film':CAT);d.className='md';
+ const f=catalog.find(x=>x.id===id),ser=!!f&&isS(f),d=document.createElement('div'),cat0=f?f.category:(pre&&pre.category)||(CAT==='all'?'film':CAT);d.className='md';
  const inner=ser
   ?`<p class="mu">${f.episodes.length} episode. Ketuk episode untuk mengedit judul, thumbnail, dan link videonya.</p><div class="xl" id="xl">${f.episodes.map(e=>xeH(e)).join('')}</div><button type="button" class="b2" id="xn">+ Episode</button>`
   :`<div id="mr" class="xs">${f?f.sources.map(s=>rowH(s.res,s.url)).join(''):rowH()}</div><button class="b2" id="ma">+ Resolusi</button>`;
- d.innerHTML=`<div><h2 style="margin:0">${ser?'Edit serial':f?'Edit film':'Tambah film'}</h2><input class="in" id="mt" placeholder="Judul film" value="${esc(f?.title||'')}"><p class="mu" style="font-size:13px;margin-bottom:-4px">Kategori</p><div class="seg" id="mcat" data-v="${cat0}">${CATS.map(c=>`<button type="button" data-v="${c[0]}" class="${cat0===c[0]?'on':''}">${c[1]}</button>`).join('')}</div>${inner}<div class="btns mb"><button class="b2" id="mc">Batal</button>${f?'<button class="b2" id="mx" style="color:#fca5a5">Hapus</button>':''}<button class="b2 on" id="ms">Simpan</button></div></div>`;
+ d.innerHTML=`<div><h2 style="margin:0">${ser?'Edit serial':f?'Edit film':'Tambah film'}</h2><input class="in" id="mt" placeholder="Judul film" value="${esc(f?.title||(pre&&pre.title)||'')}"><p class="mu" style="font-size:13px;margin-bottom:-4px">Kategori</p><div class="seg" id="mcat" data-v="${cat0}">${CATS.map(c=>`<button type="button" data-v="${c[0]}" class="${cat0===c[0]?'on':''}">${c[1]}</button>`).join('')}</div>${inner}<div class="btns mb"><button class="b2" id="mc">Batal</button>${f?'<button class="b2" id="mx" style="color:#fca5a5">Hapus</button>':''}<button class="b2 on" id="ms">Simpan</button></div></div>`;
  document.body.append(d);
  d.onclick=e=>{const t=e.target;
   if(t.classList.contains('x')){const b=t.closest('.xs');if(b&&b.children.length>1)t.parentNode.remove()}
@@ -888,12 +1150,14 @@ async function render(){
  if(parts[0]!=='more'&&JSON.stringify(TH)!==JSON.stringify(THs)){TH=cleanTheme(THs);applyTheme(TH)}
  if(!parts[0]||['history','watch','film'].includes(parts[0]))await loadHist();
  const[body,init]=view(parts);
- const on=['film','watch'].includes(parts[0])?'':parts[0]==='admin'?'more':(parts[0]||'');
- const tabs=[['','home','Beranda'],['explore','compass','Jelajahi'],['history','clock','Riwayat'],['downloads','dl','Unduhan'],['more','menu','Lainnya']];
- app.innerHTML=`<header class="hd"><a href="#/" class="logo">Bioskop <span>Ana</span></a><div style="display:flex;gap:8px"><a href="#/explore" class="ib">${ic('search')}</a><a href="#/more" class="av">${esc(user()[0].toUpperCase())}</a></div></header><main>${body}</main><nav class="nv">${tabs.map(t=>`<a href="#/${t[0]}" class="${on===t[0]?'on':''}">${ic(t[1],24)}${t[2]}</a>`).join('')}</nav>`;
+ const on=['film','watch'].includes(parts[0])?'':['admin','request'].includes(parts[0])?'more':(parts[0]||'');
+ const tabs=[['','home','Beranda'],['explore','compass','Jelajahi'],['nobar','users','Nobar'],['history','clock','Riwayat'],['downloads','dl','Unduhan'],['more','menu','Lainnya']];
+ app.innerHTML=`<header class="hd"><a href="#/" class="logo">Bioskop <span>Ana</span></a><div style="display:flex;gap:8px"><a href="#/explore" class="ib">${ic('search')}</a><a href="#/more" class="av" style="${avSt(MYAV)}">${avIn(MYAV,user())}</a></div></header><main>${body}</main><nav class="nv">${tabs.map(t=>`<a href="#/${t[0]}" class="${on===t[0]?'on':''}">${ic(t[1],24)}${t[2]}</a>`).join('')}</nav>`;
  scrollTo(0,0);if(init)init();fillPosters();ping();
 }
 document.addEventListener('click',e=>{
+ const at=e.target.closest('[data-at]');if(at)AT=at.dataset.at;
+ const sbb=e.target.closest('[data-sb]');if(sbb)sbSend(sbb.dataset.sb);
  const b=e.target.closest('[data-dl]');if(b){e.preventDefault();const[id,i,ep]=b.dataset.dl.split(':'),a=catalog.find(x=>x.id===id);if(a)download(a,+i,+ep)}
  const ea=e.target.closest('[data-ep]');if(ea&&room&&!room.host){e.preventDefault();toast('Hanya host yang bisa ganti episode.')}
  const ed=e.target.closest('[data-edit]');if(ed&&isAdmin())filmModal(ed.dataset.edit);
@@ -902,7 +1166,7 @@ document.addEventListener('click',e=>{
 });
 addEventListener('hashchange',()=>{const m=location.hash.match(/room=([A-Za-z0-9]+)/);if(m&&user())return joinRoom(m[1].toUpperCase());render()});
 addEventListener('pagehide',saveNow);
-loadTheme();
+loadTheme();loadProfile();
 loadCatalog().then(()=>{const m=location.hash.match(/room=([A-Za-z0-9]+)/);if(m&&user())joinRoom(m[1].toUpperCase());else if(user())resumeHost()});
 </script>
 </body>
