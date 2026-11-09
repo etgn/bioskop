@@ -166,6 +166,9 @@ input[type=color]::-moz-color-swatch{border:0}
 #thc input[type=color]{width:52px;height:52px;border-radius:50%}
 .cb{width:52px;height:52px;border-radius:50%;border:1px dashed #ffffff40;display:grid;place-items:center;color:var(--mu);font-size:22px;line-height:1}
 .pr{width:34px;height:34px;border-radius:50%;border:2px solid var(--ln)}
+/* kategori */
+.cats{display:flex;gap:8px;overflow-x:auto;margin-top:12px;padding-bottom:2px}
+.cats .b2{padding:8px 16px;white-space:nowrap;font-size:14px}
 </style>
 </head>
 <body>
@@ -193,16 +196,22 @@ const RES=['360p','480p','720p','1080p','1440p','4K'];
 
 let catalog=[],cur=null,mode='in',S={q:''},hist=[];
 const isS=a=>!!(a.episodes&&a.episodes.length);
+let CAT='all';
+const CATS=[['film','Film'],['anime','Anime'],['donghua','Donghua']];
+const catName=c=>(CATS.find(x=>x[0]===c)||CATS[0])[1];
+const catChips=()=>`<div class="cats" id="cats">${[['all','Semua'],...CATS].map(c=>`<button type="button" class="b2${CAT===c[0]?' on':''}" data-c="${c[0]}">${c[1]}</button>`).join('')}</div>`;
+const inCat=a=>CAT==='all'||a.category===CAT;
+const bindCats=fn=>{$('#cats').onclick=e=>{const b=e.target.closest('[data-c]');if(!b)return;CAT=b.dataset.c;document.querySelectorAll('#cats button').forEach(x=>x.classList.toggle('on',x===b));fn()}};
 const qualsOf=a=>[...new Set((isS(a)?a.episodes.flatMap(e=>e.sources):a.sources).map(x=>x.res||'Auto'))].sort((x,y)=>resNum(x)-resNum(y));
 const wl=(a,ep)=>'#/watch/'+encodeURIComponent(a.id)+(ep?'/auto/'+ep:'');
 function normalize(r){
  const ok=x=>x&&/^https?:\/\//i.test(x.url||''),ss=a=>(Array.isArray(a)?a:[]).filter(ok).sort((a,b)=>resNum(a.res)-resNum(b.res));
  const episodes=(Array.isArray(r.episodes)?r.episodes:[]).map(e=>({no:Number(e.no),title:e.title||'',thumb:e.thumb||'',sources:ss(e.sources)})).filter(e=>Number.isFinite(e.no)&&e.sources.length).sort((a,b)=>a.no-b.no);
- return{...r,title:r.title||'Tanpa judul',sources:ss(r.sources),episodes}
+ return{...r,title:r.title||'Tanpa judul',category:['film','anime','donghua'].includes(r.category)?r.category:'film',sources:ss(r.sources),episodes}
 }
 async function loadCatalog(){
  $('#app').innerHTML='<div class="lg"><div class="lc"><div class="logo big">Bioskop <span>Ana</span></div><p class="mu">Menghubungkan ke database…</p></div></div>';
- try{const r=await api('films?select=id,title,sources,episodes,created_at&order=created_at.desc');if(!r.ok)throw Error(await r.text()||'HTTP '+r.status);
+ try{const r=await api('films?select=id,title,sources,episodes,category,created_at&order=created_at.desc');if(!r.ok)throw Error(await r.text()||'HTTP '+r.status);
   catalog=(await r.json()).map(normalize).filter(f=>f.sources.length||f.episodes.length);render()
  }catch(e){$('#app').innerHTML=`<main><div class="logo big">Bioskop <span>Ana</span></div><div class="status mt">Gagal mengambil data.<br><br>${esc(e.message)}</div><button class="b1 mt" onclick="loadCatalog()">Coba lagi</button></main>`}
 }
@@ -253,7 +262,7 @@ function detail(a){
  return`<a class="back" href="#/">${ic('back',20)}Beranda</a>
 <div class="sh"><div class="po" style="--h:${hue(a.title)}"><img data-id="${esc(a.id)}" alt=""></div>
 <h1>${esc(a.title)}</h1>
-<div class="chips" id="chips"><span class="chip">Film</span><span class="chip">${qualsOf(a).map(esc).join(' • ')}</span></div>
+<div class="chips" id="chips"><span class="chip">${catName(a.category)}</span><span class="chip">${qualsOf(a).map(esc).join(' • ')}</span></div>
 <div class="syn" id="syn" hidden><h3>Sinopsis</h3><p></p></div>
 <a class="b1 mt" href="${wl(a)}">${ic('play',18)} ${h&&p<95?'Lanjutkan':'Tonton'}</a></div>
 ${h?`<div class="pcard"><b>Progres menonton</b><div class="pg"><i style="width:${p}%"></i></div><small>${ft(h.t)} / ${ft(h.d)} · ${p}%</small></div>`:''}
@@ -304,7 +313,7 @@ function seriesDetail(a){
  return`<a class="back" href="#/">${ic('back',20)}Beranda</a>
 <div class="sh"><div class="po" style="--h:${hue(a.title)}"><img data-id="${esc(a.id)}" alt=""></div>
 <h1>${esc(a.title)}</h1>
-<div class="chips" id="chips"><span class="chip">${tot} Episode</span><span class="chip">${qualsOf(a).map(esc).join(' • ')}</span></div>
+<div class="chips" id="chips"><span class="chip">${catName(a.category)}</span><span class="chip">${tot} Episode</span><span class="chip">${qualsOf(a).map(esc).join(' • ')}</span></div>
 <div class="syn" id="syn" hidden><h3>Sinopsis</h3><p></p></div>
 <a class="b1 mt" href="${wl(a,tg)}">${ic('play',18)} ${st?'Lanjutkan':'Tonton'} Episode ${tg}</a></div>
 <div class="pcard"><b>Progres menonton</b><div class="pg"><i style="width:${pc}%"></i></div><small>${done} dari ${tot} episode selesai · ${pc}%</small></div>
@@ -332,13 +341,14 @@ function epNav(a,E){
 function view(parts){
  const[p,id,idx,epq]=parts;
  if(!p){const sn=new Set(),h=hist.filter(x=>!sn.has(x.id)&&sn.add(x.id)).slice(0,3);return[`<div class="fm" style="display:flex;gap:8px;margin-bottom:6px"><input class="in" id="jc" placeholder="Kode room nobar" maxlength="8" style="text-transform:uppercase"><button class="b2" id="jb">${ic('users',18)} Gabung</button></div>
- ${h.length?`<h2>Lanjutkan menonton</h2><div class="list">${h.map(histCard).join('')}</div>`:''}<h2>Semua film</h2>
- ${catalog.length?`<div class="grid">${catalog.map(card).join('')}</div>`:'<p class="status">Belum ada film di database.</p>'}`,()=>{
+ ${h.length?`<h2>Lanjutkan menonton</h2><div class="list">${h.map(histCard).join('')}</div>`:''}<h2>Semua film</h2>${catChips()}<div id="cg" class="grid mt"></div>`,()=>{
+  const f=()=>{const L=catalog.filter(inCat);$('#cg').innerHTML=L.map(card).join('')||`<p class="mu" style="grid-column:1/-1">${catalog.length?'Belum ada di kategori ini.':'Belum ada film di database.'}</p>`;fillPosters()};
+  bindCats(f);f();
   const go=()=>{const c=$('#jc').value.trim().toUpperCase();c?joinRoom(c):toast('Masukkan kode room dulu.')};
   $('#jb').onclick=go;$('#jc').onkeydown=e=>e.key==='Enter'&&go()}]}
- if(p==='explore')return[`<input id="sq" class="in" placeholder="Cari judul film" value="${esc(S.q)}"><div id="sg" class="grid mt"></div>`,()=>{
-  const f=()=>{$('#sg').innerHTML=catalog.filter(a=>a.title.toLowerCase().includes(S.q.toLowerCase())).map(card).join('')||'<p class="mu">Film tidak ditemukan.</p>';fillPosters()};
-  $('#sq').oninput=e=>{S.q=e.target.value;f()};f()}];
+ if(p==='explore')return[`<input id="sq" class="in" placeholder="Cari judul film" value="${esc(S.q)}">${catChips()}<div id="sg" class="grid mt"></div>`,()=>{
+  const f=()=>{$('#sg').innerHTML=catalog.filter(a=>inCat(a)&&a.title.toLowerCase().includes(S.q.toLowerCase())).map(card).join('')||'<p class="mu">Film tidak ditemukan.</p>';fillPosters()};
+  $('#sq').oninput=e=>{S.q=e.target.value;f()};bindCats(f);f()}];
  if(p==='history')return[`<h2>Riwayat tontonan</h2>${hist.length?`<div class="list">${hist.map(histCard).join('')}</div><button class="b2 mt" id="ch">Hapus riwayat</button>`:'<p class="mu">Belum ada riwayat tontonan.</p>'}`,()=>{
   const b=$('#ch');if(b)b.onclick=async()=>{await api('watch_history?username=eq.'+encodeURIComponent(user()),{method:'DELETE'});hist=[];render()}}];
  if(p==='downloads'){const d=ls.get('bs:d:'+user(),[]).filter(x=>catalog.some(a=>a.id===x.id));
@@ -386,17 +396,15 @@ async function saveTheme(){
  try{const r=await api('user_theme?on_conflict=username',{method:'POST',headers:{Prefer:'resolution=merge-duplicates,return=minimal'},body:JSON.stringify({username:u,mode:THs.mode,colors:THs.colors,updated_at:new Date().toISOString()})});if(!r.ok)throw 0;toast('Tema disimpan ke akunmu')}
  catch{toast('Tema tersimpan di perangkat ini. Tabel user_theme belum ada di database.')}
 }
-const PRE=[['#8b5cf6','#3b82f6'],['#ef4444','#f97316'],['#10b981','#06b6d4'],['#ec4899','#8b5cf6'],['#f59e0b','#ef4444'],['#3b82f6','#22d3ee','#8b5cf6'],['#22c55e']];
-const themePanel=()=>`<h2>Tema warna</h2><div class="room" style="margin-top:0"><div class="cps" id="thc" style="margin:0 0 16px"></div><div class="pvb"></div><div class="cps" id="thp" style="gap:10px;margin:16px 0 0">${PRE.map((c,i)=>`<button type="button" class="pr" data-i="${i}" style="background:linear-gradient(135deg,${c.length>1?c.join(','):c[0]+','+c[0]})"></button>`).join('')}</div></div>`;
+const themePanel=()=>`<h2>Tema warna</h2><div class="room" style="margin-top:0"><div class="cps" id="thc" style="margin:0;align-items:center"></div><p class="mu" style="font-size:12px;margin-top:12px">Ketuk bulatan untuk memilih warna. <button type="button" id="thr" style="color:var(--a);font-size:12px">Reset</button></p></div>`;
 function themeInit(){
  let tm;const save=()=>{clearTimeout(tm);tm=setTimeout(saveTheme,400)};
  const draw=()=>{
-  $('#thc').innerHTML=[...Array(TH.mode).keys()].map(i=>`<input type="color" data-i="${i}" value="${TH.colors[i]}">`).join('')
-   +(TH.mode<3?'<button type="button" class="cb" data-a="+">+</button>':'')+(TH.mode>1?'<button type="button" class="cb" data-a="-">−</button>':'');
+  $('#thc').innerHTML=[...Array(TH.mode).keys()].map(i=>`<input type="color" data-i="${i}" value="${TH.colors[i]}">`).join('')+`<button type="button" class="b2" data-n style="margin-left:auto">${TH.mode} warna ⟳</button>`;
   $('#thc').querySelectorAll('input').forEach(inp=>{inp.oninput=()=>{TH.colors[+inp.dataset.i]=inp.value;applyTheme(TH)};inp.onchange=save})
  };
- $('#thc').onclick=e=>{const b=e.target.closest('[data-a]');if(!b)return;TH.mode+=b.dataset.a==='+'?1:-1;applyTheme(TH);draw();save()};
- $('#thp').onclick=e=>{const b=e.target.closest('.pr');if(!b)return;const c=PRE[+b.dataset.i];TH={mode:c.length,colors:[0,1,2].map(i=>c[i]||c[c.length-1])};applyTheme(TH);draw();save()};
+ $('#thc').onclick=e=>{if(!e.target.closest('[data-n]'))return;TH.mode=TH.mode%3+1;applyTheme(TH);draw();save()};
+ $('#thr').onclick=()=>{TH=cleanTheme(null);applyTheme(TH);draw();save()};
  draw()
 }
 
@@ -431,12 +439,12 @@ async function doBan(k,v){
  if(await arpc('admin_ban',{k,v,r:r.trim().slice(0,120)})){toast('Berhasil diblokir');adminTab(AT)}
 }
 function tabFilm(){
- $('#adb').innerHTML=`<div class="btns" style="margin:14px 0 0"><button class="b2" data-edit="">+ Tambah film</button><button class="b2" id="ij">Impor file JSON</button><button class="b2" id="is">Impor banyak episode</button><input type="file" id="sf" accept=".json,application/json" multiple hidden><input type="file" id="jf" accept=".json,application/json" multiple hidden></div><input class="in mt" id="aq" placeholder="Cari film untuk diedit…"><div class="list mt" id="al"></div>`;
+ $('#adb').innerHTML=`<div class="btns" style="margin:14px 0 0"><button class="b2" data-edit="">+ Tambah film</button><button class="b2" id="ij">Impor file JSON</button><button class="b2" id="is">Impor banyak episode</button><input type="file" id="sf" accept=".json,application/json" multiple hidden><input type="file" id="jf" accept=".json,application/json" multiple hidden></div><select class="in mt" id="ic"><option value="">Kategori impor baru: otomatis</option>${CATS.map(c=>`<option value="${c[0]}">Impor sebagai ${c[1]}</option>`).join('')}</select><input class="in mt" id="aq" placeholder="Cari film untuk diedit…"><div class="list mt" id="al"></div>`;
  $('#aq').oninput=adminList;adminList()
 }
 function adminList(){
  const q=($('#aq').value||'').trim().toLowerCase();
- $('#al').innerHTML=q?(catalog.filter(a=>a.title.toLowerCase().includes(q)).map(a=>`<div class="hi"><div class="hm"><b>${esc(a.title)}</b><small>${isS(a)?a.episodes.length+' episode':a.sources.map(x=>esc(x.res||'Video')).join(' • ')}</small></div><button class="b2" data-edit="${esc(a.id)}">Edit</button></div>`).join('')||'<p class="mu">Film tidak ditemukan.</p>'):''
+ $('#al').innerHTML=q?(catalog.filter(a=>a.title.toLowerCase().includes(q)).map(a=>`<div class="hi"><div class="hm"><b>${esc(a.title)}</b><small>${catName(a.category)} · ${isS(a)?a.episodes.length+' episode':a.sources.map(x=>esc(x.res||'Video')).join(' • ')}</small></div><button class="b2" data-edit="${esc(a.id)}">Edit</button></div>`).join('')||'<p class="mu">Film tidak ditemukan.</p>'):''
 }
 function tabOnline(){
  $('#adb').innerHTML=`<div class="tb" style="margin-top:14px"><input class="in" id="oq" placeholder="Cari username atau IP…"><button class="b2" id="oa" style="white-space:nowrap"></button></div><p class="mu" id="os" style="margin-top:10px;font-size:13px"></p><div class="list mt" id="ol"></div>`;
@@ -693,15 +701,16 @@ const rowH=(r='720p',u='')=>`<div class="row"><input class="in u" value="${esc(u
 const xeH=(e,open)=>`<details class="xe" data-no="${e.no}"${open?' open':''}><summary>Ep ${e.no}<span>${esc(e.title||'')}</span></summary><div class="xb"><input class="in xt" placeholder="Judul episode" value="${esc(e.title||'')}"><input class="in xh" placeholder="Link thumbnail (https://…)" value="${esc(e.thumb||'')}"><div class="xs">${e.sources.map(s=>rowH(s.res,s.url)).join('')}</div><div class="btns" style="margin:2px 0 0"><button type="button" class="b2 xa">+ Resolusi</button><button type="button" class="b2 xd" style="color:#fca5a5">Hapus episode</button></div></div></details>`;
 function filmModal(id){
  if(!isAdmin())return;
- const f=catalog.find(x=>x.id===id),ser=!!f&&isS(f),d=document.createElement('div');d.className='md';
+ const f=catalog.find(x=>x.id===id),ser=!!f&&isS(f),d=document.createElement('div'),cat0=f?f.category:(CAT==='all'?'film':CAT);d.className='md';
  const inner=ser
   ?`<p class="mu">${f.episodes.length} episode. Ketuk episode untuk mengedit judul, thumbnail, dan link videonya.</p><div class="xl" id="xl">${f.episodes.map(e=>xeH(e)).join('')}</div><button type="button" class="b2" id="xn">+ Episode</button>`
   :`<div id="mr" class="xs">${f?f.sources.map(s=>rowH(s.res,s.url)).join(''):rowH()}</div><button class="b2" id="ma">+ Resolusi</button>`;
- d.innerHTML=`<div><h2 style="margin:0">${ser?'Edit serial':f?'Edit film':'Tambah film'}</h2><input class="in" id="mt" placeholder="Judul film" value="${esc(f?.title||'')}">${inner}<div class="btns mb"><button class="b2" id="mc">Batal</button>${f?'<button class="b2" id="mx" style="color:#fca5a5">Hapus</button>':''}<button class="b2 on" id="ms">Simpan</button></div></div>`;
+ d.innerHTML=`<div><h2 style="margin:0">${ser?'Edit serial':f?'Edit film':'Tambah film'}</h2><input class="in" id="mt" placeholder="Judul film" value="${esc(f?.title||'')}"><p class="mu" style="font-size:13px;margin-bottom:-4px">Kategori</p><div class="seg" id="mcat" data-v="${cat0}">${CATS.map(c=>`<button type="button" data-v="${c[0]}" class="${cat0===c[0]?'on':''}">${c[1]}</button>`).join('')}</div>${inner}<div class="btns mb"><button class="b2" id="mc">Batal</button>${f?'<button class="b2" id="mx" style="color:#fca5a5">Hapus</button>':''}<button class="b2 on" id="ms">Simpan</button></div></div>`;
  document.body.append(d);
  d.onclick=e=>{const t=e.target;
   if(t.classList.contains('x')){const b=t.closest('.xs');if(b&&b.children.length>1)t.parentNode.remove()}
   else if(t.classList.contains('xa'))t.closest('.xb').querySelector('.xs').insertAdjacentHTML('beforeend',rowH('1080p'));
+  else if(t.dataset.v&&t.closest('#mcat')){const m=$('#mcat');m.dataset.v=t.dataset.v;m.querySelectorAll('button').forEach(x=>x.classList.toggle('on',x===t))}
   else if(t.classList.contains('xd')){const x=t.closest('.xe');if(x&&confirm('Hapus Ep '+x.dataset.no+'?'))x.remove()}};
  const ma=$('#ma');if(ma)ma.onclick=()=>$('#mr').insertAdjacentHTML('beforeend',rowH('1080p'));
  const xn=$('#xn');if(xn)xn.onclick=()=>{
@@ -727,12 +736,12 @@ function filmModal(id){
     eps.push({no,title:x.querySelector('.xt').value.trim()||'Episode '+no,thumb:th,sources:src})
    }
    if(!eps.length)return toast('Minimal satu episode. Pakai Hapus untuk menghapus serial.');
-   data={title,episodes:eps.sort((a,b)=>a.no-b.no)}
+   data={title,category:$('#mcat').dataset.v,episodes:eps.sort((a,b)=>a.no-b.no)}
   }else{
    const sources=[...d.querySelectorAll('.row')].map(rd).filter(q=>q.url);
    if(!sources.length)return toast('Isi minimal satu link.');
    if(sources.some(q=>!ok(q.url)))return toast('Link harus diawali https://');
-   data={title,sources}
+   data={title,category:$('#mcat').dataset.v,sources}
   }
   try{const r=await api(f?'films?id=eq.'+f.id:'films',{method:f?'PATCH':'POST',headers:{Prefer:'return=minimal'},body:JSON.stringify(data)});if(!r.ok)throw 0;
    d.remove();toast('Film disimpan');loadCatalog()}catch{toast('Gagal menyimpan film.')}
@@ -801,6 +810,7 @@ function fillPosters(){
  L.forEach(i=>io.observe(i))
 }
 /* ===== impor film dari file JSON (admin) ===== */
+const impCat=d=>(($('#ic')||{}).value)||d;
 const normRes=r=>{r=String(r||'').trim();const n=parseInt(r.replace(/\D/g,''),10);if(/4k/i.test(r)||n===2160)return'4K';return n?n+'p':'720p'};
 function extractFilms(j){
  const arr=Array.isArray(j)?j:Array.isArray(j?.data)?j.data:[j];
@@ -826,7 +836,7 @@ async function importJson(inp){
     if(!ch){skip++;continue}
     const r=await api('films?id=eq.'+ex.id,{method:'PATCH',headers:{Prefer:'return=minimal'},body:JSON.stringify({sources:src})});if(!r.ok)throw 0;upd++;
    }else{
-    const r=await api('films',{method:'POST',headers:{Prefer:'return=minimal'},body:JSON.stringify(x)});if(!r.ok)throw 0;add++;
+    const r=await api('films',{method:'POST',headers:{Prefer:'return=minimal'},body:JSON.stringify({...x,category:impCat('film')})});if(!r.ok)throw 0;add++;
    }
   }catch{fail++}
  }
@@ -863,7 +873,7 @@ async function importSeries(inp){
     cu.sort((x,y)=>x.no-y.no);
     const r=await api('films?id=eq.'+ex.id,{method:'PATCH',headers:{Prefer:'return=minimal'},body:JSON.stringify({episodes:cu})});if(!r.ok)throw 0;
    }else{
-    const r=await api('films',{method:'POST',headers:{Prefer:'return=minimal'},body:JSON.stringify({title:s.title,sources:[],episodes:eps})});if(!r.ok)throw 0;addS++;addE+=eps.length}
+    const r=await api('films',{method:'POST',headers:{Prefer:'return=minimal'},body:JSON.stringify({title:s.title,sources:[],episodes:eps,category:impCat('anime')})});if(!r.ok)throw 0;addS++;addE+=eps.length}
   }catch{fail++}}
  toast((addS?addS+' serial baru, ':'')+`${addE} episode ditambahkan`+(updE?`, ${updE} diperbarui`:'')+(fail?`, ${fail} gagal`:'')+(bad?`, ${bad} file tidak valid`:''));
  loadCatalog();
