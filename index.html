@@ -153,6 +153,19 @@ input[type=color]::-moz-color-swatch{border:0}
 .rt{position:absolute;z-index:2;top:0;right:0;display:flex;align-items:center;gap:4px;padding:5px 10px 6px 12px;border-radius:0 0 0 14px;background:#0b0a14d9;font:700 12px Inter,sans-serif;color:#fff}
 .rt:before{content:"★";color:#fbbf24}
 .rt[hidden]{display:none}
+/* panel admin + tema simpel */
+#adt button{padding:10px 4px;font-size:13px}
+.ur{flex-direction:column;align-items:stretch;gap:10px}
+.uh{display:flex;gap:12px;align-items:flex-start}
+.dot{flex:none;width:10px;height:10px;border-radius:50%;background:#4b4966;margin-top:6px}
+.dot.on{background:#34d399;box-shadow:0 0 0 4px #34d39926}
+.ura{display:flex;gap:8px;flex-wrap:wrap}
+.ura .b2{padding:8px 12px;font-size:13px;color:#fca5a5}
+.bdg{display:inline-block;padding:1px 8px;border-radius:99px;background:#ef444426;color:#fca5a5;font:600 11px Inter,sans-serif;margin-left:4px}
+.hm small{overflow-wrap:anywhere}
+#thc input[type=color]{width:52px;height:52px;border-radius:50%}
+.cb{width:52px;height:52px;border-radius:50%;border:1px dashed #ffffff40;display:grid;place-items:center;color:var(--mu);font-size:22px;line-height:1}
+.pr{width:34px;height:34px;border-radius:50%;border:2px solid var(--ln)}
 </style>
 </head>
 <body>
@@ -161,15 +174,15 @@ input[type=color]::-moz-color-swatch{border:0}
 <script>
 const SB_URL='https://pdmrafvzkcopfpfwwizi.supabase.co';
 const SB_KEY='sb_publishable_U4IdMzfQwUCgIGOOXuctzw_HEtvvFqY';
-// Akun admin (tidak disimpan di database). Ganti sandinya di sini.
-const ADMIN_USER='admin',ADMIN_PASS='admin123';
+// Nama akun admin. Kata sandinya disimpan (di-hash) di database; ganti lewat Panel admin > Sandi.
+const ADMIN_USER='admin';
 // Poster film diambil otomatis dari TMDB berdasarkan judul.
 const TMDB_KEY='259658c16b4e90de382d7077b44ce297';
 
 const $=s=>document.querySelector(s);
 const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const ls={get(k,d){try{const v=localStorage.getItem(k);return v===null?d:JSON.parse(v)}catch{return d}},set(k,v){try{localStorage.setItem(k,JSON.stringify(v))}catch{}}};
-const I={chat:'<path d="M21 12a8 8 0 0 1-11.5 7.2L4 20l1-4.5A8 8 0 1 1 21 12z"/>',home:'<path d="M3 10.5 12 3l9 7.5V20a1 1 0 0 1-1 1h-5v-6H9v6H4a1 1 0 0 1-1-1z"/>',compass:'<circle cx="12" cy="12" r="9"/><path d="m15.5 8.5-2 5-5 2 2-5z"/>',clock:'<circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/>',dl:'<path d="M12 4v11m0 0-4-4m4 4 4-4M5 20h14"/>',menu:'<path d="M4 7h16M4 12h16M4 17h16"/>',search:'<circle cx="11" cy="11" r="7"/><path d="m20 20-4-4"/>',back:'<path d="M19 12H5m6-6-6 6 6 6"/>',play:'<path d="M7 4v16l13-8z" fill="currentColor"/>',pause:'<path d="M7 4h3.5v16H7zM13.5 4H17v16h-3.5z" fill="currentColor"/>',rw:'<path d="M3 12a9 9 0 1 0 3-6.7L3 8"/><path d="M3 3v5h5"/>',fw:'<path d="M21 12a9 9 0 1 1-3-6.7L21 8"/><path d="M21 3v5h-5"/>',vol:'<path d="M4 9v6h4l5 4V5L8 9z"/><path d="M16.5 8.5a5 5 0 0 1 0 7"/>',mute:'<path d="M4 9v6h4l5 4V5L8 9z"/><path d="m17 9 5 6m0-6-5 6"/>',gear:'<path d="M4 7h10M18 7h2M4 17h2M10 17h10"/><circle cx="16" cy="7" r="2"/><circle cx="8" cy="17" r="2"/>',full:'<path d="M4 9V4h5M20 9V4h-5M4 15v5h5M20 15v5h-5"/>',users:'<circle cx="9" cy="8" r="3.5"/><path d="M2.5 20c0-4 3-6 6.5-6s6.5 2 6.5 6M17 5a3.5 3.5 0 0 1 0 6.5M21.5 20c0-3-1.5-4.8-4-5.5"/>'};
+const I={shield:'<path d="M12 3 4 6v6c0 4.5 3.2 8 8 9 4.8-1 8-4.5 8-9V6z"/><path d="m9 12 2 2 4-4"/>',chat:'<path d="M21 12a8 8 0 0 1-11.5 7.2L4 20l1-4.5A8 8 0 1 1 21 12z"/>',home:'<path d="M3 10.5 12 3l9 7.5V20a1 1 0 0 1-1 1h-5v-6H9v6H4a1 1 0 0 1-1-1z"/>',compass:'<circle cx="12" cy="12" r="9"/><path d="m15.5 8.5-2 5-5 2 2-5z"/>',clock:'<circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/>',dl:'<path d="M12 4v11m0 0-4-4m4 4 4-4M5 20h14"/>',menu:'<path d="M4 7h16M4 12h16M4 17h16"/>',search:'<circle cx="11" cy="11" r="7"/><path d="m20 20-4-4"/>',back:'<path d="M19 12H5m6-6-6 6 6 6"/>',play:'<path d="M7 4v16l13-8z" fill="currentColor"/>',pause:'<path d="M7 4h3.5v16H7zM13.5 4H17v16h-3.5z" fill="currentColor"/>',rw:'<path d="M3 12a9 9 0 1 0 3-6.7L3 8"/><path d="M3 3v5h5"/>',fw:'<path d="M21 12a9 9 0 1 1-3-6.7L21 8"/><path d="M21 3v5h-5"/>',vol:'<path d="M4 9v6h4l5 4V5L8 9z"/><path d="M16.5 8.5a5 5 0 0 1 0 7"/>',mute:'<path d="M4 9v6h4l5 4V5L8 9z"/><path d="m17 9 5 6m0-6-5 6"/>',gear:'<path d="M4 7h10M18 7h2M4 17h2M10 17h10"/><circle cx="16" cy="7" r="2"/><circle cx="8" cy="17" r="2"/>',full:'<path d="M4 9V4h5M20 9V4h-5M4 15v5h5M20 15v5h-5"/>',users:'<circle cx="9" cy="8" r="3.5"/><path d="M2.5 20c0-4 3-6 6.5-6s6.5 2 6.5 6M17 5a3.5 3.5 0 0 1 0 6.5M21.5 20c0-3-1.5-4.8-4-5.5"/>'};
 const ic=(n,s=22)=>`<svg width="${s}" height="${s}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">${I[n]}</svg>`;
 const ft=s=>{s=Math.max(0,s|0);return String(s/60|0).padStart(2,'0')+':'+String(s%60).padStart(2,'0')};
 let tmr;function toast(m){let e=$('#ts');if(!e){e=document.createElement('div');e.id='ts';document.body.append(e)}e.textContent=m;e.className='on';clearTimeout(tmr);tmr=setTimeout(()=>e.className='',3000)}
@@ -216,9 +229,12 @@ async function auth(m,u,p){
  if(p.length<6)return'Kata sandi minimal 6 karakter.';
  if(u.toLowerCase()===ADMIN_USER){
   if(m==='reg')return'Username sudah dipakai.';
-  if(p!==ADMIN_PASS)return'Username atau kata sandi salah.';
-  ls.set('bs:s',ADMIN_USER);loadTheme();await render();return resumeHost()
+  const ah=await hash(p);let ok=false;
+  try{ok=(await rpc('admin_ok',{h:ah}))===true}catch{return'Gagal terhubung ke database.'}
+  if(!ok)return'Username atau kata sandi salah.';
+  ls.set('bs:at',ah);ls.set('bs:s',ADMIN_USER);loadTheme();await render();return resumeHost()
  }
+ try{const ac=await rpc('check_access',{u});if(ac&&ac.banned)return'Akun atau IP kamu diblokir.'+(ac.reason?' Alasan: '+ac.reason:'')}catch{}
  const h=await hash(p);
  try{
   const ok=await rpc(m==='reg'?'register_user':'login_user',{u,h});
@@ -346,9 +362,12 @@ function view(parts){
 <div class="room" id="room" hidden><div class="rc"><span class="mu">Room</span><b class="code" id="rcode">…</b><button class="b2" id="cp">Salin link</button><span class="mu" id="vw"></span></div>
 <div class="cm" id="cm"></div><div class="cin"><input class="in" id="ci" placeholder="Tulis komentar…" maxlength="300"><button class="b2" id="cs">Kirim</button></div></div>
 ${E?epNav(a,E):''}<h2>Pilih resolusi</h2><div class="eps">${list.map((s,i)=>`<a class="b2 ${i===n?'on':''}" data-ep href="${rl(i)}">${esc(s.res||'Putar')}</a>`).join('')}</div></section>`,()=>player(a,n,E?E.no:0,nxE?wl(a,nxE.no):'')]}
+ if(p==='admin'){
+  if(!isAdmin())return['<p class="mu">Halaman tidak ditemukan.</p>'];
+  return[`<a class="back" href="#/more">${ic('back',20)}Lainnya</a><h2 style="margin-top:0">Panel admin</h2><div class="seg" id="adt">${[['online','Online'],['film','Film'],['ban','Blokir'],['pw','Sandi']].map(t=>`<button type="button" data-t="${t[0]}">${t[1]}</button>`).join('')}</div><div id="adb"></div>`,adminInit]}
  if(p==='more')return[`<h2>Akun</h2><div class="hi"><div class="av">${esc(user()[0].toUpperCase())}</div><div class="hm"><b>${esc(user())}</b><small>${isAdmin()?'Admin':'Pengguna'}</small></div></div>
- <div class="list mt"><a class="hi" href="#/history">${ic('clock')} Riwayat tontonan</a><a class="hi" href="#/downloads">${ic('dl')} Unduhan</a></div>${themePanel()}<button class="b2 mt" id="lo">Keluar</button>${isAdmin()?adminPanel():''}`,()=>{themeInit();if(isAdmin())adminInit();
-  $('#lo').onclick=()=>{saveNow();leaveRoom();cur=null;hist=[];ls.set('bs:s',null);loadTheme();render()}}];
+ <div class="list mt"><a class="hi" href="#/history">${ic('clock')} Riwayat tontonan</a><a class="hi" href="#/downloads">${ic('dl')} Unduhan</a>${isAdmin()?`<a class="hi" href="#/admin">${ic('shield')} Panel admin</a>`:''}</div>${themePanel()}<button class="b2 mt" id="lo">Keluar</button>`,()=>{themeInit();
+  $('#lo').onclick=()=>{saveNow();leaveRoom();cur=null;hist=[];ls.set('bs:s',null);ls.set('bs:at','');loadTheme();render()}}];
  return['<p class="mu">Halaman tidak ditemukan.</p>']
 }
 
@@ -367,27 +386,125 @@ async function saveTheme(){
  try{const r=await api('user_theme?on_conflict=username',{method:'POST',headers:{Prefer:'resolution=merge-duplicates,return=minimal'},body:JSON.stringify({username:u,mode:THs.mode,colors:THs.colors,updated_at:new Date().toISOString()})});if(!r.ok)throw 0;toast('Tema disimpan ke akunmu')}
  catch{toast('Tema tersimpan di perangkat ini. Tabel user_theme belum ada di database.')}
 }
-const themePanel=()=>`<h2>Tema warna</h2><div class="room" style="margin-top:0"><div class="seg" id="thm"><button type="button" data-n="1">1 warna</button><button type="button" data-n="2">2 warna</button><button type="button" data-n="3">3 warna</button></div><div class="cps" id="thc"></div><div class="pvb"></div><div class="btns" style="margin:14px 0 0"><button class="b2" id="thr">Reset</button><button class="b2 on" id="ths">Simpan tema</button></div></div>`;
+const PRE=[['#8b5cf6','#3b82f6'],['#ef4444','#f97316'],['#10b981','#06b6d4'],['#ec4899','#8b5cf6'],['#f59e0b','#ef4444'],['#3b82f6','#22d3ee','#8b5cf6'],['#22c55e']];
+const themePanel=()=>`<h2>Tema warna</h2><div class="room" style="margin-top:0"><div class="cps" id="thc" style="margin:0 0 16px"></div><div class="pvb"></div><div class="cps" id="thp" style="gap:10px;margin:16px 0 0">${PRE.map((c,i)=>`<button type="button" class="pr" data-i="${i}" style="background:linear-gradient(135deg,${c.length>1?c.join(','):c[0]+','+c[0]})"></button>`).join('')}</div></div>`;
 function themeInit(){
+ let tm;const save=()=>{clearTimeout(tm);tm=setTimeout(saveTheme,400)};
  const draw=()=>{
-  document.querySelectorAll('#thm button').forEach(b=>b.classList.toggle('on',+b.dataset.n===TH.mode));
-  $('#thc').innerHTML=[...Array(TH.mode).keys()].map(i=>`<label class="cl"><input type="color" data-i="${i}" value="${TH.colors[i]}">Warna ${i+1}</label>`).join('');
-  $('#thc').querySelectorAll('input').forEach(inp=>inp.oninput=()=>{TH.colors[+inp.dataset.i]=inp.value;applyTheme(TH)})
+  $('#thc').innerHTML=[...Array(TH.mode).keys()].map(i=>`<input type="color" data-i="${i}" value="${TH.colors[i]}">`).join('')
+   +(TH.mode<3?'<button type="button" class="cb" data-a="+">+</button>':'')+(TH.mode>1?'<button type="button" class="cb" data-a="-">−</button>':'');
+  $('#thc').querySelectorAll('input').forEach(inp=>{inp.oninput=()=>{TH.colors[+inp.dataset.i]=inp.value;applyTheme(TH)};inp.onchange=save})
  };
- $('#thm').onclick=e=>{const b=e.target.closest('button');if(!b)return;TH.mode=+b.dataset.n;applyTheme(TH);draw()};
- $('#thr').onclick=()=>{TH=cleanTheme(null);applyTheme(TH);draw()};
- $('#ths').onclick=saveTheme;draw()
+ $('#thc').onclick=e=>{const b=e.target.closest('[data-a]');if(!b)return;TH.mode+=b.dataset.a==='+'?1:-1;applyTheme(TH);draw();save()};
+ $('#thp').onclick=e=>{const b=e.target.closest('.pr');if(!b)return;const c=PRE[+b.dataset.i];TH={mode:c.length,colors:[0,1,2].map(i=>c[i]||c[c.length-1])};applyTheme(TH);draw();save()};
+ draw()
 }
 
-/* ===== kelola film (admin, di menu Lainnya) ===== */
-function adminPanel(){return`<h2>Kelola film</h2>
-<div class="btns" style="margin:0"><button class="b2" data-edit="">+ Tambah film</button><button class="b2" id="ij">Impor file JSON</button><button class="b2" id="is">Impor banyak episode</button><input type="file" id="sf" accept=".json,application/json" multiple hidden><input type="file" id="jf" accept=".json,application/json" multiple hidden></div>
-<input class="in mt" id="aq" placeholder="Cari film untuk diedit…"><div class="list mt" id="al"></div>`}
+/* ===== panel admin: online, film, blokir, sandi ===== */
+let AT='online',OLY=true,OL=[],admTimer=0;
+const admTok=()=>ls.get('bs:at','');
+const ago=t=>{const x=Math.max(0,(Date.now()-new Date(t))/1000|0);return x<60?'baru saja':x<3600?(x/60|0)+' mnt lalu':x<86400?(x/3600|0)+' jam lalu':(x/86400|0)+' hari lalu'};
+async function arpc(f,b){
+ let r;try{r=await rpc(f,{h:admTok(),...b})}catch{toast('Gagal terhubung ke database.');return}
+ if(r&&r.message){if(r.message==='forbidden')adminGate();else toast(({self_ip:'Tidak bisa memblokir IP kamu sendiri.',admin_user:'Akun admin tidak bisa diblokir.',bad_input:'Isian tidak valid.'})[r.message]||'Gagal: '+r.message);return}
+ return r==null?true:r
+}
+function adminGate(){
+ clearInterval(admTimer);const b=$('#adb');if(!b)return;
+ b.innerHTML=`<div class="room" style="margin-top:14px"><p class="mu">Masukkan kata sandi admin untuk membuka panel.</p><input class="in mt" id="gp" type="password" placeholder="Kata sandi admin"><button class="b1 mt" id="gg">Buka panel</button></div>`;
+ const go=async()=>{const h=await hash($('#gp').value);let ok=false;try{ok=(await rpc('admin_ok',{h}))===true}catch{}if(!ok)return toast('Kata sandi salah.');ls.set('bs:at',h);adminTab(AT)};
+ $('#gg').onclick=go;$('#gp').onkeydown=e=>e.key==='Enter'&&go()
+}
+function adminInit(){
+ $('#adt').onclick=e=>{const b=e.target.closest('button');if(b){AT=b.dataset.t;adminTab(AT)}};
+ $('#adb').onclick=e=>{const b=e.target.closest('[data-ban]');if(b)doBan(b.dataset.ban,b.dataset.v)};
+ adminTab(AT)
+}
+function adminTab(t){
+ clearInterval(admTimer);
+ document.querySelectorAll('#adt button').forEach(b=>b.classList.toggle('on',b.dataset.t===t));
+ ({online:tabOnline,film:tabFilm,ban:tabBan,pw:tabPw})[t]()
+}
+async function doBan(k,v){
+ if(!confirm((k==='ip'?'Blokir IP ':'Blokir akun ')+v+'?'))return;
+ const r=prompt('Alasan (boleh kosong):','');if(r===null)return;
+ if(await arpc('admin_ban',{k,v,r:r.trim().slice(0,120)})){toast('Berhasil diblokir');adminTab(AT)}
+}
+function tabFilm(){
+ $('#adb').innerHTML=`<div class="btns" style="margin:14px 0 0"><button class="b2" data-edit="">+ Tambah film</button><button class="b2" id="ij">Impor file JSON</button><button class="b2" id="is">Impor banyak episode</button><input type="file" id="sf" accept=".json,application/json" multiple hidden><input type="file" id="jf" accept=".json,application/json" multiple hidden></div><input class="in mt" id="aq" placeholder="Cari film untuk diedit…"><div class="list mt" id="al"></div>`;
+ $('#aq').oninput=adminList;adminList()
+}
 function adminList(){
  const q=($('#aq').value||'').trim().toLowerCase();
  $('#al').innerHTML=q?(catalog.filter(a=>a.title.toLowerCase().includes(q)).map(a=>`<div class="hi"><div class="hm"><b>${esc(a.title)}</b><small>${isS(a)?a.episodes.length+' episode':a.sources.map(x=>esc(x.res||'Video')).join(' • ')}</small></div><button class="b2" data-edit="${esc(a.id)}">Edit</button></div>`).join('')||'<p class="mu">Film tidak ditemukan.</p>'):''
 }
-const adminInit=()=>{$('#aq').oninput=adminList;adminList()};
+function tabOnline(){
+ $('#adb').innerHTML=`<div class="tb" style="margin-top:14px"><input class="in" id="oq" placeholder="Cari username atau IP…"><button class="b2" id="oa" style="white-space:nowrap"></button></div><p class="mu" id="os" style="margin-top:10px;font-size:13px"></p><div class="list mt" id="ol"></div>`;
+ $('#oq').oninput=drawOnline;$('#oa').onclick=()=>{OLY=!OLY;drawOnline()};
+ const load=async()=>{const r=await arpc('admin_online',{});if(Array.isArray(r)){OL=r;drawOnline()}else clearInterval(admTimer)};
+ load();admTimer=setInterval(()=>{if($('#ol'))load();else clearInterval(admTimer)},10000)
+}
+const userRow=x=>{
+ const st=!x.online?'Terakhir online '+ago(x.last_seen):x.film_title?(x.watching?'▶ Menonton: ':'⏸ Membuka: ')+esc(x.film_title)+(x.episode?' · Ep '+x.episode:''):'Sedang menjelajah';
+ const me=x.username===ADMIN_USER;
+ return`<div class="hi ur"><div class="uh"><span class="dot${x.online?' on':''}"></span><div class="hm"><b>${esc(x.username)}${x.ban_user?' <span class="bdg">akun diblokir</span>':''}${x.ban_ip?' <span class="bdg">IP diblokir</span>':''}</b><small>${st}</small><small>${esc(x.ip||'?')} · ${esc(x.device||'perangkat tidak diketahui')}</small></div></div>${me?'':`<div class="ura">${x.ban_user?'':`<button class="b2" data-ban="user" data-v="${esc(x.username)}">Blokir akun</button>`}${x.ban_ip||!x.ip||x.ip==='unknown'?'':`<button class="b2" data-ban="ip" data-v="${esc(x.ip)}">Blokir IP</button>`}</div>`}</div>`
+};
+function drawOnline(){
+ const ol=$('#ol');if(!ol)return;
+ const q=($('#oq').value||'').trim().toLowerCase(),n=OL.filter(x=>x.online).length;
+ $('#oa').textContent=OLY?'Semua':'Online saja';
+ $('#os').textContent=n+' online'+(OLY?'':' · '+OL.length+' tercatat');
+ const L=OL.filter(x=>(!OLY||x.online)&&(!q||x.username.includes(q)||(x.ip||'').includes(q)));
+ ol.innerHTML=L.map(userRow).join('')||`<p class="mu">${OLY?'Belum ada yang online.':'Tidak ditemukan.'}</p>`
+}
+function tabBan(){
+ $('#adb').innerHTML=`<div class="room" style="margin-top:14px"><div class="seg" id="bk"><button type="button" data-k="user" class="on">Akun</button><button type="button" data-k="ip">IP</button></div><input class="in mt" id="bv" placeholder="Username" autocapitalize="off"><input class="in mt" id="br" placeholder="Alasan (opsional)" maxlength="120"><button class="b1 mt" id="bgo">Blokir</button></div><h2>Daftar blokir</h2><div class="list" id="bl"></div>`;
+ let k='user';
+ const loadBans=async()=>{const r=await arpc('admin_bans',{});if(!Array.isArray(r)||!$('#bl'))return;$('#bl').innerHTML=r.map(x=>`<div class="hi"><div class="hm"><b>${x.kind==='ip'?'IP':'Akun'}: ${esc(x.value)}</b><small>${x.reason?esc(x.reason)+' · ':''}${ago(x.created_at)}</small></div><button class="b2" data-unban="${x.id}">Buka</button></div>`).join('')||'<p class="mu">Belum ada yang diblokir.</p>'};
+ $('#bk').onclick=e=>{const b=e.target.closest('button');if(!b)return;k=b.dataset.k;document.querySelectorAll('#bk button').forEach(x=>x.classList.toggle('on',x===b));$('#bv').placeholder=k==='ip'?'Alamat IP, mis. 114.125.1.2':'Username'};
+ $('#bgo').onclick=async()=>{
+  const v=$('#bv').value.trim();if(!v)return toast('Isi dulu '+(k==='ip'?'alamat IP':'username')+'.');
+  if(k==='ip'&&!/^[0-9a-fA-F:.]{3,45}$/.test(v))return toast('Format IP tidak valid.');
+  if(await arpc('admin_ban',{k,v,r:$('#br').value.trim()})){$('#bv').value='';$('#br').value='';toast('Berhasil diblokir');loadBans()}
+ };
+ $('#bl').onclick=async e=>{const b=e.target.closest('[data-unban]');if(!b)return;if(await arpc('admin_unban',{id:+b.dataset.unban})){toast('Blokir dibuka');loadBans()}};
+ loadBans()
+}
+function tabPw(){
+ $('#adb').innerHTML=`<div class="room" style="margin-top:14px"><p class="mu">Ganti kata sandi admin. Minimal 8 karakter.</p><input class="in mt" id="po" type="password" placeholder="Sandi lama"><input class="in mt" id="pn" type="password" placeholder="Sandi baru"><button class="b1 mt" id="pg">Simpan sandi</button></div>`;
+ $('#pg').onclick=async()=>{
+  const o=$('#po').value,n=$('#pn').value;if(n.length<8)return toast('Sandi baru minimal 8 karakter.');
+  const nh=await hash(n);let r=null;try{r=await rpc('admin_set',{h_old:await hash(o),h_new:nh})}catch{}
+  if(r===true){ls.set('bs:at',nh);$('#po').value=$('#pn').value='';toast('Sandi admin diganti')}else toast('Sandi lama salah.')
+ }
+}
+
+/* ===== online/presence + blokir (dicek dari server) ===== */
+let BAN=null,lastPing=0;
+const bannedHtml=()=>`<div class="lg"><div class="lc" style="text-align:center"><div class="logo big">Bioskop <span>Ana</span></div><h2 style="margin:6px 0 0">Akses diblokir</h2><p class="mu">Akun atau alamat IP kamu diblokir oleh admin.${BAN?'<br>Alasan: '+esc(BAN):''}</p><button class="b1" id="bk2">Kembali</button></div></div>`;
+function kicked(r){if(BAN!==null)return;BAN=r||'';ls.set('bs:s',null);ls.set('bs:at','');leaveRoom();loadTheme();render()}
+function uaInfo(){
+ const ua=navigator.userAgent;let os='',br='',model='';
+ if(/Android/i.test(ua)){os='Android '+((ua.match(/Android\s([\d.]+)/)||[])[1]||'');model=((ua.match(/;\s*([^;)]+?)\s+Build\//)||ua.match(/Android[^;)]*;\s*([^;)]+)/)||[])[1]||'').trim();if(model==='K')model=''}
+ else if(/iPhone|iPad|iPod/i.test(ua)){os='iOS '+(((ua.match(/OS\s([\d_]+)/)||[])[1]||'').replace(/_/g,'.'));model=(ua.match(/iPhone|iPad|iPod/)||[''])[0]}
+ else if(/Windows NT/i.test(ua))os='Windows';else if(/Mac OS X/i.test(ua))os='macOS';else if(/Linux/i.test(ua))os='Linux';
+ br=/Edg\//.test(ua)?'Edge':/OPR\/|Opera/.test(ua)?'Opera':/SamsungBrowser/.test(ua)?'Samsung Browser':/Firefox\//.test(ua)?'Firefox':/Chrome\//.test(ua)?'Chrome':/Safari\//.test(ua)?'Safari':'Browser';
+ const v=(ua.match(/(?:Chrome|Firefox|Edg|OPR|Version)\/(\d+)/)||[])[1];
+ return{model,os:os.trim(),br:br+(v?' '+v:'')}
+}
+const fmtDev=u=>[u.model,u.os,u.br].filter(Boolean).join(' · ');
+let DEV=fmtDev(uaInfo());
+Promise.resolve(navigator.userAgentData?.getHighEntropyValues?.(['model','platform','platformVersion'])).then(h=>{
+ if(!h)return;const u=uaInfo();if(h.model)u.model=h.model;
+ if(h.platform==='Android'&&h.platformVersion)u.os='Android '+h.platformVersion.split('.')[0];
+ DEV=fmtDev(u)}).catch(()=>{});
+async function ping(force){
+ const u=user();if(!u||BAN!==null)return;
+ if(!force&&Date.now()-lastPing<3000)return;lastPing=Date.now();
+ const c=cur;
+ try{const r=await rpc('touch_presence',{u,dev:DEV,fid:c?String(c.a.id):null,ftitle:c?c.a.title:null,ep:c?(c.ep||0):0,w:!!(c&&c.v&&!c.v.paused)});if(r&&r.banned===true)kicked(r.reason)}catch{}
+}
+setInterval(()=>ping(true),20000);
 
 /* ===== riwayat ke database ===== */
 function saveNow(){
@@ -557,10 +674,10 @@ function player(a,n,ep,nextHref){
   const h=hist.find(x=>x.id===a.id&&x.ep===(ep||0));if(h&&h.t>5&&h.t<v.duration-5)v.currentTime=h.t};
  v.ontimeupdate=()=>{if(!v.duration)return;sk.value=v.currentTime;fill(sk,v.currentTime/v.duration*100);$('#cur').textContent=ft(v.currentTime);if(Date.now()-last>5000){last=Date.now();saveNow()}};
  v.onwaiting=()=>{$('#buf').classList.add('on');$('#bt').textContent='Memuat…';setBuf(true)};
- v.onplaying=()=>{$('#buf').classList.remove('on');$('#pp').innerHTML=ic('pause',26);show();setBuf(false)};
+ v.onplaying=()=>{$('#buf').classList.remove('on');$('#pp').innerHTML=ic('pause',26);show();setBuf(false);ping()};
  v.oncanplay=()=>{$('#buf').classList.remove('on');setBuf(false)};
  v.onplay=()=>{if(room&&!muted()){room.want=true;emitT('play')}};
- v.onpause=()=>{$('#pp').innerHTML=ic('play',26);show();saveNow();if(room&&!muted()&&!v.ended){room.want=false;emitT('pause')}};
+ v.onpause=()=>{$('#pp').innerHTML=ic('play',26);show();saveNow();ping();if(room&&!muted()&&!v.ended){room.want=false;emitT('pause')}};
  v.onseeked=()=>{if(!room)return;if(room.rt!==null&&Math.abs(v.currentTime-room.rt)<.8){room.rt=null;return}emitT('seek')};
  v.onerror=()=>{$('#buf').classList.add('on');$('#bt').textContent='Video gagal dimuat. Cek URL CDN.'};
  $('#dl').onclick=()=>download(a,n,ep);v.onended=()=>{if(nextHref&&(!room||room.host))location.hash=nextHref};
@@ -754,16 +871,17 @@ async function importSeries(inp){
 
 async function render(){
  saveNow();cur=null;const app=$('#app');
+ if(BAN!==null){leaveRoom();app.innerHTML=bannedHtml();$('#bk2').onclick=()=>{BAN=null;render()};return}
  if(!user()){leaveRoom();app.innerHTML=loginHtml();bindLogin();return}
  const parts=(location.hash.slice(1)||'/').split('/').filter(Boolean).map(decodeURIComponent);
  if(parts[0]!=='watch'&&room&&!room.pend)leaveRoom();
  if(parts[0]!=='more'&&JSON.stringify(TH)!==JSON.stringify(THs)){TH=cleanTheme(THs);applyTheme(TH)}
  if(!parts[0]||['history','watch','film'].includes(parts[0]))await loadHist();
  const[body,init]=view(parts);
- const on=['film','watch'].includes(parts[0])?'':(parts[0]||'');
+ const on=['film','watch'].includes(parts[0])?'':parts[0]==='admin'?'more':(parts[0]||'');
  const tabs=[['','home','Beranda'],['explore','compass','Jelajahi'],['history','clock','Riwayat'],['downloads','dl','Unduhan'],['more','menu','Lainnya']];
  app.innerHTML=`<header class="hd"><a href="#/" class="logo">Bioskop <span>Ana</span></a><div style="display:flex;gap:8px"><a href="#/explore" class="ib">${ic('search')}</a><a href="#/more" class="av">${esc(user()[0].toUpperCase())}</a></div></header><main>${body}</main><nav class="nv">${tabs.map(t=>`<a href="#/${t[0]}" class="${on===t[0]?'on':''}">${ic(t[1],24)}${t[2]}</a>`).join('')}</nav>`;
- scrollTo(0,0);if(init)init();fillPosters();
+ scrollTo(0,0);if(init)init();fillPosters();ping();
 }
 document.addEventListener('click',e=>{
  const b=e.target.closest('[data-dl]');if(b){e.preventDefault();const[id,i,ep]=b.dataset.dl.split(':'),a=catalog.find(x=>x.id===id);if(a)download(a,+i,+ep)}
