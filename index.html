@@ -385,6 +385,8 @@ html[data-skin=lucu] .er{color:#d6455f}
 html[data-skin=lucu] .bdg{background:#f9cfd8;color:#b23a56}
 @media(min-width:1024px){html[data-skin=lucu] .nv{border-radius:0 26px 26px 0;border-top:0;border-right:3px solid var(--ln)}html[data-skin=lucu] .hd{border-radius:0 0 26px 26px}}
 
+/* iPhone: font input <16px membuat halaman ter-zoom saat mengetik */
+@supports(-webkit-touch-callout:none){input,textarea,select,.in{font-size:16px!important}}
 /* layar penuh buatan (iPhone) */
 html.pfs-on,html.pfs-on body{overflow:hidden!important}
 .pl.pfs{position:fixed!important;inset:0;z-index:300;width:100vw;height:100vh;height:100dvh;aspect-ratio:auto;border-radius:0;border:0}
@@ -1260,8 +1262,10 @@ async function resumeHost(){
   const r=await api('rooms?host=eq.'+encodeURIComponent(user())+'&select=*&order=last_seen.desc&limit=1');
   const row=(await r.json())[0];if(!row||!alive(row))return;
   const a=catalog.find(x=>x.id===row.film_id);if(!a)return;
+  /* hanya lanjutkan jika web dimuat ulang di halaman nonton film room itu; menu lain tidak dialihkan */
+  if(!location.hash.startsWith('#/watch/'+encodeURIComponent(a.id)))return;
   resumeRow=row;toast('Melanjutkan room '+row.code);
-  const h=wl(a,row.episode);if(location.hash===h)render();else location.hash=h;
+  render();
  }catch{}
 }
 
@@ -1339,7 +1343,7 @@ function player(a,n,ep,nextHref){
   if(document.fullscreenElement||document.webkitFullscreenElement)return(document.exitFullscreen||document.webkitExitFullscreen).call(document);
   const rf=pl.requestFullscreen||pl.webkitRequestFullscreen;
   if(rf){try{const r=rf.call(pl);if(r&&r.catch)r.catch(()=>pfsSet(pl,true));return}catch{}}
-  if(v.webkitEnterFullscreen&&v.webkitSupportsFullscreen!==false){try{v.webkitEnterFullscreen();return}catch{}}
+  if(!room&&v.webkitEnterFullscreen&&v.webkitSupportsFullscreen!==false){try{v.webkitEnterFullscreen();return}catch{}}
   pfsSet(pl,true)
  };
  sk.oninput=()=>v.currentTime=+sk.value;
