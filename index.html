@@ -182,7 +182,7 @@ input[type=color]::-moz-color-swatch{border:0}
 .ct .rv{display:none}
 .pl.rm .ct .rv{display:grid}
 .ct .act{color:var(--a);background:var(--t1);border-radius:12px}
-@media(max-width:480px){.pl.rm:not(:fullscreen) #vo{display:none}}
+@media(max-width:480px){.pl.rm:not(:fullscreen):not(.pfs) #vo{display:none}}
 body{overflow-x:clip}
 /* bingkai avatar (SVG, digenerate lewat JS) */
 .av[class*=" bd"]{position:relative;overflow:visible}
@@ -385,6 +385,15 @@ html[data-skin=lucu] .er{color:#d6455f}
 html[data-skin=lucu] .bdg{background:#f9cfd8;color:#b23a56}
 @media(min-width:1024px){html[data-skin=lucu] .nv{border-radius:0 26px 26px 0;border-top:0;border-right:3px solid var(--ln)}html[data-skin=lucu] .hd{border-radius:0 0 26px 26px}}
 
+/* layar penuh buatan (iPhone) */
+html.pfs-on,html.pfs-on body{overflow:hidden!important}
+.pl.pfs{position:fixed!important;inset:0;z-index:300;width:100vw;height:100vh;height:100dvh;aspect-ratio:auto;border-radius:0;border:0}
+.pl.pfs.rot{inset:auto;top:0;left:100%;width:100vh;width:100dvh;height:100vw;height:100dvw;transform:rotate(90deg);transform-origin:0 0}
+.pl.pfs .fl{display:flex}
+.pl.pfs .rp.on{display:flex}
+.pl.rm.pfs #ctg{display:grid!important}
+.pl.pfs:not(.rot) .ov.t{padding-top:calc(12px + env(safe-area-inset-top))}
+html[data-skin=lucu] .pl.pfs{border:0;border-radius:0}
 /* kategori */
 .cats .gb{display:inline-flex;align-items:center;gap:8px;flex:none;border-color:var(--bd);background:var(--t3);color:var(--a2)}
 .cats .gb.on{background:var(--g);color:#fff;border-color:transparent}
@@ -1173,6 +1182,10 @@ function apply(m){
 }
 function handleBuf(id,b){b?room.bufs.add(id):room.bufs.delete(id);const h=room.bufs.size>0;if(h===room.hold)return;apply({t:'hold',v:h});bc({t:'hold',v:h})}
 function setBuf(b){if(!room||b===room.myBuf)return;room.myBuf=b;room.host?handleBuf('host',b):emit({t:'buf',v:b})}
+const PCFG={config:{iceCandidatePoolSize:4,iceServers:[
+ {urls:['stun:stun.l.google.com:19302','stun:stun1.l.google.com:19302','stun:global.stun.twilio.com:3478']},
+ {urls:['turn:openrelay.metered.ca:80','turn:openrelay.metered.ca:443','turn:openrelay.metered.ca:443?transport=tcp','turns:openrelay.metered.ca:443?transport=tcp'],username:'openrelayproject',credential:'openrelayproject'}
+]}};
 const newRoom=h=>room={host:h,conns:[],bufs:new Set(),hold:false,want:false,myBuf:false,rt:null,log:[],n:1,code:'',hc:null,pend:null,hostPeer:'',joined:false,down:false,poll:null,hb:null,mic:null,calls:new Map(),peers:[],auds:new Map(),pub:false};
 
 function showVw(){const e=$('#vw');if(e&&room)e.textContent=room.n+' penonton'}
@@ -1205,7 +1218,7 @@ async function startRoom(a,row,pub){
  const gen=()=>Math.random().toString(36).slice(2,7).toUpperCase();
  room.code=row?row.code:gen();
  const pid='bioskop-'+room.code+'-'+Math.random().toString(36).slice(2,6);
- try{peer=new Peer(pid)}catch{room=null;return toast('PeerJS gagal dimuat.')}
+ try{peer=new Peer(pid,PCFG)}catch{room=null;return toast('PeerJS gagal dimuat.')}
  bindVoice();
  peer.on('open',async()=>{
   if(!room||!room.host)return;
@@ -1256,20 +1269,24 @@ async function joinRoom(code){
  leaveRoom();let row;
  try{row=await rget(code)}catch{return toast('Gagal terhubung ke database.')}
  if(!row||!alive(row))return toast('Room tidak ditemukan atau sudah berakhir.');
- newRoom(false);room.code=code;room.hostPeer=row.host_peer;
- try{peer=new Peer()}catch{room=null;return toast('PeerJS gagal dimuat.')}
+ newRoom(false);room.code=code;room.hostPeer=row.host_peer;toast('Menghubungkan ke room…');
+ try{peer=new Peer(PCFG)}catch{room=null;return toast('PeerJS gagal dimuat.')}
  bindVoice();
  peer.on('disconnected',()=>{try{peer.reconnect()}catch{}});
  peer.on('error',e=>{
   if(!room)return;
   if(e.type==='peer-unavailable'&&room.joined){room.down=true;return}
   toast(e.type==='peer-unavailable'?'Room tidak ditemukan. Cek kodenya.':'Koneksi gagal: '+e.type);leaveRoom()});
- peer.on('open',()=>{if(!room)return;connectHost();room.poll=setInterval(checkRoom,4000)});
+ room.po=setTimeout(()=>{if(room&&peer&&!peer.open){toast('Server koneksi tidak merespons. Coba lagi sebentar.');leaveRoom()}},12000);
+ peer.on('open',()=>{if(!room)return;clearTimeout(room.po);connectHost();room.poll=setInterval(checkRoom,4000)});
 }
 function connectHost(){
  if(!peer||!room||room.host)return;
+ try{if(room.hc)room.hc.close()}catch{}
  const c=room.hc=peer.connect(room.hostPeer,{reliable:true});
- c.on('open',()=>c.send({t:'hello',name:user()}));
+ clearTimeout(room.ct);
+ room.ct=setTimeout(()=>{if(room&&room.hc===c&&!c.open){room.down=true;if(!room.joined&&!room.warned){room.warned=1;toast('Belum bisa tersambung ke host. Mencoba lagi… (jika terus gagal, coba ganti jaringan)')}}},15000);
+ c.on('open',()=>{clearTimeout(room&&room.ct);if(room)room.warned=0;c.send({t:'hello',name:user()})});
  c.on('data',m=>{
   if(!room)return;
   if(m.t!=='init')return apply(m);
@@ -1290,8 +1307,18 @@ async function checkRoom(){
 function bindRoomStart(){const v=V();if(!room||!room.pend||!v)return;const p=room.pend;
  const go=()=>{room.pend=null;if(p.time>0){room.rt=p.time;v.currentTime=p.time}if(p.playing&&!room.hold)doPlay();else if(!p.playing)doPause();showRoomUI()};
  v.readyState>=1?go():v.addEventListener('loadedmetadata',go,{once:true})}
-function leaveRoom(){if(room){clearInterval(room.poll);clearInterval(room.hb);stopMic();room.auds.forEach(a=>{a.srcObject=null;a.remove()})}if(peer){try{peer.destroy()}catch{}}peer=null;room=null}
+function leaveRoom(){if(room){clearTimeout(room.po);clearTimeout(room.ct);clearInterval(room.poll);clearInterval(room.hb);stopMic();room.auds.forEach(a=>{a.srcObject=null;a.remove()})}if(peer){try{peer.destroy()}catch{}}peer=null;room=null}
 
+/* ===== layar penuh buatan (iPhone tidak mendukung fullscreen untuk elemen biasa) ===== */
+function pfsSet(pl,on){
+ pl.classList.toggle('pfs',on);document.documentElement.classList.toggle('pfs-on',on);
+ pl.classList.toggle('rot',on&&innerHeight>innerWidth);
+ if(on)pl.classList.add('ui');
+ scrollTo(0,0)
+}
+const pfsFix=()=>{const p=$('#pl.pfs');if(p)p.classList.toggle('rot',innerHeight>innerWidth)};
+addEventListener('resize',pfsFix);addEventListener('orientationchange',()=>setTimeout(pfsFix,200));
+addEventListener('keydown',e=>{if(e.key==='Escape'){const p=$('#pl.pfs');if(p)pfsSet(p,false)}});
 /* ===== pemutar ===== */
 function player(a,n,ep,nextHref){
  const v=qd('#v'),pl=qd('#pl'),sk=qd('#sk'),vo=qd('#vo');const kept=!!(cur&&cur.v===v);cur={a,n,v,ep:ep||0,h:location.hash};
@@ -1307,7 +1334,13 @@ function player(a,n,ep,nextHref){
  vo.oninput=()=>{v.volume=+vo.value;v.muted=v.volume===0;fill(vo,v.volume*100)};
  v.onvolumechange=()=>{qd('#mu').innerHTML=ic(v.muted?'mute':'vol')};
  qd('#sp').onclick=()=>{rate=(rate+1)%rates.length;v.playbackRate=rates[rate];toast('Kecepatan '+rates[rate]+'x')};
- qd('#fs').onclick=()=>document.fullscreenElement?document.exitFullscreen():pl.requestFullscreen?.();
+ qd('#fs').onclick=()=>{
+  if(pl.classList.contains('pfs'))return pfsSet(pl,false);
+  if(document.fullscreenElement||document.webkitFullscreenElement)return(document.exitFullscreen||document.webkitExitFullscreen).call(document);
+  const rf=pl.requestFullscreen||pl.webkitRequestFullscreen;
+  if(rf){try{const r=rf.call(pl);if(r&&r.catch)r.catch(()=>pfsSet(pl,true));return}catch{}}
+  pfsSet(pl,true)
+ };
  sk.oninput=()=>v.currentTime=+sk.value;
  v.onloadedmetadata=()=>{
   sk.max=v.duration;qd('#dur').textContent=ft(v.duration);
@@ -1599,7 +1632,7 @@ function killMini(leave){
 }
 
 async function render(){
- const app=$('#app');
+ const app=$('#app');document.documentElement.classList.remove('pfs-on');
  const parts=(location.hash.slice(1)||'/').split('/').filter(Boolean).map(decodeURIComponent);
  let keep=null,km=null;
  if(BAN!==null||!user())killMini(false);
