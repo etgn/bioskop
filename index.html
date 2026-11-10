@@ -1339,6 +1339,7 @@ function player(a,n,ep,nextHref){
   if(document.fullscreenElement||document.webkitFullscreenElement)return(document.exitFullscreen||document.webkitExitFullscreen).call(document);
   const rf=pl.requestFullscreen||pl.webkitRequestFullscreen;
   if(rf){try{const r=rf.call(pl);if(r&&r.catch)r.catch(()=>pfsSet(pl,true));return}catch{}}
+  if(v.webkitEnterFullscreen&&v.webkitSupportsFullscreen!==false){try{v.webkitEnterFullscreen();return}catch{}}
   pfsSet(pl,true)
  };
  sk.oninput=()=>v.currentTime=+sk.value;
