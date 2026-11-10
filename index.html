@@ -4,7 +4,8 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <title>Bioskop Ana</title>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
+<script>try{var _u=JSON.parse(localStorage.getItem("bs:s")),_k=JSON.parse(localStorage.getItem("bs:skin:"+_u)||localStorage.getItem("bs:skin")||"null");if(_k==="lucu")document.documentElement.dataset.skin="lucu"}catch(e){}</script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@500;700&family=Fredoka:wght@400;500;600;700&display=swap" rel="stylesheet">
 <style>
 *{box-sizing:border-box;margin:0}
 :root{--mw:100%;--pd:16px;--cw:100px;--bg:#05050a;--cd:#0c0b16;--ln:#201d36;--tx:#f4f3fc;--mu:#9b98b8;--c1:#8b5cf6;--c2:#3b82f6;--c3:#3b82f6;--g:linear-gradient(135deg,var(--c1),var(--c2),var(--c3));--a:color-mix(in srgb,var(--c1) 60%,#fff);--a2:color-mix(in srgb,var(--c1) 38%,#fff);--b:color-mix(in srgb,var(--c2) 60%,#fff);--bd:color-mix(in srgb,var(--c1) 65%,#000);--t1:color-mix(in srgb,var(--c1) 30%,transparent);--t2:color-mix(in srgb,var(--c2) 24%,transparent);--t3:color-mix(in srgb,var(--c1) 15%,transparent)}
@@ -155,7 +156,7 @@ input[type=color]::-moz-color-swatch{border:0}
 .rt:before{content:"★";color:#fbbf24}
 .rt[hidden]{display:none}
 /* panel admin + tema simpel */
-#adt button{padding:10px 4px;font-size:13px}
+
 .ur{flex-direction:column;align-items:stretch;gap:10px}
 .uh{display:flex;gap:12px;align-items:flex-start}
 .dot{flex:none;width:10px;height:10px;border-radius:50%;background:#4b4966;margin-top:6px}
@@ -310,6 +311,127 @@ a:focus-visible,button:focus-visible,.in:focus-visible{outline:2px solid var(--a
  .sh h1{font-size:36px}
 }
 @media(min-width:2200px){:root{--mw:2000px;--cw:230px}}
+/* ===== TEMA LUCU (pastel kawaii) - aktif lewat html[data-skin=lucu] ===== */
+.skg{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.sk{display:grid;gap:4px;justify-items:center;padding:12px;border:2px solid var(--ln);border-radius:18px;background:var(--cd);text-align:center;font-weight:700}
+.sk small{color:var(--mu);font-size:12px;font-weight:400}
+.sk.on{border-color:var(--a);background:var(--t3);box-shadow:inset 0 0 0 2px var(--a)}
+.skp{display:block;width:100%;height:46px;border-radius:12px;border:1px solid #ffffff22}
+.sk1{background:linear-gradient(135deg,#05050a 52%,#8b5cf6 52%,#3b82f6)}
+.sk2{background:linear-gradient(135deg,#f9d3d9 40%,#c9ebe2 40% 70%,#fcd9b8 70%);border:2px solid #7a5252}
+.sw{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-top:14px}
+.sw small{display:block;font-size:12px;color:var(--mu)}
+.tgl{position:relative;flex:none;width:54px;height:30px;border-radius:99px;background:#ffffff22;border:2px solid var(--ln);transition:.2s}
+.tgl i{position:absolute;top:2px;left:2px;width:22px;height:22px;border-radius:50%;background:#fff;transition:.2s;box-shadow:0 1px 3px #0004}
+.tgl[aria-checked=true]{background:var(--a)}
+.tgl[aria-checked=true] i{left:26px}
+.fxp{position:fixed;z-index:200;pointer-events:none;font-size:18px;transform:translate(-50%,-50%);animation:fxp .85s ease-out forwards}
+@keyframes fxp{to{transform:translate(calc(-50% + var(--dx)),calc(-50% - 54px)) scale(1.35) rotate(var(--r));opacity:0}}
+@media(prefers-reduced-motion:reduce){.fxp{display:none}}
+
+html[data-skin=lucu]{--bg:#fdf1e3;--cd:#fffaf3;--ln:#7a5252;--tx:#5a3a3a;--mu:#876360;--c1:#f6a9bc;--c2:#fbcfa0;--c3:#a8ddd0;--g:linear-gradient(135deg,#f6a9bc,#fbcfa0);--a:#c0577a;--a2:#b04a6c;--b:#3f9d8a;--bd:#7a5252;--t1:#f9d3d9;--t2:#d9ece6;--t3:#f9d3d9aa}
+html[data-skin=lucu] body{font-family:Fredoka,"Baloo 2",ui-rounded,Nunito,system-ui,sans-serif;font-weight:500;background:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='150' height='150'%3E%3Cg fill='%23f4b8c6' opacity='.55'%3E%3Cpath d='M22 26c-4-6-12-2-8 4l8 8 8-8c4-6-4-10-8-4z'/%3E%3C/g%3E%3Cg fill='%23ffd98a' opacity='.7'%3E%3Cpath d='M108 22l2.6 6.2 6.4.5-4.8 4.2 1.5 6.3-5.7-3.4-5.7 3.4 1.5-6.3-4.8-4.2 6.4-.5z'/%3E%3C/g%3E%3Cg fill='%23cdb9ef' opacity='.55'%3E%3Ccircle cx='86' cy='104' r='4'/%3E%3Ccircle cx='96' cy='97' r='3'/%3E%3Ccircle cx='107' cy='103' r='3'/%3E%3Ccircle cx='96' cy='110' r='5.5'/%3E%3C/g%3E%3Cg fill='%23a8ddd0' opacity='.6'%3E%3Ccircle cx='30' cy='112' r='3.5'/%3E%3C/g%3E%3C/svg%3E"),linear-gradient(180deg,#e8def7 0,#fbe3ea 280px,#fdf1e3 640px),#fdf1e3}
+html[data-skin=lucu] :is(.lb,.eb,.tm b,.rc b.code,.tg,.en,.du,.chip,.rt){font-family:Fredoka,ui-rounded,system-ui,sans-serif}
+html[data-skin=lucu] #thw{display:none}
+html[data-skin=lucu] h2::before{content:"🐾";margin-right:8px;font-size:.85em}
+html[data-skin=lucu] .logo{color:var(--tx);letter-spacing:0}
+html[data-skin=lucu] .logo span{background:none;color:#c0577a}
+html[data-skin=lucu] .logo::after{content:" 🐱";font-size:.75em}
+html[data-skin=lucu] .hd{background:#f9d3d9f2;border-bottom:3px solid var(--ln);border-radius:0 0 24px 24px}
+html[data-skin=lucu] .ib{color:var(--tx)}
+html[data-skin=lucu] :is(.hi,.room,.info,.syn,.pcard,.status,.lc,.xe,#mini,.md>div){border-width:2.5px;border-color:var(--ln)}
+html[data-skin=lucu] :is(.hi,.room,.info,.syn,.pcard,.lc){border-radius:26px;box-shadow:0 4px 0 #7a525233}
+html[data-skin=lucu] .pl{border:3px solid var(--ln);border-radius:28px}
+html[data-skin=lucu] .po{border:2.5px solid var(--ln);box-shadow:3px 4px 0 #7a525240;background:linear-gradient(160deg,hsl(var(--h) 80% 80%),hsl(calc(var(--h) + 40) 72% 66%))}
+html[data-skin=lucu] .po:not(:has(img[src])) b,html[data-skin=lucu] .po:not(:has(img[src])) .sub{color:#4a2f2f;text-shadow:none}
+html[data-skin=lucu] .et{background:linear-gradient(160deg,hsl(var(--h) 75% 80%),#f3d9e0)}
+html[data-skin=lucu] .sh .po{box-shadow:5px 6px 0 #7a525240}
+@media(hover:hover){html[data-skin=lucu] .cd:hover .po{transform:translateY(-5px) rotate(-1.2deg);box-shadow:4px 9px 0 #7a525240}}
+html[data-skin=lucu] .b2{background:#fff;border:2px solid var(--ln);border-radius:99px;box-shadow:0 3px 0 var(--ln)}
+html[data-skin=lucu] .b1{background:var(--g);color:var(--tx);border:2.5px solid var(--ln);border-radius:99px;box-shadow:0 4px 0 var(--ln)}
+html[data-skin=lucu] :is(.b2.on,.seg .on,.eps .b2.on){background:#f6a9bc;color:var(--tx);border-color:var(--ln)}
+html[data-skin=lucu] :is(.b1,.b2):active{transform:translateY(2px);box-shadow:0 1px 0 var(--ln)}
+html[data-skin=lucu] .ura .b2{color:#d6455f}
+html[data-skin=lucu] .cats .b2:nth-child(4n+1){background:#c9ebe2}
+html[data-skin=lucu] .cats .b2:nth-child(4n+2){background:#f9cfd8}
+html[data-skin=lucu] .cats .b2:nth-child(4n+3){background:#fbd8b3}
+html[data-skin=lucu] .cats .b2:nth-child(4n){background:#ddd0f5}
+html[data-skin=lucu] .cats .b2.on{background:#f08aa5;color:#fff;transform:translateY(-2px);box-shadow:0 5px 0 var(--ln)}
+html[data-skin=lucu] .in,html[data-skin=lucu] select{background:#fff;border:2px solid var(--ln);border-radius:99px;color:var(--tx)}
+html[data-skin=lucu] textarea.in{border-radius:20px}
+html[data-skin=lucu] .in::placeholder{color:#c4a9a6}
+html[data-skin=lucu] .in:focus{border-color:var(--a)}
+html[data-skin=lucu] .seg{background:#fff;border:2px solid var(--ln);border-radius:99px}
+html[data-skin=lucu] .seg button{border-radius:99px}
+html[data-skin=lucu] .chip{background:#fff;border:2px solid var(--ln)}
+html[data-skin=lucu] .xe{background:#ffffffa0}
+html[data-skin=lucu] .pg{height:10px;background:#fff;border:2px solid var(--ln)}
+html[data-skin=lucu] .pg i{background:linear-gradient(90deg,#f6a9bc,#fbcfa0)}
+html[data-skin=lucu] .av{color:var(--tx)}
+html[data-skin=lucu] .tgl{background:#eadccd}
+html[data-skin=lucu] .tgl[aria-checked=true]{background:#f08aa5}
+html[data-skin=lucu] .nv{background:#fff6ecf7;border-top:3px solid var(--ln);border-radius:26px 26px 0 0}
+html[data-skin=lucu] .nv a{font-weight:600}
+html[data-skin=lucu] .nv a svg{transition:transform .2s}
+html[data-skin=lucu] .nv a.on svg{transform:translateY(-3px) scale(1.15)}
+html[data-skin=lucu] #ts{background:#fff;color:var(--tx);border:2px solid var(--ln);box-shadow:0 4px 0 var(--ln)}
+html[data-skin=lucu] .md{background:#5a3a3a99}
+html[data-skin=lucu] .btns.mb{background:var(--cd)}
+html[data-skin=lucu] .bcell.on{background:#f9d3d9}
+html[data-skin=lucu] .avg button.on{background:#f9d3d9}
+html[data-skin=lucu] input[type=range]{background:linear-gradient(90deg,#f6a9bc,#fbcfa0) 0 0/var(--v,0%) 100% no-repeat,#ffffff55}
+html[data-skin=lucu] .lc{background:#fffaf3f2}
+html[data-skin=lucu] .er{color:#d6455f}
+html[data-skin=lucu] .bdg{background:#f9cfd8;color:#b23a56}
+@media(min-width:1024px){html[data-skin=lucu] .nv{border-radius:0 26px 26px 0;border-top:0;border-right:3px solid var(--ln)}html[data-skin=lucu] .hd{border-radius:0 0 26px 26px}}
+
+/* kategori */
+.cats .gb{display:inline-flex;align-items:center;gap:8px;flex:none;border-color:var(--bd);background:var(--t3);color:var(--a2)}
+.cats .gb.on{background:var(--g);color:#fff;border-color:transparent}
+.md.sheet{place-items:end center;padding:0}
+.md.sheet>div{width:min(560px,100%);border-radius:26px 26px 0 0;max-height:80vh;max-height:80dvh;padding-bottom:calc(22px + env(safe-area-inset-bottom))}
+@media(min-width:600px){.md.sheet{place-items:center;padding:16px}.md.sheet>div{border-radius:26px}}
+.gg{display:flex;flex-wrap:wrap;gap:8px}
+.gc{display:inline-flex;align-items:center;gap:8px;padding:9px 14px;border-radius:99px;border:1px solid var(--ln);background:#ffffff08;font-weight:600;font-size:14px}
+.gc small{color:var(--mu);font:600 11px "JetBrains Mono",monospace}
+.gc.on{background:var(--g);color:#fff;border-color:transparent}.gc.on small{color:#fffc}
+/* panel admin baru */
+.adm{display:grid;gap:14px}
+.adm #adb{display:grid;gap:14px;align-content:start}
+.adm #adb>*{margin-top:0!important}
+.ahero{display:flex;align-items:center;gap:14px;padding:16px;border:1px solid var(--ln);border-radius:24px;background:linear-gradient(135deg,var(--t1),var(--t2)),var(--cd)}
+.ahero h2{margin:0;font-size:21px}.ahero small{color:var(--mu)}
+.ahi{display:grid;place-items:center;width:52px;height:52px;border-radius:16px;background:var(--g);color:#fff;flex:none}
+.ast{display:grid;grid-template-columns:repeat(2,1fr);gap:10px}
+.at{padding:14px 16px;border:1px solid var(--ln);border-radius:18px;background:var(--cd)}
+.at b{display:block;font-size:26px;line-height:1.1;letter-spacing:-.02em}.at span{color:var(--mu);font-size:12px}
+.at.w b{color:#fbbf24}
+.atabs{display:flex;gap:8px;overflow-x:auto;padding:2px 0 6px;scrollbar-width:none}.atabs::-webkit-scrollbar{display:none}
+.atabs button{display:inline-flex;align-items:center;gap:8px;flex:none;padding:10px 16px;border-radius:14px;border:1px solid var(--ln);background:var(--cd);color:var(--mu);font-weight:600;font-size:14px;white-space:nowrap}
+.atabs button.on{background:var(--g);color:#fff;border-color:transparent}
+.atabs .n{min-width:20px;padding:0 6px;border-radius:99px;background:#fbbf24;color:#2a1d00;font:700 11px/20px Inter,sans-serif;text-align:center}
+.apn{display:grid;gap:12px;padding:16px;border:1px solid var(--ln);border-radius:22px;background:var(--cd)}
+.apn h3{font-size:16px}.apn .mu{font-size:13px}
+.agrid{display:grid;grid-template-columns:repeat(2,1fr);gap:10px}
+.aact{display:grid;justify-items:center;align-content:center;gap:8px;min-height:84px;padding:12px 8px;border:1px solid var(--ln);border-radius:18px;background:#ffffff06;font-weight:600;font-size:13px;text-align:center}
+.aact svg{color:var(--a)}
+@media(hover:hover){.aact:hover{border-color:var(--bd);background:var(--t3)}}
+.gts{display:flex;flex-wrap:wrap;gap:4px}
+.gt{display:inline-block;padding:1px 9px;border-radius:99px;background:var(--t3);color:var(--a2);font:600 11px Inter,sans-serif}
+.gt.big{padding:5px 12px;font-size:12px}
+.gt.w{background:#fbbf2426;color:#fbbf24}
+@media(min-width:600px){.ast{grid-template-columns:repeat(4,1fr)}.agrid{grid-template-columns:repeat(4,1fr)}}
+html[data-skin=lucu] :is(.ahero,.apn,.at){border-width:2.5px;border-radius:26px;box-shadow:0 4px 0 #7a525233}
+html[data-skin=lucu] .atabs button{background:#fff;border:2px solid var(--ln);border-radius:99px}
+html[data-skin=lucu] .atabs button.on{background:#f6a9bc;color:var(--tx)}
+html[data-skin=lucu] .aact{background:#fff;border:2px solid var(--ln);border-radius:20px}
+html[data-skin=lucu] .gc{background:#fff;border:2px solid var(--ln)}
+html[data-skin=lucu] .gc.on,html[data-skin=lucu] .cats .gb.on{background:#f08aa5;color:#fff}
+html[data-skin=lucu] .cats .gb{background:#fff}
+html[data-skin=lucu] .ahi{color:var(--tx)}
+.bh{display:flex;justify-content:space-between;align-items:center;gap:12px;margin:6px 0 18px}
+.bh .back{margin:0}
+.bh .be{padding:8px 16px;border-radius:14px;font-size:14px;color:var(--a);border-color:var(--bd);background:var(--t3)}
 </style>
 </head>
 <body>
@@ -327,7 +449,7 @@ const $=s=>document.querySelector(s);
 const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const ls={get(k,d){try{const v=localStorage.getItem(k);return v===null?d:JSON.parse(v)}catch{return d}},set(k,v){try{localStorage.setItem(k,JSON.stringify(v))}catch{}}};
 const I={plus:'<path d="M12 5v14M5 12h14"/>',mic:'<rect x="9" y="3" width="6" height="11" rx="3"/><path d="M5 11a7 7 0 0 0 14 0M12 18v3"/>',micoff:'<rect x="9" y="3" width="6" height="11" rx="3"/><path d="M5 11a7 7 0 0 0 14 0M12 18v3M3 3l18 18"/>',shield:'<path d="M12 3 4 6v6c0 4.5 3.2 8 8 9 4.8-1 8-4.5 8-9V6z"/><path d="m9 12 2 2 4-4"/>',chat:'<path d="M21 12a8 8 0 0 1-11.5 7.2L4 20l1-4.5A8 8 0 1 1 21 12z"/>',home:'<path d="M3 10.5 12 3l9 7.5V20a1 1 0 0 1-1 1h-5v-6H9v6H4a1 1 0 0 1-1-1z"/>',compass:'<circle cx="12" cy="12" r="9"/><path d="m15.5 8.5-2 5-5 2 2-5z"/>',clock:'<circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/>',dl:'<path d="M12 4v11m0 0-4-4m4 4 4-4M5 20h14"/>',menu:'<path d="M4 7h16M4 12h16M4 17h16"/>',search:'<circle cx="11" cy="11" r="7"/><path d="m20 20-4-4"/>',back:'<path d="M19 12H5m6-6-6 6 6 6"/>',play:'<path d="M7 4v16l13-8z" fill="currentColor"/>',pause:'<path d="M7 4h3.5v16H7zM13.5 4H17v16h-3.5z" fill="currentColor"/>',rw:'<path d="M3 12a9 9 0 1 0 3-6.7L3 8"/><path d="M3 3v5h5"/>',fw:'<path d="M21 12a9 9 0 1 1-3-6.7L21 8"/><path d="M21 3v5h-5"/>',vol:'<path d="M4 9v6h4l5 4V5L8 9z"/><path d="M16.5 8.5a5 5 0 0 1 0 7"/>',mute:'<path d="M4 9v6h4l5 4V5L8 9z"/><path d="m17 9 5 6m0-6-5 6"/>',gear:'<path d="M4 7h10M18 7h2M4 17h2M10 17h10"/><circle cx="16" cy="7" r="2"/><circle cx="8" cy="17" r="2"/>',full:'<path d="M4 9V4h5M20 9V4h-5M4 15v5h5M20 15v5h-5"/>',users:'<circle cx="9" cy="8" r="3.5"/><path d="M2.5 20c0-4 3-6 6.5-6s6.5 2 6.5 6M17 5a3.5 3.5 0 0 1 0 6.5M21.5 20c0-3-1.5-4.8-4-5.5"/>'};
-I.sun='<circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/>';I.x='<path d="M6 6l12 12M18 6 6 18"/>';
+I.sun='<circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/>';I.x='<path d="M6 6l12 12M18 6 6 18"/>';I.tag='<path d="M20.6 13.4 13.4 20.6a2 2 0 0 1-2.8 0L3 13V3h10l7.6 7.6a2 2 0 0 1 0 2.8z"/><circle cx="7.5" cy="7.5" r="1.2"/>';I.key='<circle cx="8" cy="15" r="4"/><path d="m11 12 9-9M16 7l3 3"/>';
 const ic=(n,s=22)=>`<svg width="${s}" height="${s}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">${I[n]}</svg>`;
 const ft=s=>{s=Math.max(0,s|0);return String(s/60|0).padStart(2,'0')+':'+String(s%60).padStart(2,'0')};
 let tmr;function toast(m){let e=$('#ts');if(!e){e=document.createElement('div');e.id='ts';document.body.append(e)}e.textContent=m;e.className='on';clearTimeout(tmr);tmr=setTimeout(()=>e.className='',3000)}
@@ -338,22 +460,23 @@ const RES=['360p','480p','720p','1080p','1440p','4K'];
 
 let catalog=[],cur=null,mode='in',S={q:''},hist=[];
 const isS=a=>!!(a.episodes&&a.episodes.length);
-let CAT='all';
+let CAT='all',GEN='all',GREF=null,GB=0,GP=null,GT=0;
 const CATS=[['film','Film'],['anime','Anime'],['donghua','Donghua']];
 const catName=c=>(CATS.find(x=>x[0]===c)||CATS[0])[1];
-const catChips=()=>`<div class="cats" id="cats">${[['all','Semua'],...CATS].map(c=>`<button type="button" class="b2${CAT===c[0]?' on':''}" data-c="${c[0]}">${c[1]}</button>`).join('')}</div>`;
-const inCat=a=>CAT==='all'||a.category===CAT;
-const bindCats=fn=>{$('#cats').onclick=e=>{const b=e.target.closest('[data-c]');if(!b)return;CAT=b.dataset.c;document.querySelectorAll('#cats button').forEach(x=>x.classList.toggle('on',x===b));fn()}};
+const gLabel=()=>GEN==='all'?'Kategori':GEN;
+const catChips=()=>`<div class="cats" id="cats"><button type="button" class="b2 gb${GEN!=='all'?' on':''}" id="gbtn">${ic('tag',16)}<span>${esc(gLabel())}</span></button>${[['all','Semua'],...CATS].map(c=>`<button type="button" class="b2${CAT===c[0]?' on':''}" data-c="${c[0]}">${c[1]}</button>`).join('')}</div>`;
+const inCat=a=>(CAT==='all'||a.category===CAT)&&(GEN==='all'||(a.genres||[]).includes(GEN));
+const bindCats=fn=>{GREF=fn;$('#gbtn').onclick=()=>genreModal(fn);$('#cats').onclick=e=>{const b=e.target.closest('[data-c]');if(!b)return;CAT=b.dataset.c;document.querySelectorAll('#cats [data-c]').forEach(x=>x.classList.toggle('on',x===b));fn()}};
 const qualsOf=a=>[...new Set((isS(a)?a.episodes.flatMap(e=>e.sources):a.sources).map(x=>x.res||'Auto'))].sort((x,y)=>resNum(x)-resNum(y));
 const wl=(a,ep)=>'#/watch/'+encodeURIComponent(a.id)+(ep?'/auto/'+ep:'');
 function normalize(r){
  const ok=x=>x&&/^https?:\/\//i.test(x.url||''),ss=a=>(Array.isArray(a)?a:[]).filter(ok).sort((a,b)=>resNum(a.res)-resNum(b.res));
  const episodes=(Array.isArray(r.episodes)?r.episodes:[]).map(e=>({no:Number(e.no),title:e.title||'',thumb:e.thumb||'',sources:ss(e.sources)})).filter(e=>Number.isFinite(e.no)&&e.sources.length).sort((a,b)=>a.no-b.no);
- return{...r,title:r.title||'Tanpa judul',category:['film','anime','donghua'].includes(r.category)?r.category:'film',sources:ss(r.sources),episodes}
+ return{...r,title:r.title||'Tanpa judul',category:['film','anime','donghua'].includes(r.category)?r.category:'film',genres:Array.isArray(r.genres)?r.genres:null,sources:ss(r.sources),episodes}
 }
 async function loadCatalog(){
  $('#app').innerHTML='<div class="lg"><div class="lc"><div class="logo big">Bioskop <span>Ana</span></div><p class="mu">Menghubungkan ke database…</p></div></div>';
- try{const r=await api('films?select=id,title,sources,episodes,category,created_at&order=created_at.desc');if(!r.ok)throw Error(await r.text()||'HTTP '+r.status);
+ try{const r=await api('films?select=id,title,sources,episodes,category,genres,created_at&order=created_at.desc');if(!r.ok)throw Error(await r.text()||'HTTP '+r.status);
   catalog=(await r.json()).map(normalize).filter(f=>f.sources.length||f.episodes.length);render()
  }catch(e){$('#app').innerHTML=`<main><div class="logo big">Bioskop <span>Ana</span></div><div class="status mt">Gagal mengambil data.<br><br>${esc(e.message)}</div><button class="b1 mt" onclick="loadCatalog()">Coba lagi</button></main>`}
 }
@@ -404,7 +527,7 @@ const histCard=x=>{const a=catalog.find(z=>z.id===x.id);if(!a)return'';const p=x
  return`<a class="hi" href="${wl(a,x.ep)}"><div class="po s" style="--h:${hue(a.title)}"><img data-id="${esc(a.id)}" alt=""></div><div class="hm"><b>${esc(a.title)}${x.ep?' · Ep '+x.ep:''}</b><small>${ft(x.t)} / ${ft(x.d)}</small><div class="pg"><i style="width:${p}%"></i></div></div></a>`};
 function detail(a){
  const h=hist.find(x=>x.id===a.id&&!x.ep),p=h&&h.d?Math.min(100,Math.round(h.t/h.d*100)):0;
- return`<a class="back" href="#/">${ic('back',20)}Beranda</a>
+ return`<div class="bh"><a class="back" href="#/">${ic('back',20)}Beranda</a>${isAdmin()?`<button type="button" class="b2 be" data-edit="${esc(a.id)}">${ic('gear',18)}Edit</button>`:''}</div>
 <div class="sh"><div class="po" style="--h:${hue(a.title)}"><img data-id="${esc(a.id)}" alt=""></div>
 <h1>${esc(a.title)}</h1>
 <div class="chips" id="chips"><span class="chip">${catName(a.category)}</span><span class="chip">${qualsOf(a).map(esc).join(' • ')}</span></div>
@@ -455,7 +578,7 @@ function seriesDetail(a){
  const tot=a.episodes.length,
   done=new Set(hist.filter(h=>h.id===a.id&&h.ep&&h.d&&h.t/h.d>.95).map(h=>h.ep)).size,
   pc=Math.round(done/tot*100),tg=resumeTarget(a),st=hist.some(h=>h.id===a.id&&h.ep);
- return`<a class="back" href="#/">${ic('back',20)}Beranda</a>
+ return`<div class="bh"><a class="back" href="#/">${ic('back',20)}Beranda</a>${isAdmin()?`<button type="button" class="b2 be" data-edit="${esc(a.id)}">${ic('gear',18)}Edit</button>`:''}</div>
 <div class="sh"><div class="po" style="--h:${hue(a.title)}"><img data-id="${esc(a.id)}" alt=""></div>
 <h1>${esc(a.title)}</h1>
 <div class="chips" id="chips"><span class="chip">${catName(a.category)}</span><span class="chip">${tot} Episode</span><span class="chip">${qualsOf(a).map(esc).join(' • ')}</span></div>
@@ -519,7 +642,7 @@ ${E?epNav(a,E):''}<h2>Pilih resolusi</h2><div class="eps">${list.map((s,i)=>`<a 
  if(p==='request')return[`<a class="back" href="#/more">${ic('back',20)}Lainnya</a><h2 style="margin-top:0">Request</h2><input class="in" id="rq" placeholder="Cari film, anime, atau donghua…"><div class="list mt" id="rr"></div><button class="b2 mt" id="rman" hidden style="width:100%;justify-content:center">Tidak ketemu? Request manual</button><h2>Request saya</h2><div class="list" id="rmy"></div>`,requestInit];
  if(p==='admin'){
   if(!isAdmin())return['<p class="mu">Halaman tidak ditemukan.</p>'];
-  return[`<a class="back" href="#/more">${ic('back',20)}Lainnya</a><h2 style="margin-top:0">Panel admin</h2><div class="seg" id="adt">${[['online','Online'],['film','Film'],['req','Request'],['ban','Blokir'],['exp','Ekspor'],['pw','Sandi']].map(t=>`<button type="button" data-t="${t[0]}">${t[1]}</button>`).join('')}</div><div id="adb"></div>`,adminInit]}
+  return[`<a class="back" href="#/more">${ic('back',20)}Lainnya</a><div class="adm"><div class="ahero"><div class="ahi">${ic('shield',26)}</div><div><h2>Panel admin</h2><small>Kelola film, kategori, request, dan pengguna</small></div></div><div class="ast" id="ast"></div><div class="atabs" id="adt">${[['online','Online','users'],['film','Film','play'],['cat','Kategori','tag'],['req','Request','plus'],['ban','Blokir','shield'],['exp','Ekspor','dl'],['pw','Sandi','key']].map(t=>`<button type="button" data-t="${t[0]}">${ic(t[2],18)}${t[1]}${t[0]==='cat'?'<span class="n" id="adn" hidden></span>':''}</button>`).join('')}</div><div id="adb"></div></div>`,adminInit]}
  if(p==='more')return[`<h2>Akun</h2><div class="hi"><div class="av${avCl(MYAV)}" id="avb" style="width:60px;height:60px;cursor:pointer;margin:14px;${avSt(MYAV,30)}">${avIn(MYAV,user())}</div><div class="hm"><b>${esc(user())}</b><small>${isAdmin()?'Admin':'Pengguna'} · ketuk foto untuk ganti avatar &amp; bingkai</small></div></div>
  <div class="list mt"><a class="hi" href="#/history">${ic('clock')} Riwayat tontonan</a><a class="hi" href="#/downloads">${ic('dl')} Unduhan</a><a class="hi" href="#/request">${ic('plus')} Request film / anime / donghua</a>${isAdmin()?`<a class="hi" href="#/admin">${ic('shield')} Panel admin</a>`:''}</div>${isAdmin()?`<h2 id="rqh">Request masuk</h2><div class="list" id="rqs"></div>`:''}${themePanel()}<button class="b2 mt" id="lo">Keluar</button>`,()=>{$('#avb').onclick=avatarModal;if(isAdmin())homeReq();themeInit();
   $('#lo').onclick=()=>{killMini(true);saveNow();leaveRoom();cur=null;hist=[];ls.set('bs:s',null);ls.set('bs:at','');ls.set('bs:tk','');loadTheme();loadProfile();render()}}];
@@ -530,9 +653,9 @@ ${E?epNav(a,E):''}<h2>Pilih resolusi</h2><div class="eps">${list.map((s,i)=>`<a 
 const TH0={mode:2,colors:['#8b5cf6','#3b82f6','#3b82f6']};
 const cleanTheme=t=>{const m=[1,2,3].includes(+t?.mode)?+t.mode:2,c=Array.isArray(t?.colors)?t.colors:[];return{mode:m,colors:[0,1,2].map(i=>/^#[0-9a-f]{6}$/i.test(c[i])?c[i]:TH0.colors[i])}};
 let TH=cleanTheme(null),THs=cleanTheme(null);
-function applyTheme(t){const n=t.mode,c=t.colors,r=document.documentElement.style,c1=c[0],c2=n>1?c[1]:c1,c3=n>2?c[2]:c2;r.setProperty('--c1',c1);r.setProperty('--c2',c2);r.setProperty('--c3',c3)}
+function applyTheme(t){const r0=document.documentElement.style;if(document.documentElement.dataset.skin==='lucu'){['--c1','--c2','--c3'].forEach(p=>r0.removeProperty(p));return}const n=t.mode,c=t.colors,r=document.documentElement.style,c1=c[0],c2=n>1?c[1]:c1,c3=n>2?c[2]:c2;r.setProperty('--c1',c1);r.setProperty('--c2',c2);r.setProperty('--c3',c3)}
 async function loadTheme(){
- const u=user();TH=cleanTheme(u?ls.get('bs:th:'+u,null):null);THs=cleanTheme(TH);applyTheme(TH);
+ const u=user();document.documentElement.dataset.skin=getSkin();TH=cleanTheme(u?ls.get('bs:th:'+u,null):null);THs=cleanTheme(TH);applyTheme(TH);
  if(!u)return;
  try{const r=await api('user_theme?select=mode,colors&username=eq.'+encodeURIComponent(u));if(!r.ok||user()!==u)return;const x=(await r.json())[0];if(x){TH=cleanTheme(x);THs=cleanTheme(TH);ls.set('bs:th:'+u,TH);applyTheme(TH)}}catch{}
 }
@@ -541,8 +664,13 @@ async function saveTheme(){
  try{const r=await api('user_theme?on_conflict=username',{method:'POST',headers:{Prefer:'resolution=merge-duplicates,return=minimal'},body:JSON.stringify({username:u,mode:THs.mode,colors:THs.colors,updated_at:new Date().toISOString()})});if(!r.ok)throw 0;toast('Tema disimpan ke akunmu')}
  catch{toast('Tema tersimpan di perangkat ini. Tabel user_theme belum ada di database.')}
 }
-const themePanel=()=>`<h2>Tema warna</h2><div class="room" style="margin-top:0"><div class="cps" id="thc" style="margin:0;align-items:center"></div><p class="mu" style="font-size:12px;margin-top:12px">Ketuk bulatan untuk memilih warna. <button type="button" id="thr" style="color:var(--a);font-size:12px">Reset</button></p></div>`;
+const skinPanel=()=>`<h2>Tema tampilan</h2><div class="room" style="margin-top:0"><div class="skg" id="skg"><button type="button" class="sk" data-sk="gelap"><i class="skp sk1"></i>Gelap<small>Klasik</small></button><button type="button" class="sk" data-sk="lucu"><i class="skp sk2"></i>Lucu 🐱<small>Pastel manis</small></button></div><div class="sw"><div><b>Suara klik lucu</b><small id="sfxs"></small></div><button type="button" class="tgl" id="sfxt" role="switch" aria-label="Suara klik" data-nosfx><i></i></button></div><p class="mu" id="skn" style="font-size:12px;margin-top:10px"></p></div>`;
+const themePanel=()=>skinPanel()+`<div id="thw"><h2>Tema warna</h2><div class="room" style="margin-top:0"><div class="cps" id="thc" style="margin:0;align-items:center"></div><p class="mu" style="font-size:12px;margin-top:12px">Ketuk bulatan untuk memilih warna. <button type="button" id="thr" style="color:var(--a);font-size:12px">Reset</button></p></div></div>`;
 function themeInit(){
+ const drawSk=()=>{const k=document.documentElement.dataset.skin==='lucu'?'lucu':'gelap',on=SFX.enabled();document.querySelectorAll('.sk').forEach(b=>b.classList.toggle('on',b.dataset.sk===k));$('#sfxt').setAttribute('aria-checked',on);$('#sfxs').textContent=on?'Aktif · ketuk untuk membisukan':'Dibisukan';$('#skn').textContent=k==='lucu'?'Warna kustom tersedia di tema Gelap. Semua fitur tetap sama.':''};
+ $('#skg').onclick=e=>{const b=e.target.closest('.sk');if(!b)return;setSkin(b.dataset.sk);drawSk()};
+ $('#sfxt').onclick=()=>{const v=!SFX.enabled();SFX.set(v);drawSk();if(v)SFX.play('yay')};
+ drawSk();
  let tm;const save=()=>{clearTimeout(tm);tm=setTimeout(saveTheme,400)};
  const draw=()=>{
   $('#thc').innerHTML=[...Array(TH.mode).keys()].map(i=>`<input type="color" data-i="${i}" value="${TH.colors[i]}">`).join('')+`<button type="button" class="b2" data-n style="margin-left:auto">${TH.mode} warna ⟳</button>`;
@@ -552,6 +680,27 @@ function themeInit(){
  $('#thr').onclick=()=>{TH=cleanTheme(null);applyTheme(TH);draw();save()};
  draw()
 }
+
+
+/* ===== tema Lucu + suara klik ===== */
+function getSkin(){const u=user();return(ls.get(u?'bs:skin:'+u:'bs:skin',null)??ls.get('bs:skin','gelap'))==='lucu'?'lucu':'gelap'}
+function setSkin(k){const u=user();k=k==='lucu'?'lucu':'gelap';document.documentElement.dataset.skin=k;ls.set('bs:skin',k);if(u)ls.set('bs:skin:'+u,k);applyTheme(TH);toast(k==='lucu'?'Tema Lucu aktif 🐱':'Tema Gelap aktif')}
+const SFX=(()=>{
+ let ctx,last=0;const KEY='bs:sfx',N=[523.25,587.33,659.25,783.99,880,1046.5,1174.66];
+ const enabled=()=>{const v=ls.get(KEY,null);return v===null?document.documentElement.dataset.skin==='lucu':!!v};
+ const get=()=>{try{if(!ctx){const C=window.AudioContext||window.webkitAudioContext;if(!C)return null;ctx=new C()}if(ctx.state==='suspended')ctx.resume();return ctx}catch{return null}};
+ const tone=(c,f0,f1,t,d,vol,type='sine')=>{const o=c.createOscillator(),g=c.createGain();o.type=type;o.frequency.setValueAtTime(f0,t);if(f1!==f0)o.frequency.exponentialRampToValueAtTime(f1,t+d*.6);g.gain.setValueAtTime(.0001,t);g.gain.exponentialRampToValueAtTime(vol,t+.012);g.gain.exponentialRampToValueAtTime(.0001,t+d);o.connect(g);g.connect(c.destination);o.start(t);o.stop(t+d+.03)};
+ const play=k=>{const c=get();if(!c)return;const t=c.currentTime+.005;
+  if(k==='nav'){tone(c,659.25,880,t,.14,.13);tone(c,987.77,1318.5,t+.09,.18,.12)}
+  else if(k==='yay')[523.25,659.25,783.99,1046.5].forEach((f,i)=>tone(c,f,f*1.02,t+i*.07,.22,.12,'triangle'));
+  else{const f=N[Math.random()*N.length|0];tone(c,f*.7,f,t,.16,.15);tone(c,f*2,f*2,t+.02,.1,.04,'triangle')}};
+ return{enabled,play,set:v=>ls.set(KEY,!!v),gate:()=>{const n=performance.now();if(n-last<70)return false;last=n;return true}}
+})();
+const FXE=['💖','🐾','⭐','✨','🍿','🌸'];
+function burst(x,y){const e=document.createElement('span');e.className='fxp';e.textContent=FXE[Math.random()*FXE.length|0];e.style.cssText=`left:${x}px;top:${y}px;--dx:${Math.round((Math.random()-.5)*60)}px;--r:${Math.round((Math.random()-.5)*50)}deg`;document.body.append(e);setTimeout(()=>e.remove(),900)}
+document.addEventListener('click',e=>{const el=e.target;if(!(el instanceof Element)||el.closest('input[type=range],input[type=color],[data-nosfx]')||!SFX.gate())return;
+ if(SFX.enabled())SFX.play(el.closest('.nv a')?'nav':el.closest('.b1,[type=submit]')?'yay':'pop');
+ if(document.documentElement.dataset.skin==='lucu'&&e.clientX+e.clientY>0)burst(e.clientX,e.clientY)},true);
 
 /* ===== panel admin: online, film, blokir, ekspor, sandi ===== */
 let AT='online',OLY=true,OL=[],admTimer=0;
@@ -576,20 +725,48 @@ function adminInit(){
 function adminTab(t){
  clearInterval(admTimer);
  document.querySelectorAll('#adt button').forEach(b=>b.classList.toggle('on',b.dataset.t===t));
- ({online:tabOnline,film:tabFilm,req:tabReq,ban:tabBan,exp:tabExp,pw:tabPw})[t]()
+ adminStats();
+ ({online:tabOnline,film:tabFilm,cat:tabCat,req:tabReq,ban:tabBan,exp:tabExp,pw:tabPw})[t]()
 }
 async function doBan(k,v){
  if(!confirm((k==='ip'?'Blokir IP ':'Blokir akun ')+v+'?'))return;
  const r=prompt('Alasan (boleh kosong):','');if(r===null)return;
  if(await arpc('admin_ban',{k,v,r:r.trim().slice(0,120)})){toast('Berhasil diblokir');adminTab(AT)}
 }
+const gtags=a=>Array.isArray(a.genres)?(a.genres.length?a.genres.map(g=>`<span class="gt">${esc(g)}</span>`).join(''):'<span class="gt w">Tanpa kategori</span>'):'<span class="gt">Mengecek…</span>';
+const aRow=(a,x='')=>`<div class="hi"><div class="po s" style="--h:${hue(a.title)}"><img data-id="${esc(a.id)}" alt="" onerror="this.remove()"></div><div class="hm"><b>${esc(a.title)}</b><small>${catName(a.category)} · ${isS(a)?a.episodes.length+' episode':a.sources.map(z=>esc(z.res||'Video')).join(' • ')}</small><div class="gts">${gtags(a)}</div></div><div class="ura" style="flex-direction:column;flex:none">${x}<button class="b2" data-edit="${esc(a.id)}" style="color:var(--tx)">Edit</button></div></div>`;
+let AFN=20;
+function adminStats(){
+ const e=$('#ast');if(!e)return;
+ const s=catalog.filter(isS).length,nc=catalog.filter(a=>Array.isArray(a.genres)&&!a.genres.length).length;
+ e.innerHTML=`<div class="at"><b>${catalog.length}</b><span>Total judul</span></div><div class="at"><b>${catalog.length-s}</b><span>Film</span></div><div class="at"><b>${s}</b><span>Serial</span></div><div class="at${nc?' w':''}"><b>${nc}</b><span>Tanpa kategori</span></div>`;
+ const n=$('#adn');if(n){n.hidden=!nc;n.textContent=nc}
+}
 function tabFilm(){
- $('#adb').innerHTML=`<div class="btns" style="margin:14px 0 0"><button class="b2" data-edit="">+ Tambah film</button><button class="b2" id="ij">Impor file JSON</button><button class="b2" id="is">Impor banyak episode</button><input type="file" id="sf" accept=".json,application/json" multiple hidden><input type="file" id="jf" accept=".json,application/json" multiple hidden></div><select class="in mt" id="ic"><option value="">Kategori impor baru: otomatis</option>${CATS.map(c=>`<option value="${c[0]}">Impor sebagai ${c[1]}</option>`).join('')}</select><input class="in mt" id="aq" placeholder="Cari film untuk diedit…"><div class="list mt" id="al"></div>`;
- $('#aq').oninput=adminList;adminList()
+ $('#adb').innerHTML=`<div class="apn"><h3>Tambah &amp; impor</h3><div class="agrid"><button class="aact" data-edit="">${ic('plus',22)}Tambah film</button><button class="aact" id="ij">${ic('dl',22)}Impor JSON film</button><button class="aact" id="is">${ic('menu',22)}Impor banyak episode</button><button class="aact" id="agc">${ic('tag',22)}Kategori otomatis</button></div><input type="file" id="sf" accept=".json,application/json" multiple hidden><input type="file" id="jf" accept=".json,application/json" multiple hidden><select class="in" id="ic"><option value="">Kategori impor baru: otomatis</option>${CATS.map(c=>`<option value="${c[0]}">Impor sebagai ${c[1]}</option>`).join('')}</select><p class="mu" style="font-size:12px">Film baru yang ditambahkan atau diimpor otomatis diberi kategori dari TMDB.</p></div><div class="apn"><h3>Daftar judul</h3><input class="in" id="aq" placeholder="Cari film untuk diedit…"><div class="list" id="al"></div><div id="am"></div></div>`;
+ $('#agc').onclick=()=>{AT='cat';adminTab('cat')};
+ $('#aq').oninput=()=>{AFN=20;adminList()};AFN=20;adminList()
 }
 function adminList(){
- const q=($('#aq').value||'').trim().toLowerCase();
- $('#al').innerHTML=q?(catalog.filter(a=>a.title.toLowerCase().includes(q)).map(a=>`<div class="hi"><div class="hm"><b>${esc(a.title)}</b><small>${catName(a.category)} · ${isS(a)?a.episodes.length+' episode':a.sources.map(x=>esc(x.res||'Video')).join(' • ')}</small></div><button class="b2" data-edit="${esc(a.id)}">Edit</button></div>`).join('')||'<p class="mu">Film tidak ditemukan.</p>'):''
+ const q=($('#aq').value||'').trim().toLowerCase(),L=q?catalog.filter(a=>a.title.toLowerCase().includes(q)):catalog;
+ $('#al').innerHTML=L.slice(0,AFN).map(a=>aRow(a)).join('')||'<p class="mu">Film tidak ditemukan.</p>';
+ $('#am').innerHTML=L.length>AFN?`<button class="b2" id="amm" style="width:100%;justify-content:center;color:var(--a)">Lebih banyak (${L.length-AFN})</button>`:'';
+ const m=$('#amm');if(m)m.onclick=()=>{AFN+=20;adminList()};
+ fillPosters()
+}
+function tabCat(){catDraw()}
+function catDraw(){
+ const b=$('#adb');if(!b)return;
+ const un=catalog.filter(a=>a.genres==null),nc=catalog.filter(a=>Array.isArray(a.genres)&&!a.genres.length),cnt=new Map();
+ catalog.forEach(a=>(a.genres||[]).forEach(g=>cnt.set(g,(cnt.get(g)||0)+1)));
+ const gl=[...cnt].sort((x,y)=>y[1]-x[1]||x[0].localeCompare(y[0])),
+  st=GP?`<p class="mu">Mengkategorikan otomatis… ${GP.n}/${GP.t}</p><div class="pg"><i style="width:${Math.round(GP.n/Math.max(1,GP.t)*100)}%"></i></div>`
+   :un.length?`<p class="mu">${un.length} film belum dicek.</p><button class="b1" id="acr">Kategorikan ${un.length} film sekarang</button>`
+   :'<p class="mu">Semua film sudah dicek ✓</p>';
+ b.innerHTML=`<div class="apn" id="acx"><h3>Kategori dari TMDB</h3><p class="mu">Diambil otomatis saat film ditambahkan, diimpor, atau judulnya diubah.</p><div class="gts">${gl.map(([g,n])=>`<span class="gt big">${esc(g)} · ${n}</span>`).join('')||'<span class="mu">Belum ada data.</span>'}</div>${st}</div><div class="apn"><h3>Film tanpa kategori (${nc.length})</h3><p class="mu">Judul tidak ketemu di TMDB atau TMDB tidak punya kategorinya. Film ini tetap tampil di beranda dan pencarian. Ubah judul agar mirip judul di TMDB, lalu kategori dicek ulang otomatis.</p><div class="list" id="acl">${nc.map(a=>aRow(a,`<a class="b2" target="_blank" rel="noopener" href="https://www.themoviedb.org/search?query=${encodeURIComponent(a.title.replace(/\(.*?\)/g,' ').trim())}">TMDB</a>`)).join('')||'<p class="mu">Semua film punya kategori 🎉</p>'}</div>${nc.length?'<button class="b2" id="acf" style="justify-content:center">Cek ulang dari TMDB</button>':''}</div>`;
+ const r=$('#acr');if(r)r.onclick=()=>{GT=0;ensureGenres()};
+ const f=$('#acf');if(f)f.onclick=async()=>{const n=await runGenres(nc,true);toast(n?n+' film mendapat kategori':'Belum ada yang cocok di TMDB.')};
+ fillPosters()
 }
 function tabOnline(){
  $('#adb').innerHTML=`<div class="tb" style="margin-top:14px"><input class="in" id="oq" placeholder="Cari username atau IP…"><button class="b2" id="oa" style="white-space:nowrap"></button></div><p class="mu" id="os" style="margin-top:10px;font-size:13px"></p><div class="list mt" id="ol"></div>`;
@@ -1241,7 +1418,7 @@ async function tmdbFind(a){
    const h=(d.results||[]).find(x=>x.poster_path);if(!h)continue;
    let p=h.poster_path;
    if(kind==='tv'&&season){try{const sd=await tfetch(`${T}tv/${h.id}/season/${season}?api_key=${TMDB_KEY}&language=id-ID`);if(sd.poster_path)p=sd.poster_path}catch{}}
-   return{p:'https://image.tmdb.org/t/p/w500'+p,r:h.vote_average||0,y:(h.first_air_date||h.release_date||'').slice(0,4),o:h.overview||'',id:h.id,k:kind}
+   return{p:'https://image.tmdb.org/t/p/w500'+p,r:h.vote_average||0,y:(h.first_air_date||h.release_date||'').slice(0,4),o:h.overview||'',id:h.id,k:kind,g:h.genre_ids||[]}
   }
  }
  return null
@@ -1342,6 +1519,58 @@ async function importSeries(inp){
  loadCatalog();
 }
 
+/* ===== kategori (genre) dari TMDB ===== */
+const GM={28:'Aksi',12:'Petualangan',16:'Animasi',35:'Komedi',80:'Kriminal',99:'Dokumenter',18:'Drama',10751:'Keluarga',14:'Fantasi',36:'Sejarah',27:'Horor',10402:'Musik',9648:'Misteri',10749:'Romantis',878:'Fiksi Ilmiah',10770:'Film TV',53:'Tegang',10752:'Perang',37:'Barat'};
+const GTV={10759:['Aksi','Petualangan'],10762:['Anak-anak'],10763:['Berita'],10764:['Reality'],10765:['Fiksi Ilmiah','Fantasi'],10766:['Sinetron'],10767:['Talk Show'],10768:['Perang']};
+const gNames=ids=>[...new Set(ids.flatMap(i=>GTV[i]||(GM[i]?[GM[i]]:[])))];
+/* undefined = gagal terhubung (dicoba lagi nanti), [] = tidak ada kategori di TMDB */
+async function genresOf(a,force){
+ const kk='bs:g3:'+(isS(a)?'s:':'m:')+a.title.toLowerCase();
+ if(!force){const c=ls.get(kk,null);if(c&&Array.isArray(c.g)&&Date.now()-c.t<6048e5)return c.g}
+ try{const m=await tmdbFind(a),g=m?gNames(m.g||[]):[];ls.set(kk,{g,t:Date.now()});return g}catch{return undefined}
+}
+async function runGenres(L,force){
+ if(GB||!L.length)return 0;
+ GB=1;GP={n:0,t:L.length};let ok=0,bad=0,persist=isAdmin();
+ const one=async a=>{
+  if(bad>=6)return;
+  const g=await genresOf(a,force);
+  if(g===undefined){bad++;return}
+  GP.n++;
+  if(force&&!g.length)return;
+  if(persist){const r=await arpc('admin_film_save',{fid:a.id,d:{genres:g}});if(r)ok++;else persist=false}
+  a.genres=g;if(!force)ok++
+ };
+ try{
+  for(let i=0;i<L.length&&bad<6;i+=4){await Promise.all(L.slice(i,i+4).map(one));gRefresh()}
+ }finally{GB=0;GP=null;if(bad>=6)GT=Date.now();gRefresh(1)}
+ return ok
+}
+function ensureGenres(){
+ if(GB||!user()||Date.now()-GT<6e4)return;
+ const L=catalog.filter(a=>a.genres==null);if(L.length)runGenres(L,false)
+}
+function gRefresh(fin){
+ if(GREF&&$('#cats')&&(GEN!=='all'||fin))GREF();
+ adminStats();
+ if($('#acx')&&(fin||!GB))catDraw();
+ else if($('#acx')){const p=$('#acx .pg i');if(p&&GP)p.style.width=Math.round(GP.n/Math.max(1,GP.t)*100)+'%'}
+}
+function genreModal(fn){
+ const base=catalog.filter(a=>CAT==='all'||a.category===CAT),cnt=new Map();
+ base.forEach(a=>(a.genres||[]).forEach(g=>cnt.set(g,(cnt.get(g)||0)+1)));
+ const list=[...cnt].sort((x,y)=>y[1]-x[1]||x[0].localeCompare(y[0])),d=document.createElement('div');d.className='md sheet';
+ d.innerHTML=`<div><div style="display:flex;justify-content:space-between;align-items:center"><h2 style="margin:0">Kategori</h2><button class="ib" id="gx" type="button">${ic('x',20)}</button></div>${GP?`<p class="mu" style="font-size:13px">Sedang mengkategorikan film… ${GP.n}/${GP.t}</p>`:''}<div class="gg"><button type="button" class="gc${GEN==='all'?' on':''}" data-g="all">Semua<small>${base.length}</small></button>${list.map(([g,n])=>`<button type="button" class="gc${GEN===g?' on':''}" data-g="${esc(g)}">${esc(g)}<small>${n}</small></button>`).join('')}</div>${!list.length&&!GP?'<p class="mu">Belum ada data kategori.</p>':''}</div>`;
+ document.body.append(d);
+ d.onclick=e=>{
+  if(e.target===d||e.target.closest('#gx'))return d.remove();
+  const b=e.target.closest('[data-g]');if(!b)return;
+  GEN=b.dataset.g;d.remove();
+  const g=$('#gbtn');if(g){g.classList.toggle('on',GEN!=='all');g.querySelector('span').textContent=gLabel()}
+  fn()
+ }
+}
+
 /* ===== mini player ===== */
 let MINI=null;
 const DUM={classList:{add(){},remove(){},toggle(){}},style:{setProperty(){}},innerHTML:'',textContent:'',value:0,max:0},qd=q=>$(q)||DUM;
@@ -1390,7 +1619,7 @@ async function render(){
  app.innerHTML=`<header class="hd"><a href="#/" class="logo">Bioskop <span>Ana</span></a><div style="display:flex;gap:8px"><a href="#/explore" class="ib">${ic('search')}</a><a href="#/more" class="av${avCl(MYAV)}" style="${avSt(MYAV)}">${avIn(MYAV,user())}</a></div></header><main>${body}</main><nav class="nv">${tabs.map(t=>`<a href="#/${t[0]}" class="${on===t[0]?'on':''}">${ic(t[1],24)}${t[2]}</a>`).join('')}</nav>`;
  scrollTo(0,0);
  if(keep){const nv=$('#v');if(nv){const was=!keep.v.paused;nv.replaceWith(keep.v);if(was&&keep.v.paused)keep.v.play().catch(()=>{})}if(km)km.m.remove()}
- if(init)init();fillPosters();ping();
+ if(init)init();fillPosters();ping();ensureGenres();
 }
 document.addEventListener('click',e=>{
  const at=e.target.closest('[data-at]');if(at)AT=at.dataset.at;
