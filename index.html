@@ -212,7 +212,12 @@ body{overflow-x:clip}
 #mini #mxx{color:#fca5a5}
 @keyframes mup{from{opacity:0;transform:translateY(16px)}}
 /* ===== RESPONSIF: HP -> tablet -> laptop -> PC ===== */
-html{-webkit-text-size-adjust:100%;overflow-x:clip}
+html{-webkit-text-size-adjust:100%;overflow-x:hidden;overscroll-behavior-x:none;max-width:100%}
+html,body{touch-action:pan-y pinch-zoom}
+body{max-width:100%;overflow-x:hidden;overflow-x:clip}
+.rr,.cats,.pl,.ct,input,textarea,select{touch-action:auto}
+#ts{max-width:calc(100% - 24px)}
+#mini{max-width:calc(100% - 24px)}
 .hd{padding-top:calc(12px + env(safe-area-inset-top));padding-inline:max(var(--pd),calc((100% - var(--mw))/2 + var(--pd)))}
 .cd .po b{font-size:clamp(12px,3.3vw,14px);overflow-wrap:anywhere;word-break:break-word}
 .po{min-width:0}
