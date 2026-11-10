@@ -170,10 +170,10 @@ input[type=color]::-moz-color-swatch{border:0}
 .cats{display:flex;gap:8px;overflow-x:auto;margin-top:12px;padding-bottom:2px}
 .cats .b2{padding:8px 16px;white-space:nowrap;font-size:14px}
 /* avatar, nobar, suara, soundboard */
-.av img{width:100%;height:100%;object-fit:cover}
+.av img{width:100%;height:100%;object-fit:cover;border-radius:50%}
 .avg{display:grid;grid-template-columns:repeat(5,1fr);gap:10px}
 .avg button{aspect-ratio:1;border-radius:50%;font-size:28px;display:grid;place-items:center;border:2px solid transparent}
-.avg button.on{border-color:var(--a)}
+.avg button.on{border-color:var(--a);transform:scale(1.08)}
 .uw{position:relative;flex:none}
 .uw .av{width:40px;height:40px;font-size:18px}
 .uw .dot{position:absolute;right:-1px;bottom:-1px;margin:0;border:2px solid var(--cd)}
@@ -181,6 +181,67 @@ input[type=color]::-moz-color-swatch{border:0}
 .pl.rm .ct .rv{display:grid}
 .ct .act{color:var(--a);background:var(--t1);border-radius:12px}
 @media(max-width:480px){.pl.rm:not(:fullscreen) #vo{display:none}}
+body{overflow-x:clip}
+/* bingkai avatar */
+.av[class*=" bd"]{position:relative;isolation:isolate;--rw:4px;--gc:#0000}
+.av[class*=" bd"]::before{content:"";position:absolute;inset:-4px;border-radius:50%;z-index:-1;-webkit-mask:radial-gradient(farthest-side,#0000 calc(100% - var(--rw) - 1px),#000 calc(100% - var(--rw)));mask:radial-gradient(farthest-side,#0000 calc(100% - var(--rw) - 1px),#000 calc(100% - var(--rw)))}
+@keyframes avspin{to{transform:rotate(360deg)}}
+@keyframes avglow{from{box-shadow:0 0 3px var(--gc)}to{box-shadow:0 0 14px 2px var(--gc)}}
+.bd1::before{background:repeating-linear-gradient(45deg,#ff5c8a 0 5px,#fff 5px 10px);animation:avspin 4s linear infinite}
+.bd2::before{background:radial-gradient(circle,#fff 45%,#0000 47%) 0 0/8px 8px,#7dd3fc;animation:avspin 9s linear infinite}
+.bd3::before{background:conic-gradient(#f43f5e,#fb923c,#facc15,#4ade80,#22d3ee,#6366f1,#d946ef,#f43f5e);animation:avspin 3s linear infinite}
+.bd4::before{background:radial-gradient(circle,#fde047 28%,#0000 30%) 0 0/9px 9px,#f472b6;animation:avspin 8s linear infinite}
+.bd5::before{background:conic-gradient(#f9a8d4,#a5f3fc,#fde68a,#c4b5fd,#f9a8d4);animation:avspin 5s linear infinite}
+.bd6::before{background:repeating-conic-gradient(#22c55e 0 12.5%,#052e16 0 25%)}
+.bd7{--gc:#60a5fa;animation:avglow 1.5s ease-in-out infinite alternate}
+.bd7::before{background:conic-gradient(#ff2d55,#22ff88,#2d6bff,#ff2d55);animation:avspin 1.4s linear infinite}
+.bd8{--gc:#22d3ee;animation:avglow 1.5s ease-in-out infinite alternate}
+.bd8::before{background:conic-gradient(#22d3ee,#e879f9,#22d3ee,#e879f9,#22d3ee);animation:avspin 2s linear infinite}
+.bd9{--gc:#f59e0b;animation:avglow 1.8s ease-in-out infinite alternate}
+.bd9::before{background:conic-gradient(#fde047,#f59e0b,#fff7ad,#f59e0b,#fde047);animation:avspin 3s linear infinite}
+.bd10{--gc:#22c55e;animation:avglow 1.6s ease-in-out infinite alternate}
+.bd10::before{background:repeating-linear-gradient(0deg,#22c55e 0 3px,#052e16 3px 6px)}
+.bd11{--gc:#f97316;animation:avglow .9s ease-in-out infinite alternate}
+.bd11::before{background:conic-gradient(#fde047,#f97316,#dc2626,#f97316,#fde047);animation:avspin 1.2s linear infinite}
+.bd12{--gc:#facc15;animation:avglow .6s ease-in-out infinite alternate}
+.bd12::before{background:conic-gradient(#fff,#facc15,#60a5fa,#fff,#facc15,#60a5fa,#fff);animation:avspin .9s linear infinite}
+.bd13{--gc:#34d399;animation:avglow 2.2s ease-in-out infinite alternate}
+.bd13::before{background:conic-gradient(#34d399,#22d3ee,#a78bfa,#34d399);animation:avspin 5s linear infinite}
+.bd14{--gc:#c026d3;animation:avglow 1.2s ease-in-out infinite alternate}
+.bd14::before{background:conic-gradient(#f0abfc,#8b5cf6,#22d3ee,#f0abfc);animation:avspin 1.6s linear infinite}
+.bd15{--gc:#7c3aed;animation:avglow 2s ease-in-out infinite alternate}
+.bd15::before{background:conic-gradient(#312e81,#7c3aed,#fff,#2563eb,#312e81);animation:avspin 6s linear infinite}
+.bd16{box-shadow:0 2px 10px #0008}.bd16::before{background:#ffffff80}
+.bd17::before{background:linear-gradient(135deg,#8b5cf6,#3b82f6)}
+.bd18::before{background:conic-gradient(#fff,#6b7280,#e5e7eb,#6b7280,#fff)}
+.bd19::before{background:linear-gradient(135deg,#fde2d3,#d98b9d,#f9d3c4)}
+.bd20::before{background:conic-gradient(#38bdf8 0 50%,#f472b6 0)}
+.bd21::before{background:#fff}.bd22::before{background:#facc15}.bd23::before{background:#3b82f6}.bd24::before{background:#22c55e}.bd25::before{background:#ef4444}
+.bg5{display:grid;grid-template-columns:repeat(5,1fr);gap:6px}
+.bcell{display:grid;place-items:center;padding:9px 0;border:2px solid transparent;border-radius:14px}
+.bcell.on{border-color:var(--a);background:var(--t3)}
+.bcell .av{width:38px;height:38px;font-size:18px}
+.av.sm{width:30px;height:30px;font-size:14px;flex:none;margin:5px 0 0 5px}
+.fx .av.sm{width:24px;height:24px;font-size:12px;margin:4px 0 0 4px}
+.cu{display:flex;gap:11px;align-items:flex-start}
+.cu>div:last-child{min-width:0}
+/* mode sinematik */
+.plw{position:relative}
+.amb{position:absolute;left:-6%;top:-10%;width:112%;height:120%;filter:blur(36px) saturate(1.9) brightness(1.1);opacity:.75;z-index:0;pointer-events:none;transition:opacity .5s}
+.amb.off{opacity:0}
+.plw .pl{position:relative;z-index:1}
+@media(max-width:420px){.ct button{width:34px}#vo{width:48px}}
+/* mini player */
+#mini{position:fixed;right:12px;bottom:calc(84px + env(safe-area-inset-bottom));z-index:30;width:min(280px,66vw);background:var(--cd);border:1px solid var(--ln);border-radius:18px;overflow:hidden;box-shadow:0 12px 40px #000a;animation:mup .25s}
+#mini .mv{aspect-ratio:16/9;background:#000;cursor:pointer}
+#mini video{width:100%;height:100%;object-fit:contain;display:block}
+#mini .mb{display:flex;align-items:center;gap:2px;padding:6px 6px 6px 12px}
+#mini .mtt{flex:1;min-width:0;display:grid}
+#mini .mtt b{font-size:12px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+#mini .mtt small{font-size:11px;color:var(--mu)}
+#mini button{display:grid;place-items:center;width:34px;height:34px;border-radius:10px;color:var(--tx)}
+#mini #mxx{color:#fca5a5}
+@keyframes mup{from{opacity:0;transform:translateY(16px)}}
 </style>
 </head>
 <body>
@@ -198,6 +259,7 @@ const $=s=>document.querySelector(s);
 const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const ls={get(k,d){try{const v=localStorage.getItem(k);return v===null?d:JSON.parse(v)}catch{return d}},set(k,v){try{localStorage.setItem(k,JSON.stringify(v))}catch{}}};
 const I={plus:'<path d="M12 5v14M5 12h14"/>',mic:'<rect x="9" y="3" width="6" height="11" rx="3"/><path d="M5 11a7 7 0 0 0 14 0M12 18v3"/>',micoff:'<rect x="9" y="3" width="6" height="11" rx="3"/><path d="M5 11a7 7 0 0 0 14 0M12 18v3M3 3l18 18"/>',shield:'<path d="M12 3 4 6v6c0 4.5 3.2 8 8 9 4.8-1 8-4.5 8-9V6z"/><path d="m9 12 2 2 4-4"/>',chat:'<path d="M21 12a8 8 0 0 1-11.5 7.2L4 20l1-4.5A8 8 0 1 1 21 12z"/>',home:'<path d="M3 10.5 12 3l9 7.5V20a1 1 0 0 1-1 1h-5v-6H9v6H4a1 1 0 0 1-1-1z"/>',compass:'<circle cx="12" cy="12" r="9"/><path d="m15.5 8.5-2 5-5 2 2-5z"/>',clock:'<circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/>',dl:'<path d="M12 4v11m0 0-4-4m4 4 4-4M5 20h14"/>',menu:'<path d="M4 7h16M4 12h16M4 17h16"/>',search:'<circle cx="11" cy="11" r="7"/><path d="m20 20-4-4"/>',back:'<path d="M19 12H5m6-6-6 6 6 6"/>',play:'<path d="M7 4v16l13-8z" fill="currentColor"/>',pause:'<path d="M7 4h3.5v16H7zM13.5 4H17v16h-3.5z" fill="currentColor"/>',rw:'<path d="M3 12a9 9 0 1 0 3-6.7L3 8"/><path d="M3 3v5h5"/>',fw:'<path d="M21 12a9 9 0 1 1-3-6.7L21 8"/><path d="M21 3v5h-5"/>',vol:'<path d="M4 9v6h4l5 4V5L8 9z"/><path d="M16.5 8.5a5 5 0 0 1 0 7"/>',mute:'<path d="M4 9v6h4l5 4V5L8 9z"/><path d="m17 9 5 6m0-6-5 6"/>',gear:'<path d="M4 7h10M18 7h2M4 17h2M10 17h10"/><circle cx="16" cy="7" r="2"/><circle cx="8" cy="17" r="2"/>',full:'<path d="M4 9V4h5M20 9V4h-5M4 15v5h5M20 15v5h-5"/>',users:'<circle cx="9" cy="8" r="3.5"/><path d="M2.5 20c0-4 3-6 6.5-6s6.5 2 6.5 6M17 5a3.5 3.5 0 0 1 0 6.5M21.5 20c0-3-1.5-4.8-4-5.5"/>'};
+I.sun='<circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/>';I.x='<path d="M6 6l12 12M18 6 6 18"/>';
 const ic=(n,s=22)=>`<svg width="${s}" height="${s}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">${I[n]}</svg>`;
 const ft=s=>{s=Math.max(0,s|0);return String(s/60|0).padStart(2,'0')+':'+String(s%60).padStart(2,'0')};
 let tmr;function toast(m){let e=$('#ts');if(!e){e=document.createElement('div');e.id='ts';document.body.append(e)}e.textContent=m;e.className='on';clearTimeout(tmr);tmr=setTimeout(()=>e.className='',3000)}
@@ -375,10 +437,10 @@ function view(parts){
   const n=/^\d+$/.test(idx||'')?Math.min(+idx,list.length-1):list.length-1,src=list[n],T=a.title+(E?' · Episode '+E.no:'');
   const nxE=E?a.episodes.find(e=>e.no>E.no):null,rl=i=>'#/watch/'+encodeURIComponent(a.id)+'/'+i+(E?'/'+E.no:'');
   return[`<a class="back" href="#/film/${encodeURIComponent(a.id)}">${ic('back',20)}Detail film</a>
-<div class="pl ui" id="pl"><video id="v" playsinline preload="metadata" src="${esc(src.url)}"></video><div class="buf" id="buf"><div id="bt">Memuat video…</div></div><div class="fl" id="fl"></div><div class="rp" id="rp"><input class="in" id="ri" placeholder="Balas komentar…" maxlength="300"><button class="b2" id="rs">Kirim</button></div>
+<div class="plw"><canvas id="amb" class="amb"></canvas><div class="pl ui" id="pl"><video id="v" playsinline preload="metadata" src="${esc(src.url)}"></video><div class="buf" id="buf"><div id="bt">Memuat video…</div></div><div class="fl" id="fl"></div><div class="rp" id="rp"><input class="in" id="ri" placeholder="Balas komentar…" maxlength="300"><button class="b2" id="rs">Kirim</button></div>
 <div class="ov t"><a class="ib" href="#/film/${encodeURIComponent(a.id)}">${ic('back',20)}</a><div class="tt"><b>${esc(T)}</b><small>${esc(src.res||'Video')}</small></div></div>
 <div class="ov b"><div class="tm"><b id="cur">00:00</b><input id="sk" type="range" min="0" max="100" step=".1" value="0"><b id="dur">00:00</b></div>
-<div class="ct"><button id="pp">${ic('play',26)}</button><button id="rw">${ic('rw')}</button><button id="fw">${ic('fw')}</button><button id="mu">${ic('vol')}</button><input id="vo" type="range" min="0" max="1" step=".05" value="1"><button id="ctg" title="Balas komentar">${ic('chat')}</button><button id="cmic" class="rv" title="Mic">${ic('micoff')}</button><button id="sp">${ic('gear')}</button><button id="fs">${ic('full')}</button></div></div></div>
+<div class="ct"><button id="pp">${ic('play',26)}</button><button id="rw">${ic('rw')}</button><button id="fw">${ic('fw')}</button><button id="mu">${ic('vol')}</button><input id="vo" type="range" min="0" max="1" step=".05" value="1"><button id="ctg" title="Balas komentar">${ic('chat')}</button><button id="cmic" class="rv" title="Mic">${ic('micoff')}</button><button id="am" title="Mode sinematik">${ic('sun')}</button><button id="sp">${ic('gear')}</button><button id="fs">${ic('full')}</button></div></div></div></div>
 <section class="info"><div class="lb">SEDANG DIPUTAR</div><h1>${esc(T)}</h1><div class="eb">${esc(src.res||'Video')}</div>
 <div class="btns"><button class="b2" id="dl">${ic('dl')} Unduh</button><button class="b2" id="nb">${ic('users',18)} Nobar</button></div>
 <div class="room" id="room" hidden><div class="rc"><span class="mu">Room</span><b class="code" id="rcode">…</b><button class="b2" id="cp">Salin link</button><span class="mu" id="vw"></span></div>
@@ -390,9 +452,9 @@ ${E?epNav(a,E):''}<h2>Pilih resolusi</h2><div class="eps">${list.map((s,i)=>`<a 
  if(p==='admin'){
   if(!isAdmin())return['<p class="mu">Halaman tidak ditemukan.</p>'];
   return[`<a class="back" href="#/more">${ic('back',20)}Lainnya</a><h2 style="margin-top:0">Panel admin</h2><div class="seg" id="adt">${[['online','Online'],['film','Film'],['req','Request'],['ban','Blokir'],['exp','Ekspor'],['pw','Sandi']].map(t=>`<button type="button" data-t="${t[0]}">${t[1]}</button>`).join('')}</div><div id="adb"></div>`,adminInit]}
- if(p==='more')return[`<h2>Akun</h2><div class="hi"><div class="av" id="avb" style="width:60px;height:60px;cursor:pointer;${avSt(MYAV,30)}">${avIn(MYAV,user())}</div><div class="hm"><b>${esc(user())}</b><small>${isAdmin()?'Admin':'Pengguna'} · ketuk foto untuk ganti avatar</small></div></div>
+ if(p==='more')return[`<h2>Akun</h2><div class="hi"><div class="av${avCl(MYAV)}" id="avb" style="width:60px;height:60px;cursor:pointer;margin:5px;${avSt(MYAV,30)}">${avIn(MYAV,user())}</div><div class="hm"><b>${esc(user())}</b><small>${isAdmin()?'Admin':'Pengguna'} · ketuk foto untuk ganti avatar &amp; bingkai</small></div></div>
  <div class="list mt"><a class="hi" href="#/history">${ic('clock')} Riwayat tontonan</a><a class="hi" href="#/downloads">${ic('dl')} Unduhan</a><a class="hi" href="#/request">${ic('plus')} Request film / anime / donghua</a>${isAdmin()?`<a class="hi" href="#/admin">${ic('shield')} Panel admin</a>`:''}</div>${isAdmin()?`<h2 id="rqh">Request masuk</h2><div class="list" id="rqs"></div>`:''}${themePanel()}<button class="b2 mt" id="lo">Keluar</button>`,()=>{$('#avb').onclick=avatarModal;if(isAdmin())homeReq();themeInit();
-  $('#lo').onclick=()=>{saveNow();leaveRoom();cur=null;hist=[];ls.set('bs:s',null);ls.set('bs:at','');ls.set('bs:tk','');loadTheme();loadProfile();render()}}];
+  $('#lo').onclick=()=>{killMini(true);saveNow();leaveRoom();cur=null;hist=[];ls.set('bs:s',null);ls.set('bs:at','');ls.set('bs:tk','');loadTheme();loadProfile();render()}}];
  return['<p class="mu">Halaman tidak ditemukan.</p>']
 }
 
@@ -470,7 +532,7 @@ function tabOnline(){
 const userRow=x=>{
  const st=!x.online?'Terakhir online '+ago(x.last_seen):x.film_title?(x.watching?'▶ Menonton: ':'⏸ Membuka: ')+esc(x.film_title)+(x.episode?' · Ep '+x.episode:''):'Sedang menjelajah';
  const me=x.username===ADMIN_USER;
- return`<div class="hi ur"><div class="uh"><div class="uw"><div class="av" style="${avSt(PF[x.username],18)}">${avIn(PF[x.username],x.username)}</div><span class="dot${x.online?' on':''}"></span></div><div class="hm"><b>${esc(x.username)}${x.ban_user?' <span class="bdg">akun diblokir</span>':''}${x.ban_ip?' <span class="bdg">IP diblokir</span>':''}</b><small>${st}</small><small>${esc(x.ip||'?')} · ${esc(x.device||'perangkat tidak diketahui')}</small></div></div>${me?'':`<div class="ura">${x.ban_user?'':`<button class="b2" data-ban="user" data-v="${esc(x.username)}">Blokir akun</button>`}${x.ban_ip||!x.ip||x.ip==='unknown'?'':`<button class="b2" data-ban="ip" data-v="${esc(x.ip)}">Blokir IP</button>`}</div>`}</div>`
+ return`<div class="hi ur"><div class="uh"><div class="uw"><div class="av${avCl(PF[x.username])}" style="${avSt(PF[x.username],18)}">${avIn(PF[x.username],x.username)}</div><span class="dot${x.online?' on':''}"></span></div><div class="hm"><b>${esc(x.username)}${x.ban_user?' <span class="bdg">akun diblokir</span>':''}${x.ban_ip?' <span class="bdg">IP diblokir</span>':''}</b><small>${st}</small><small>${esc(x.ip||'?')} · ${esc(x.device||'perangkat tidak diketahui')}</small></div></div>${me?'':`<div class="ura">${x.ban_user?'':`<button class="b2" data-ban="user" data-v="${esc(x.username)}">Blokir akun</button>`}${x.ban_ip||!x.ip||x.ip==='unknown'?'':`<button class="b2" data-ban="ip" data-v="${esc(x.ip)}">Blokir IP</button>`}</div>`}</div>`
 };
 function drawOnline(){
  const ol=$('#ol');if(!ol)return;
@@ -617,8 +679,12 @@ function nobarInit(){
 /* ===== avatar profil ===== */
 const AVS=['🐱','🐶','🐰','🐻','🐼','🐨','🦊','🐯','🦁','🐸','🐵','🐷','🐮','🐹','🐭','🐔','🐧','🐥','🦄','🐙','🦉','🐢','🐳','🦦','🦝','🐺','🦔','🐴','🐝','🦋'];
 let MYAV='';const PF={};
-const avIn=(a,n)=>a&&a.startsWith('img:data:image/')?`<img src="${esc(a.slice(4))}" alt="">`:a&&a.startsWith('e:')?esc(a.slice(2)):esc((n||'?')[0].toUpperCase());
-const avSt=(a,fs=20)=>a&&a.startsWith('e:')?`background:hsl(${hue(a)} 55% 30%);font-size:${fs}px`:a&&a.startsWith('img:data:image/')?'background:#000;overflow:hidden':'';
+const BDC=['Lucu','Gaming','Menyala','Modern','Biasa'],BDN=['Permen','Awan','Pelangi','Bunga','Bubblegum','Pixel','RGB','Cyber','Level Up','Matrix','Api','Petir','Aurora','Plasma','Galaxy','Kaca','Gradasi','Perak','Rose Gold','Duo','Putih','Emas','Biru','Hijau','Merah'];
+const avBase=a=>String(a||'').replace(/~b\d{1,2}$/,''),avB=a=>+((/~b(\d{1,2})$/.exec(a||'')||[])[1]||0),avCl=a=>avB(a)?' bd'+avB(a):'';
+const AVP=[h=>`linear-gradient(135deg,hsl(${h} 90% 72%),hsl(${h+40} 90% 58%))`,h=>`radial-gradient(circle at 30% 25%,#fffa,#0000 45%),hsl(${h} 85% 62%)`,h=>`repeating-conic-gradient(hsl(${h} 90% 70%) 0 10deg,hsl(${h} 90% 60%) 10deg 20deg)`,h=>`repeating-linear-gradient(45deg,hsl(${h} 85% 72%) 0 7px,hsl(${h} 85% 62%) 7px 14px)`,h=>`radial-gradient(#fff7 2px,#0000 3px) 0 0/9px 9px,hsl(${h} 80% 60%)`,h=>`conic-gradient(hsl(${h} 90% 65%),hsl(${h+60} 90% 65%),hsl(${h+120} 90% 65%),hsl(${h} 90% 65%))`,h=>`linear-gradient(180deg,hsl(${h} 90% 76%) 50%,hsl(${h} 80% 55%) 50%)`,h=>`radial-gradient(circle,hsl(${h} 95% 82%),hsl(${h} 85% 50%))`,h=>`repeating-linear-gradient(0deg,hsl(${h} 80% 68%) 0 6px,hsl(${h+30} 85% 62%) 6px 12px)`,h=>`conic-gradient(from 45deg,hsl(${h} 85% 62%) 25%,hsl(${h+30} 90% 72%) 0 50%,hsl(${h} 85% 62%) 0 75%,hsl(${h+30} 90% 72%) 0)`];
+const avBg=e=>{const k=Math.max(0,AVS.indexOf(e));return AVP[k%10]((k*47)%360)};
+const avIn=(a,n)=>{a=avBase(a);return a.startsWith('img:data:image/')?`<img src="${esc(a.slice(4))}" alt="">`:a.startsWith('e:')?esc(a.slice(2)):esc((n||'?')[0].toUpperCase())};
+const avSt=(a,fs=20)=>{a=avBase(a);return a.startsWith('e:')?`background:${avBg(a.slice(2))};font-size:${fs}px;text-shadow:0 2px 5px #0006`:a.startsWith('img:data:image/')?'background:#000':''};
 async function loadProfile(){
  const u=user();MYAV=u?ls.get('bs:av:'+u,''):'';if(!u)return;
  try{const r=await api('profiles?select=avatar&username=eq.'+encodeURIComponent(u));if(!r.ok||user()!==u)return;
@@ -644,18 +710,30 @@ const resizeImg=f=>new Promise((res,rej)=>{
  i.onerror=()=>{URL.revokeObjectURL(u);rej()};i.src=u
 });
 function avatarModal(){
+ let sa=avBase(MYAV),sb=avB(MYAV);
  const d=document.createElement('div');d.className='md';
- d.innerHTML=`<div><h2 style="margin:0">Pilih avatar</h2><div class="avg">${AVS.map(e=>`<button type="button" data-e="${e}" class="${MYAV==='e:'+e?'on':''}" style="background:hsl(${hue('e:'+e)} 55% 30%)">${e}</button>`).join('')}</div><input type="file" id="avf" accept="image/*" hidden><div class="btns" style="margin:4px 0 0"><button class="b2" id="avu">Unggah foto</button><button class="b2" id="avr">Hapus</button><button class="b2" id="avc">Tutup</button></div></div>`;
- document.body.append(d);
- d.onclick=e=>{const b=e.target.closest('[data-e]');if(b){d.remove();setAvatar('e:'+b.dataset.e)}};
- $('#avc').onclick=()=>d.remove();
- $('#avr').onclick=()=>{d.remove();setAvatar('')};
- $('#avu').onclick=()=>$('#avf').click();
- $('#avf').onchange=async e=>{
+ const val=()=>sa+(sb?'~b'+sb:'');
+ const grp=BDC.map((c,k)=>`<p class="mu" style="font-size:12px;margin:6px 0 0">${c}</p><div class="bg5">${[1,2,3,4,5].map(j=>{const i=k*5+j;return`<button type="button" class="bcell" data-b="${i}" title="${BDN[i-1]}"><div class="av bd${i}"></div></button>`}).join('')}</div>`).join('');
+ d.innerHTML=`<div><h2 style="margin:0">Avatar &amp; bingkai</h2><div style="display:grid;place-items:center;padding:12px"><div class="av" id="avp"></div></div><p class="mu" style="font-size:13px;margin:0">Avatar</p><div class="avg">${AVS.map(e=>`<button type="button" data-e="${e}" style="background:${avBg(e)}">${e}</button>`).join('')}</div><p class="mu" style="font-size:13px;margin:6px 0 0">Bingkai</p><button type="button" class="b2" data-b="0" style="justify-self:start">Tanpa bingkai</button>${grp}<input type="file" id="avf" accept="image/*" hidden><div class="btns" style="margin:4px 0 0"><button type="button" class="b2" id="avu">Unggah foto</button><button type="button" class="b2" id="avr">Hapus avatar</button></div><div class="btns mb"><button type="button" class="b2" id="avc">Batal</button><button type="button" class="b2 on" id="avs">Simpan</button></div></div>`;
+ const upd=()=>{
+  const p=d.querySelector('#avp'),v=val();p.className='av'+avCl(v);p.style.cssText='width:88px;height:88px;'+avSt(v,44);p.innerHTML=avIn(v,user());
+  d.querySelectorAll('.bcell .av').forEach(x=>{x.style.cssText=avSt(sa,18);x.innerHTML=avIn(sa,user())});
+  d.querySelectorAll('.avg button').forEach(x=>x.classList.toggle('on',sa==='e:'+x.dataset.e));
+  d.querySelectorAll('[data-b]').forEach(x=>x.classList.toggle('on',+x.dataset.b===sb))
+ };
+ d.onclick=e=>{const t=e.target.closest('button');if(!t)return;
+  if(t.dataset.e){sa='e:'+t.dataset.e;upd()}
+  else if(t.dataset.b!==undefined){sb=+t.dataset.b;upd()}
+  else if(t.id==='avu')d.querySelector('#avf').click();
+  else if(t.id==='avr'){sa='';upd()}
+  else if(t.id==='avc')d.remove();
+  else if(t.id==='avs'){const v=val();d.remove();setAvatar(v)}};
+ d.querySelector('#avf').onchange=async e=>{
   const f=e.target.files[0];if(!f)return;
   if(!/^image\//.test(f.type)||f.size>10e6)return toast('Pilih file gambar (maks 10 MB).');
-  try{const u=await resizeImg(f);d.remove();setAvatar('img:'+u)}catch{toast('Gambar tidak bisa dibaca.')}
- }
+  try{sa='img:'+await resizeImg(f);upd()}catch{toast('Gambar tidak bisa dibaca.')}
+ };
+ document.body.append(d);upd()
 }
 
 /* ===== request film/anime/donghua ===== */
@@ -804,9 +882,15 @@ function showRoomUI(){
 }
 function renderChat(){const cm=$('#cm');if(!cm||!room)return;cm.innerHTML='';room.log.forEach(m=>cm.append(chatEl(m)))}
 function chatEl(m){const d=document.createElement('div');d.className='msg'+(m.sys?' sys':'');
- if(m.sys)d.textContent=String(m.text).slice(0,120);else{const b=document.createElement('b');b.textContent=String(m.name).slice(0,20);d.append(b,' '+String(m.text).slice(0,300))}return d}
+ if(m.sys){d.textContent=String(m.text).slice(0,120);return d}
+ const nm=String(m.name).slice(0,20),me=nm===user(),a=me?MYAV:PF[nm];
+ if(!me&&a===undefined&&/^[\w.]{3,20}$/.test(nm))loadAvs([nm]).then(n=>n&&renderChat());
+ d.classList.add('cu');
+ const av=document.createElement('div');av.className='av sm'+avCl(a);av.style.cssText=avSt(a,14);av.innerHTML=avIn(a,nm);
+ const t=document.createElement('div'),b=document.createElement('b');b.textContent=nm;t.append(b,' '+String(m.text).slice(0,300));
+ d.append(av,t);return d}
 function addChat(m){room.log.unshift(m);if(room.log.length>150)room.log.pop();const cm=$('#cm');if(cm){cm.prepend(chatEl(m));cm.scrollTop=0}floatMsg(m)}
-function floatMsg(m){const f=$('#fl');if(!f)return;const d=chatEl(m);d.className='fx'+(m.sys?' sys':'');f.prepend(d);while(f.children.length>6)f.lastChild.remove();setTimeout(()=>d.remove(),9000)}
+function floatMsg(m){const f=$('#fl');if(!f)return;const d=chatEl(m);d.className='fx'+(m.sys?' sys':' cu');f.prepend(d);while(f.children.length>6)f.lastChild.remove();setTimeout(()=>d.remove(),9000)}
 function sendChat(i=$('#ci')){const text=i.value.trim();if(!text)return;i.value='';const m={t:'chat',name:user(),text};addChat(m);emit(m)}
 const sysMsg=text=>{const m={t:'chat',sys:1,text};addChat(m);bc(m)};
 
@@ -906,39 +990,48 @@ function leaveRoom(){if(room){clearInterval(room.poll);clearInterval(room.hb);st
 
 /* ===== pemutar ===== */
 function player(a,n,ep,nextHref){
- const v=$('#v'),pl=$('#pl'),sk=$('#sk'),vo=$('#vo');cur={a,n,v,ep:ep||0};
+ const v=qd('#v'),pl=qd('#pl'),sk=qd('#sk'),vo=qd('#vo');const kept=!!(cur&&cur.v===v);cur={a,n,v,ep:ep||0,h:location.hash};
  let timer,last=0,rate=0;const rates=[1,1.25,1.5,2,.75];
  const fill=(e,x)=>e.style.setProperty('--v',x+'%');
  const show=()=>{pl.classList.add('ui');clearTimeout(timer);if(!v.paused)timer=setTimeout(()=>pl.classList.remove('ui'),3000)};
  const emitT=t=>room&&!muted()&&emit({t,time:v.currentTime});
  pl.onclick=e=>{if(e.target.closest('button,input,a'))return;pl.classList.contains('ui')&&!v.paused?pl.classList.remove('ui'):show()};
- $('#pp').onclick=()=>v.paused?v.play():v.pause();
- $('#rw').onclick=()=>{v.currentTime=Math.max(0,v.currentTime-10);show()};
- $('#fw').onclick=()=>{v.currentTime=Math.min(v.duration||0,v.currentTime+10);show()};
- $('#mu').onclick=()=>v.muted=!v.muted;
+ qd('#pp').onclick=()=>v.paused?v.play():v.pause();
+ qd('#rw').onclick=()=>{v.currentTime=Math.max(0,v.currentTime-10);show()};
+ qd('#fw').onclick=()=>{v.currentTime=Math.min(v.duration||0,v.currentTime+10);show()};
+ qd('#mu').onclick=()=>v.muted=!v.muted;
  vo.oninput=()=>{v.volume=+vo.value;v.muted=v.volume===0;fill(vo,v.volume*100)};
- v.onvolumechange=()=>{$('#mu').innerHTML=ic(v.muted?'mute':'vol')};
- $('#sp').onclick=()=>{rate=(rate+1)%rates.length;v.playbackRate=rates[rate];toast('Kecepatan '+rates[rate]+'x')};
- $('#fs').onclick=()=>document.fullscreenElement?document.exitFullscreen():pl.requestFullscreen?.();
+ v.onvolumechange=()=>{qd('#mu').innerHTML=ic(v.muted?'mute':'vol')};
+ qd('#sp').onclick=()=>{rate=(rate+1)%rates.length;v.playbackRate=rates[rate];toast('Kecepatan '+rates[rate]+'x')};
+ qd('#fs').onclick=()=>document.fullscreenElement?document.exitFullscreen():pl.requestFullscreen?.();
  sk.oninput=()=>v.currentTime=+sk.value;
  v.onloadedmetadata=()=>{
-  sk.max=v.duration;$('#dur').textContent=ft(v.duration);
+  sk.max=v.duration;qd('#dur').textContent=ft(v.duration);
   if(room&&room.pend)return;
   const h=hist.find(x=>x.id===a.id&&x.ep===(ep||0));if(h&&h.t>5&&h.t<v.duration-5)v.currentTime=h.t};
- v.ontimeupdate=()=>{if(!v.duration)return;sk.value=v.currentTime;fill(sk,v.currentTime/v.duration*100);$('#cur').textContent=ft(v.currentTime);if(Date.now()-last>5000){last=Date.now();saveNow()}};
- v.onwaiting=()=>{$('#buf').classList.add('on');$('#bt').textContent='Memuat…';setBuf(true)};
- v.onplaying=()=>{$('#buf').classList.remove('on');$('#pp').innerHTML=ic('pause',26);show();setBuf(false);ping()};
- v.oncanplay=()=>{$('#buf').classList.remove('on');setBuf(false)};
+ v.ontimeupdate=()=>{if(!v.duration)return;sk.value=v.currentTime;fill(sk,v.currentTime/v.duration*100);qd('#cur').textContent=ft(v.currentTime);if(Date.now()-last>5000){last=Date.now();saveNow()}};
+ v.onwaiting=()=>{qd('#buf').classList.add('on');qd('#bt').textContent='Memuat…';setBuf(true)};
+ v.onplaying=()=>{qd('#buf').classList.remove('on');qd('#pp').innerHTML=ic('pause',26);show();setBuf(false);ping()};
+ v.oncanplay=()=>{qd('#buf').classList.remove('on');setBuf(false)};
  v.onplay=()=>{if(room&&!muted()){room.want=true;emitT('play')}};
- v.onpause=()=>{$('#pp').innerHTML=ic('play',26);show();saveNow();ping();if(room&&!muted()&&!v.ended){room.want=false;emitT('pause')}};
+ v.onpause=()=>{qd('#pp').innerHTML=ic('play',26);show();saveNow();ping();if(room&&!muted()&&!v.ended){room.want=false;emitT('pause')}};
  v.onseeked=()=>{if(!room)return;if(room.rt!==null&&Math.abs(v.currentTime-room.rt)<.8){room.rt=null;return}emitT('seek')};
- v.onerror=()=>{$('#buf').classList.add('on');$('#bt').textContent='Video gagal dimuat. Cek URL CDN.'};
- $('#dl').onclick=()=>download(a,n,ep);v.onended=()=>{if(nextHref&&(!room||room.host))location.hash=nextHref};
- $('#nb').onclick=()=>pickVis(a);
+ v.onerror=()=>{qd('#buf').classList.add('on');qd('#bt').textContent='Video gagal dimuat. Cek URL CDN.'};
+ qd('#dl').onclick=()=>download(a,n,ep);v.onended=()=>{if(nextHref&&!MINI&&(!room||room.host))location.hash=nextHref};
+ qd('#nb').onclick=()=>pickVis(a);
  if(room){showRoomUI();if(room.pend)bindRoomStart();else{room.rt=null;const t=hist.find(x=>x.id===a.id);if(!room.host&&room.want)v.play().catch(()=>{})}}
- else if(resumeRow){const r=resumeRow;resumeRow=null;setTimeout(()=>startRoom(a,r),0)}else v.play().catch(()=>{});
+ else if(resumeRow){const r=resumeRow;resumeRow=null;setTimeout(()=>startRoom(a,r),0)}else if(!kept)v.play().catch(()=>{});
  show();
  if(room&&room.host&&room.ep!==(ep||0)){room.ep=ep||0;bc({t:'ep',ep:room.ep})}
+ if(kept&&v.readyState>=1){sk.max=v.duration;$('#dur').textContent=ft(v.duration);$('#cur').textContent=ft(v.currentTime);sk.value=v.currentTime;fill(sk,v.currentTime/v.duration*100);$('#pp').innerHTML=ic(v.paused?'play':'pause',26);$('#buf').classList.remove('on')}
+ const ac=$('#amb'),am=$('#am');let amb=ls.get('bs:amb',true);
+ if(ac&&am){
+  const ax=ac.getContext('2d');ac.width=64;ac.height=36;ac.classList.toggle('off',!amb);am.classList.toggle('act',amb);
+  const pa=()=>{if(amb&&ac.isConnected&&v.readyState>=2)try{ax.drawImage(v,0,0,64,36)}catch{}};
+  const iv=setInterval(()=>{if(!ac.isConnected)return clearInterval(iv);if(!v.paused)pa()},100);
+  ['loadeddata','seeked','pause'].forEach(ev=>v.addEventListener(ev,pa));pa();
+  am.onclick=()=>{amb=!amb;ls.set('bs:amb',amb);ac.classList.toggle('off',!amb);am.classList.toggle('act',amb);if(amb)pa();toast(amb?'Mode sinematik: nyala':'Mode sinematik: mati')}
+ }
 }
 
 /* ===== admin: tambah/edit film ===== */
@@ -1122,19 +1215,55 @@ async function importSeries(inp){
  loadCatalog();
 }
 
+/* ===== mini player ===== */
+let MINI=null;
+const DUM={classList:{add(){},remove(){},toggle(){}},style:{setProperty(){}},innerHTML:'',textContent:'',value:0,max:0},qd=q=>$(q)||DUM;
+function miniStart(c){
+ const v=c.v;if(MINI||!v||!v.isConnected)return;
+ const m=document.createElement('div');m.id='mini';
+ const T=c.a.title+(c.ep?' · Ep '+c.ep:'');
+ m.innerHTML=`<div class="mv"></div><div class="mb"><div class="mtt"><b>${esc(T)}</b><small>Sedang diputar</small></div><button type="button" id="mpp"></button><button type="button" id="mex" title="Kembali ke film">${ic('full',18)}</button><button type="button" id="mxx" title="Tutup">${ic('x',18)}</button></div>`;
+ const was=!v.paused;
+ m.querySelector('.mv').append(v);document.body.append(m);
+ if(was&&v.paused)v.play().catch(()=>{});
+ MINI={c,h:c.h,m};
+ const sync=()=>{const b=$('#mpp');if(b)b.innerHTML=ic(v.paused?'play':'pause',18)};
+ v.addEventListener('play',sync);v.addEventListener('pause',sync);sync();
+ $('#mpp').onclick=()=>v.paused?v.play():v.pause();
+ $('#mex').onclick=()=>{location.hash=MINI.h};
+ $('#mxx').onclick=()=>killMini(true);
+ m.querySelector('.mv').onclick=()=>{location.hash=MINI.h}
+}
+function killMini(leave){
+ if(!MINI)return;const{c,m}=MINI;MINI=null;
+ try{saveNow()}catch{}
+ if(leave)leaveRoom();
+ const v=c.v;v.pause();v.removeAttribute('src');try{v.load()}catch{}
+ m.remove();if(cur===c)cur=null
+}
+
 async function render(){
- saveNow();cur=null;const app=$('#app');
+ const app=$('#app');
+ const parts=(location.hash.slice(1)||'/').split('/').filter(Boolean).map(decodeURIComponent);
+ let keep=null,km=null;
+ if(BAN!==null||!user())killMini(false);
+ else if(parts[0]==='watch'){
+  if(cur&&cur.h===location.hash&&cur.v){keep=cur;km=MINI;MINI=null}
+  else killMini(false)
+ }else if(cur&&!MINI)miniStart(cur);
+ saveNow();if(!keep&&!MINI)cur=null;
  if(BAN!==null){leaveRoom();app.innerHTML=bannedHtml();$('#bk2').onclick=()=>{BAN=null;render()};return}
  if(!user()){leaveRoom();app.innerHTML=loginHtml();bindLogin();return}
- const parts=(location.hash.slice(1)||'/').split('/').filter(Boolean).map(decodeURIComponent);
- if(parts[0]!=='watch'&&room&&!room.pend)leaveRoom();
+ if(parts[0]!=='watch'&&room&&!room.pend&&!MINI)leaveRoom();
  if(parts[0]!=='more'&&JSON.stringify(TH)!==JSON.stringify(THs)){TH=cleanTheme(THs);applyTheme(TH)}
  if(!parts[0]||['history','watch','film'].includes(parts[0]))await loadHist();
  const[body,init]=view(parts);
  const on=['film','watch'].includes(parts[0])?'':['admin','request'].includes(parts[0])?'more':(parts[0]||'');
  const tabs=[['','home','Beranda'],['explore','compass','Jelajahi'],['nobar','users','Nobar'],['history','clock','Riwayat'],['downloads','dl','Unduhan'],['more','menu','Lainnya']];
- app.innerHTML=`<header class="hd"><a href="#/" class="logo">Bioskop <span>Ana</span></a><div style="display:flex;gap:8px"><a href="#/explore" class="ib">${ic('search')}</a><a href="#/more" class="av" style="${avSt(MYAV)}">${avIn(MYAV,user())}</a></div></header><main>${body}</main><nav class="nv">${tabs.map(t=>`<a href="#/${t[0]}" class="${on===t[0]?'on':''}">${ic(t[1],24)}${t[2]}</a>`).join('')}</nav>`;
- scrollTo(0,0);if(init)init();fillPosters();ping();
+ app.innerHTML=`<header class="hd"><a href="#/" class="logo">Bioskop <span>Ana</span></a><div style="display:flex;gap:8px"><a href="#/explore" class="ib">${ic('search')}</a><a href="#/more" class="av${avCl(MYAV)}" style="${avSt(MYAV)}">${avIn(MYAV,user())}</a></div></header><main>${body}</main><nav class="nv">${tabs.map(t=>`<a href="#/${t[0]}" class="${on===t[0]?'on':''}">${ic(t[1],24)}${t[2]}</a>`).join('')}</nav>`;
+ scrollTo(0,0);
+ if(keep){const nv=$('#v');if(nv){const was=!keep.v.paused;nv.replaceWith(keep.v);if(was&&keep.v.paused)keep.v.play().catch(()=>{})}if(km)km.m.remove()}
+ if(init)init();fillPosters();ping();
 }
 document.addEventListener('click',e=>{
  const at=e.target.closest('[data-at]');if(at)AT=at.dataset.at;
