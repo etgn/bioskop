@@ -470,6 +470,27 @@ html[data-skin=lucu] .ahi{color:var(--tx)}
 .bh{display:flex;justify-content:space-between;align-items:center;gap:12px;margin:6px 0 18px}
 .bh .back{margin:0}
 .bh .be{padding:8px 16px;border-radius:14px;font-size:14px;color:var(--a);border-color:var(--bd);background:var(--t3)}
+/* rekomendasi beranda */
+h2.rekh{margin-top:4px}
+.rek{display:flex;gap:12px;overflow-x:auto;scroll-snap-type:x mandatory;scrollbar-width:none}
+.rek::-webkit-scrollbar{display:none}
+.reks{position:relative;isolation:isolate;flex:0 0 100%;min-width:0;scroll-snap-align:start;display:flex;align-items:center;gap:16px;padding:16px;border-radius:24px;overflow:hidden;border:1px solid var(--ln);background:linear-gradient(135deg,hsl(var(--h) 65% 30%),hsl(calc(var(--h) + 45) 70% 10%));color:#fff}
+.reks .rekbg{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;filter:blur(18px);transform:scale(1.2);z-index:-2}
+.reks .rekbg:not([src]){display:none}
+.reks:before{content:"";position:absolute;inset:0;z-index:-1;background:linear-gradient(90deg,#05050a80,#05050ad9)}
+.reks .po{width:112px;flex:none;border-radius:16px;box-shadow:0 10px 28px #0008}
+.reks .po:after{display:none}
+.reki{display:flex;flex-direction:column;align-items:flex-start;gap:8px;min-width:0}
+.reki b{font-size:17px;line-height:1.3;display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden;overflow-wrap:anywhere}
+.reki small{font-size:12px;color:#d8d6ea}
+.rekbtn{display:inline-flex;align-items:center;gap:6px;margin-top:4px;padding:8px 16px;border-radius:12px;background:var(--g);color:#fff;font-weight:700;font-size:13px}
+.rekd{display:flex;justify-content:center;gap:6px;margin-top:10px}
+.rekd button{width:7px;height:7px;padding:0;border:0;border-radius:9px;background:var(--mu);opacity:.4;cursor:pointer;transition:width .25s,opacity .25s}
+.rekd button.on{width:20px;opacity:1;background:var(--c1)}
+@media(min-width:700px){.reks{flex-basis:calc(50% - 6px)}}
+html[data-skin=lucu] .reks{background:#fffaf4;color:var(--tx);border:2px solid var(--tx)}
+html[data-skin=lucu] .reks:before{background:#fffaf4d9}
+html[data-skin=lucu] .reks small{color:var(--mu)}
 </style>
 </head>
 <body>
@@ -645,11 +666,48 @@ function epList(a){
 function epNav(a,E){
  const asc=[...a.episodes].sort((x,y)=>x.no-y.no),i=asc.findIndex(e=>e.no===E.no),pv=asc[i-1],nx=asc[i+1];
  return`<div class="btns" style="margin:0 0 6px">${pv?`<a class="b2" data-ep href="${wl(a,pv.no)}">‹ Ep ${pv.no}</a>`:''}${nx?`<a class="b2 on" data-ep href="${wl(a,nx.no)}">Ep ${nx.no} ›</a>`:''}</div><h2>Pilih episode</h2><div class="eps" style="max-height:150px;overflow:auto">${asc.map(e=>`<a class="b2 ${e.no===E.no?'on':''}" data-ep href="${wl(a,e.no)}" style="padding:8px 14px">${e.no}</a>`).join('')}</div>`}
+/* ===== acak urutan & rekomendasi beranda (berubah tiap web dibuka / di-refresh) ===== */
+const RND=new Map();
+const rnd1=a=>{if(!RND.has(a.id))RND.set(a.id,Math.random());return RND.get(a.id)};
+const shuffled=L=>[...L].sort((x,y)=>rnd1(x)-rnd1(y));
+let REC={u:null,ids:[]},recTm=0;
+function recList(){
+ if(REC.u!==user()||!REC.ids.some(id=>catalog.some(a=>a.id===id))){
+  const seen=new Set(hist.map(x=>x.id)),like=new Set(catalog.filter(a=>seen.has(a.id)).flatMap(a=>a.genres||[]));
+  // utamakan yang belum ditonton dan genrenya mirip riwayat, tetap ada unsur acak
+  const score=a=>(seen.has(a.id)?0:2)+((a.genres||[]).some(g=>like.has(g))?.6:0)+Math.random();
+  REC={u:user(),ids:catalog.map(a=>[a.id,score(a)]).sort((x,y)=>y[1]-x[1]).slice(0,6).map(x=>x[0])}
+ }
+ return REC.ids.map(id=>catalog.find(a=>a.id===id)).filter(Boolean)
+}
+function recHtml(){
+ const L=recList();if(!L.length)return'';
+ return`<h2 class="rekh">Rekomendasi film</h2><div class="rek" id="rek">${L.map(a=>`<a class="reks" href="#/film/${encodeURIComponent(a.id)}" style="--h:${hue(a.title)}"><img class="rekbg" data-id="${esc(a.id)}" alt="" onerror="this.remove()"><div class="po" style="--h:${hue(a.title)}"><img data-id="${esc(a.id)}" alt="" onerror="this.remove()"><span class="rt" hidden></span></div><div class="reki"><b>${esc(a.title)}</b><small>${esc([catName(a.category),...(a.genres||[]).slice(0,2),isS(a)?a.episodes.length+' episode':''].filter(Boolean).join(' • '))}</small><span class="rekbtn">${ic('play',15)} Tonton</span></div></a>`).join('')}</div>${L.length>1?`<div class="rekd" id="rekd">${L.map((a,i)=>`<button type="button" aria-label="Rekomendasi ${i+1}"${i?'':' class="on"'}></button>`).join('')}</div>`:''}`
+}
+function recInit(){
+ clearInterval(recTm);const r=$('#rek');if(!r)return;
+ r.querySelectorAll('img[data-id]').forEach(paint);
+ const d=$('#rekd');if(!d)return;
+ const S_=[...r.children],pos=i=>S_[i].offsetLeft-S_[0].offsetLeft;
+ const now=()=>r.scrollLeft>=r.scrollWidth-r.clientWidth-4&&r.scrollLeft>0?S_.length-1:S_.reduce((b,_,i)=>Math.abs(pos(i)-r.scrollLeft)<Math.abs(pos(b)-r.scrollLeft)?i:b,0);
+ const go=i=>r.scrollTo({left:pos(i),behavior:'smooth'});
+ let hold=0;
+ const touch=()=>{hold=Date.now()+8000};
+ r.addEventListener('pointerdown',touch,{passive:true});r.addEventListener('touchmove',touch,{passive:true});r.addEventListener('wheel',touch,{passive:true});
+ r.onscroll=()=>{const n=now();[...d.children].forEach((b,i)=>b.classList.toggle('on',i===n))};
+ d.onclick=e=>{const i=[...d.children].indexOf(e.target);if(i>=0){touch();go(i)}};
+ recTm=setInterval(()=>{
+  if(!r.isConnected)return clearInterval(recTm);
+  if(document.hidden||Date.now()<hold||r.scrollWidth<=r.clientWidth+4)return;
+  const end=r.scrollLeft>=r.scrollWidth-r.clientWidth-4;
+  go(end?0:(now()+1)%S_.length)
+ },5000)
+}
 function view(parts){
  const[p,id,idx,epq]=parts;
- if(!p){const sn=new Set(),h=hist.filter(x=>!sn.has(x.id)&&sn.add(x.id)).slice(0,3);return[`${h.length?`<h2>Lanjutkan menonton</h2><div class="list">${h.map(histCard).join('')}</div>`:''}<h2>Semua film</h2>${catChips()}<div id="cg" class="grid mt"></div>`,()=>{
-  const f=()=>{const L=catalog.filter(inCat);$('#cg').innerHTML=L.map(card).join('')||`<p class="mu" style="grid-column:1/-1">${catalog.length?'Belum ada di kategori ini.':'Belum ada film di database.'}</p>`;fillPosters()};
-  bindCats(f);f()}]}
+ if(!p){const sn=new Set(),h=hist.filter(x=>!sn.has(x.id)&&sn.add(x.id)).slice(0,3);return[`${recHtml()}${h.length?`<h2>Lanjutkan menonton</h2><div class="list">${h.map(histCard).join('')}</div>`:''}<h2>Semua film</h2>${catChips()}<div id="cg" class="grid mt"></div>`,()=>{
+  const f=()=>{const L=shuffled(catalog.filter(inCat));$('#cg').innerHTML=L.map(card).join('')||`<p class="mu" style="grid-column:1/-1">${catalog.length?'Belum ada di kategori ini.':'Belum ada film di database.'}</p>`;fillPosters()};
+  bindCats(f);f();recInit()}]}
  if(p==='explore')return[`<input id="sq" class="in" placeholder="Cari judul film" value="${esc(S.q)}">${catChips()}<div id="sg" class="grid mt"></div>`,()=>{
   const f=()=>{$('#sg').innerHTML=catalog.filter(a=>inCat(a)&&a.title.toLowerCase().includes(S.q.toLowerCase())).map(card).join('')||'<p class="mu">Film tidak ditemukan.</p>';fillPosters()};
   $('#sq').oninput=e=>{S.q=e.target.value;f()};bindCats(f);f()}];
@@ -1935,4 +1993,4 @@ loadTheme();loadProfile();
 loadCatalog().then(()=>{const m=location.hash.match(/room=([A-Za-z0-9]+)/);if(m&&user())joinRoom(m[1].toUpperCase());else if(user())resumeHost()});
 </script>
 </body>
- </html>
+</html>
